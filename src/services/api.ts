@@ -1,14 +1,16 @@
 import axios, { AxiosError } from 'axios';
-import { parseCookies } from 'nookies';
 import {AuthTokenError} from './errors/AuthTokenError';
-
 import { singOut } from '@/contexts/AuthContext';
+import { parseCookies } from 'nookies';
+
+// import { singOut } from '@/contexts/AuthContext';
 
 export function setupAPIClient(ctx = undefined) {
     let cookies = parseCookies(ctx);
 
     const api = axios.create({
-        baseURL: 'http://localhost:3300',
+        // baseURL: 'http://localhost:3300',
+        baseURL: 'https://synsaude-dev.azurewebsites.net/api',
         headers:{
             Authorization: `Bearer ${cookies['@nextauth.token']}`
         }

@@ -1,29 +1,26 @@
 import { FormEvent, useContext, useState } from "react";
-import Head from "next/head";
 import Image from "next/image";
-import styles from "../../styles/page.module.scss";
-import logoImg from "../../public/logo.svg";
+import doctorImg from "../../public/doctor.png";
 import Link from "next/link";
-
 import { AuthContext } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
 import { canSSRGuest } from "@/utils/canSSRGuest";
-
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import Head from "next/head";
+import * as S from "./styles";
+import InputWithMask from "@/components/InputMask";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const { singIn } = useContext(AuthContext);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSingIn(event: FormEvent) {
     event.preventDefault();
 
-    if (email === "" || password === "") {
+    if (cpf === "" || senha === "") {
       toast.warning("Preencha todos os campos");
       return;
     }
@@ -31,8 +28,9 @@ export default function Home() {
     setLoading(true);
     //teste
     let data = {
-      email,
-      password,
+      // email: "", // Add the email property with an empty string value
+      cpf,
+      senha,
     };
 
     await singIn(data);
@@ -43,43 +41,56 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Sujeito Pizza - faça seu login 1</title>
+        <title>SynSaude - login</title>
       </Head>
-      <div className={styles.containerCenter}>
-        <Image src={logoImg} alt="Sujeito Pizza" />
-        <div className={styles.login}>
-          <form onSubmit={handleSingIn}>
-            <Label>Nome fulano</Label>
-            <Input />
-            <Label>Nome fulano</Label>
-            <Input />
-            <Label>Nome fulano</Label>
-            <Input />
-            <Label>Nome fulano</Label>
-            <Input />
+      <S.Container>
+        <S.LoginContent>
+          <h1>Bem vindo de Volta!</h1>
+          <S.FormContent onSubmit={handleSingIn}>
+            <S.InputContainer>
+              <S.InputLabel>Cpf</S.InputLabel>
+              <InputWithMask
+                mask="999.999.999-99"
+                placeholder="Digite seu cpf"
+                value={cpf}
+                type="text"
+                onChange={(event) => setCpf(event.target.value)}
+              />
+            </S.InputContainer>
 
-            {/* <Input
-              placeholder="Digite seu email "
-              type="text"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-            <Input
-              placeholder="Digite sua senha"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            /> */}
-            <Button type="submit">Acessar</Button>
-          </form>
-          <div className={styles.boxLink}>
-            <span className={styles.text}> Não possui uma conta?</span>
+            <S.InputContainer>
+              <S.InputLabel>Email</S.InputLabel>
+              <Input type="email" />
+            </S.InputContainer>
+            <S.InputContainer>
+              <S.InputLabel>Senha</S.InputLabel>
+
+              <S.InputContent
+                placeholder="Digite sua senha"
+                type="password"
+                value={senha}
+                onChange={(event: any) => setSenha(event.target.value)}
+              />
+            </S.InputContainer>
+            <S.InputLabel style={{ color: "var(--purple-300)" }}>
+              Esqueceu sua senha?
+            </S.InputLabel>
+            <S.ButtonContent type="submit">Acessar</S.ButtonContent>
+          </S.FormContent>
+          <div>
+            <S.InputLabel> Não possui uma conta?</S.InputLabel>
             <Link href="/singup">
-              <span className={styles.textLink}> Cadastre-se!</span>
+              <S.InputLabel
+                style={{ color: "var(--purple-300)", fontWeight: "700" }}
+              >
+                {" "}
+                Cadastre-se!
+              </S.InputLabel>
             </Link>
           </div>
-        </div>
-      </div>
+        </S.LoginContent>
+        {/* <Image src={doctorImg} alt="SynSaude" width={690} height={690}/> */}
+      </S.Container>
     </>
   );
 }

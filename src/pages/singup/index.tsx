@@ -1,30 +1,28 @@
-import Head from "next/head";
+// import Head from "next/head";
 import Image from "next/image";
 import styles from "../../../styles/page.module.scss";
 import logoImg from "../../../public/logo.svg";
 import Link from "next/link";
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AuthContext } from "@/contexts/AuthContext";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Header } from "@/components/Header";
-import { canSSRAuth } from "@/utils/canSSRAuth";
+import Head from "next/head";
+
 
 export default function SingUp() {
   const { singUp } = useContext(AuthContext);
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const [isAuthUser, setIsAuthUser] = useState(true);//arrumar o estado
+  const [loading, setLoading] = useState(false);
+  const [isAuthUser, setIsAuthUser] = useState(true);
 
   async function handleSingUp(event: FormEvent) {
     event.preventDefault();
 
-    if (name === "" || email === "" || password === "") {
+    if (name === "" || cpf === "" || password === "") {
       toast.warning("Preencha todos os campos");
       return;
     }
@@ -33,51 +31,72 @@ export default function SingUp() {
 
     let data = {
       name,
-      email,
+      cpf,
       password,
     };
 
-    await singUp(data);
+    // await singUp(data);
 
     setLoading(false);
   }
+
+  function handleCpfChange(event: { target: { value: any; }; }) {
+    const inputCpf = event.target.value;
+    const formattedCpf = formatCpf(inputCpf);
+    setCpf(formattedCpf);
+  }
+
+  function formatCpf(value: string) {
+    let cpfFormatted = value.replace(/\D/g, "");
+    
+    cpfFormatted = cpfFormatted.replace(/(\d{3})(\d)/, "$1.$2");
+    cpfFormatted = cpfFormatted.replace(/(\d{3})(\d)/, "$1.$2");
+    cpfFormatted = cpfFormatted.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+    return cpfFormatted;
+  }
+
+  
+
   return (
     <>
       <Head>
         <title>Faça seu cadastro agora!</title>
       </Head>
-      {isAuthUser && <Header />}
-      <div className={styles.containerCenter}>
-        <Image src={logoImg} alt="Sujeito Pizza" />
-        <div className={styles.login}>
+      {/* {isAuthUser && <Header />} */}
+      <div>
+        {/* <Image src={logoImg} alt="Sujeito Pizza" /> */}
+        <div>
           <h1>Criando sua conta</h1>
           <form onSubmit={handleSingUp}>
-            <Input
+            <input
               placeholder="Digite seu Nome"
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
             />
-            <Input
-              placeholder="Digite seu email"
+            <input
+              placeholder="Digite seu cpf"
               type="text"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              value={cpf}
+              // onChange={(event) => setCpf(event.target.value)}
+              onChange={handleCpfChange}
+              maxLength={14}
             />
-            <Input
+            <input
               placeholder="Digite sua senha"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
-            <Button type="submit" loading={loading}>
+            <button type="submit">
               cadastrar
-            </Button>
+            </button>
           </form>
-          <div className={styles.boxLink}>
-            <span className={styles.text}> Já possui uma conta?</span>
+          <div>
+            <span > Já possui uma conta?</span>
             <Link href="/">
-              <span className={styles.textLink}> Faça login!</span>
+              <span> Faça login!</span>
             </Link>
           </div>
         </div>

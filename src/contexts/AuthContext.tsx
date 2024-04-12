@@ -1,8 +1,8 @@
 import { destroyCookie, setCookie, parseCookies } from "nookies";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import Router from "next/router";
-import { api } from "../services/apiClient";
 import { toast } from "react-toastify";
+import { api } from "@/services/apiClient";
 
 type AuthContextData = {
   user: UserProps;
@@ -14,25 +14,24 @@ type AuthContextData = {
 
 type UserProps = {
   id: string;
+  cpf: string;
   name: string;
-  email: string;
 };
 
 type SingInProps = {
-  email: string;
-  password: string;
+  cpf: string;
+  senha: string;
 };
 
 type SingUpProps = {
   name: string;
-  email: string;
-  password: string;
+  cpf: string;
+  senha: string;
 };
 
 type AuthProviderProps = {
   children: ReactNode;
 };
-
 export const AuthContext = createContext({} as AuthContextData);
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -40,65 +39,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    const {'@nextauth.token': token} = parseCookies();
-    if(token) {
-      api.get("/me").then(response => {
-        const { id, name, email } = response.data;
-        setUser({ id, name, email });
-      }).catch(() => {
-        singOut();
-      });
+    const { "@nextauth.token": token } = parseCookies();
+    if (token) {
+      api
+        .get("/me")
+        .then((response) => {
+          const { id, name, cpf } = response.data;
+          setUser({ id, name, cpf });
+        })
+        .catch(() => {
+          singOut();
+        });
     }
   }, []);
 
-  async function singIn({ email, password }: SingInProps) {
+  async function singIn({ cpf, senha }: SingInProps) {
     try {
-      const response = await api.post("/session", {
-        email,
-        password,
+      const response = await api.post("/auth/login", {
+        cpf,
+        senha,
       });
 
-      const { id, name, token } = response.data;
+      const { token } = response.data;
 
       setCookie(undefined, "@nextauth.token", token, {
         maxAge: 60 * 60 * 1, // 1 hour
         // maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: "/", //quais caminhos tem acesso ao cookie
+        path: "/",
       });
 
       setUser({
-        id,
-        name,
-        email,
+        id: "",
+        name: "",
+        cpf,
       });
 
-      //passar o token para proximas requests
       api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
-      toast.success(`Bem Vindo! ` + name);
+      toast.success("Bem Vindo! " + cpf);
 
-      Router.push("/dashboard");
-      // console.log(response.data);
+      Router.push("/homepage");
     } catch (error) {
       toast.error("Erro ao acessar");
       console.log("Error ao acessar", error);
     }
   }
-
-  async function singUp({ name, email, password }: SingUpProps) {
+  async function singUp({ name, cpf, senha }: SingUpProps) {
     try {
       const response = await api.post("/users", {
         name,
-        email,
-        password,
+        cpf,
+        senha,
       });
-      
-      toast.success(`Usuario cadastrado com sucesso! `);
+
+      toast.success("Usuario cadastrado com sucesso!");
 
       Router.push("/");
-
-      
-    } catch(error) {
+    } catch (error) {
       toast.error("Erro ao cadastrar");
       console.log("Erro ao cadastrar");
     }
@@ -112,7 +109,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
-
 export function singOut() {
   try {
     destroyCookie(undefined, "@nextauth.token");

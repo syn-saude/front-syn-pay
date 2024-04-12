@@ -13,10 +13,12 @@
 
   --gray-100: #8a8a8a;
   --green-900: #3fffa3;
-  --green-600: #7fffd4;
+  --green-300: #22ecc5;
+  --green-200: #c7faf0b1;
   --red-900: #ff3f48;
   --yellow-900: #fffa3f;
-  --purple-900: #a03fff;
+  --purple-100: #f7f7fd;
+  --purple-300: #7065f0;
 }
 
 button {
@@ -29,7 +31,7 @@ a {
 }
 
 body {
-  background: var(--dark-700);
+  background: var(--white);
 }
 
 body,
