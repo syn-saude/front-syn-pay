@@ -1,6 +1,6 @@
 import { FormEvent, useContext, useState } from "react";
 import Image from "next/image";
-import doctorImg from "../../public/doctor.png";
+import doctorImg from "../../public/img/logo-2.png";
 import Link from "next/link";
 import { AuthContext } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import Head from "next/head";
 import * as S from "./styles";
 import InputWithMask from "@/components/InputMask";
 import { Input } from "@/components/ui/input";
+import { NavigationMenuDemo } from "@/components/NavigationMenuT";
 
 export default function Home() {
   const { singIn } = useContext(AuthContext);
@@ -44,9 +45,21 @@ export default function Home() {
         <title>SynSaude - login</title>
       </Head>
       <S.Container>
+        <NavigationMenuDemo />
         <S.LoginContent>
+          <Image src={doctorImg} alt="SynSaude" width={120} />
           <h1>Bem vindo de Volta!</h1>
           <S.FormContent onSubmit={handleSingIn}>
+            <S.InputContainer>
+              <S.InputLabel>Cpf</S.InputLabel>
+              <Input
+                placeholder="Digite seu cpf"
+                value={cpf}
+                type="text"
+                onChange={(event) => setCpf(event.target.value)}
+              />
+            </S.InputContainer>
+
             <S.InputContainer>
               <S.InputLabel>Cpf</S.InputLabel>
               <InputWithMask
@@ -58,10 +71,6 @@ export default function Home() {
               />
             </S.InputContainer>
 
-            <S.InputContainer>
-              <S.InputLabel>Email</S.InputLabel>
-              <Input type="email" />
-            </S.InputContainer>
             <S.InputContainer>
               <S.InputLabel>Senha</S.InputLabel>
 
@@ -83,7 +92,6 @@ export default function Home() {
               <S.InputLabel
                 style={{ color: "var(--purple-300)", fontWeight: "700" }}
               >
-                {" "}
                 Cadastre-se!
               </S.InputLabel>
             </Link>
