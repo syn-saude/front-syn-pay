@@ -60,3 +60,5 @@ export const ButtonContent = styled.button`
   color: var(--white);
   border: 0;
 `;
+
+export default ButtonContent;
