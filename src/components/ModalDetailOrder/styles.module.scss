@@ -1,0 +1,56 @@
+.button {
+    display: flex;
+    position: relative;
+    left: 98%;
+    top: -20px;
+    margin-bottom: -25px;
+    border: 0;
+    background-color: transparent;
+    color: var(--yellow-900);
+    cursor: pointer;
+    transition: all 0.5s;
+
+    &:hover {
+        transform: scale(1.2);
+        color: var(--red-900);
+        ;
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+    max-width: 720px;
+}
+
+.table {
+    font-size: 1.3rem;
+    color: var(--yellow-900);
+}
+
+.comander {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: -5px
+}
+
+.confirmOrder {
+    height: 40px;
+    border: 0;
+    margin-top: 1rem;
+    background-color: var(--red-900);
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 0.3rem;
+    color: var(--white);
+    transition: 0.5s;
+
+    &:hover {
+        background-color: var(--green-600);
+        color: var(--dark-700);
+        filter: brightness(0.8);
+    }
+}

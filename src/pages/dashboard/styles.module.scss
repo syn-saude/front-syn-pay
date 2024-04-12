@@ -1,0 +1,108 @@
+.container {
+    max-width: 720px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.btnRefresh {
+    color: var(--yellow-900);
+    cursor: pointer;
+    transition: all 0.7s;
+
+    &:hover {
+        color: var(--green-900);
+        transform: scale(1.2);
+    }
+
+}
+
+.btnNewOrder {
+    color: var(--yellow-900);
+    cursor: pointer;
+    transition: all 0.7s;
+
+    &:hover {
+        color: var(--green-900);
+        transform: scale(1.1);
+    }
+}
+
+.container h1 {
+    color: var(--white);
+}
+
+.containerHeader {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    button {
+        background-color: transparent;
+        border: none;
+    }
+}
+
+.listOrders {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+    gap: 1rem;
+}
+
+.orderItem {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--dark-900);
+    align-items: center;
+    border-radius: 0.3rem;
+    color: var(--white);
+    font-size: 1.2rem;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.7s;
+    justify-content: space-between;
+
+    .containerTag {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .iconEdit {
+        color: var(--yellow-900);
+        cursor: pointer;
+        transition: all 0.7s;
+        margin-right: 20px;
+
+        &:hover {
+            color: var(--green-900);
+            transform: scale(1.2);
+        }
+    }
+
+    .tag {
+        width: 9px;
+        background-color: var(--green-900);
+        height: 60px;
+        border-radius: 0.3rem 0 0 0.3rem;
+    }
+
+    &:hover {
+        span {
+            font-size: 1.25rem;
+            color: var(--red-900);
+        }
+
+        .tag {
+            background-color: var(--red-900);
+        }
+    }
+}
+
+.empty {
+    color: var(--yellow-900);
+}
