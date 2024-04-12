@@ -1,40 +1,38 @@
-.containerCenter{
+.containerCenter {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   background: var(--gray-900);
-
 }
 
-.login{
+.login {
   margin-top: 2rem;
   width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
-  h1{
-    color: var(--white);
+
+  h1 {
+    color: var(--black);
     padding-bottom: 1rem;
   }
 
-  form{
+  form {
     width: 90%;
     display: flex;
     flex-direction: column;
   }
 
-  form Button{
+  form Button {
     height: 40px;
     font-size: 1.2rem;
   }
-
 }
 
-.boxLink{
+.boxLink {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,19 +42,19 @@
   color: var(--primary);
 }
 
-.text{
-  color: var(--white);
+.text {
+  color: var(--black);
 }
 
-.textLink{
-  color: var(--white);
-  &:hover{
+.textLink {
+  color: var(--black);
+  &:hover {
     color: var(--green-900);
   }
 }
 
-@media (max-width: 620px){
-  .login{
+@media (max-width: 620px) {
+  .login {
     width: 90%;
   }
 }
