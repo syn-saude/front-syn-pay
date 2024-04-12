@@ -5,7 +5,7 @@ import {
   GetServerSidePropsResult,
 } from "next";
 import { parseCookies, destroyCookie } from "nookies";
-import { AuthTokenError } from "../errors/AuthTokenError";
+import { AuthTokenError } from "../services/errors/AuthTokenError";
 
 //funcao para paginas que podem ser acessadas por usuarios que estiverem autenticado
 
