@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import doctorImg from "../../public/img/logo-2.png";
 import Link from "next/link";
@@ -10,34 +10,49 @@ import * as S from "./styles";
 import InputWithMask from "@/components/InputMask";
 import { Input } from "@/components/ui/input";
 import { NavigationMenuDemo } from "@/components/NavigationMenuT";
+import { SingInProps } from "@/services/auth/types";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { DevTool } from "@hookform/devtools";
+import { pt } from "yup-locales";
+import * as yup from "yup";
+yup.setLocale(pt);
+
+const schema = yup
+  .object({
+    cpf: yup.string().required(),
+    email: yup.string(),
+    senha: yup.string().required(),
+  })
+  .required();
 
 export default function Home() {
   const { singIn } = useContext(AuthContext);
 
+  const { register, watch, handleSubmit, setValue, formState, control } =
+    useForm<SingInProps>({
+      resolver: yupResolver(schema),
+    });
+
+  const form = watch();
+  const { errors } = formState;
+
   const [cpf, setCpf] = useState("");
-  const [senha, setSenha] = useState("");
+  // const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSingIn(event: FormEvent) {
-    event.preventDefault();
-
-    if (cpf === "" || senha === "") {
-      toast.warning("Preencha todos os campos");
-      return;
+  async function handleSingIn(form: SingInProps) {
+    try {
+      setLoading(true);
+      await singIn(form);
+    } catch (error) {
+      setLoading(false);
     }
-
-    setLoading(true);
-    //teste
-    let data = {
-      // email: "", // Add the email property with an empty string value
-      cpf,
-      senha,
-    };
-
-    await singIn(data);
-
-    setLoading(false);
   }
+
+  useEffect(() => {
+    register("cpf");
+  }, [register]);
 
   return (
     <>
@@ -48,27 +63,49 @@ export default function Home() {
         <NavigationMenuDemo />
         <S.LoginContent>
           <Image src={doctorImg} alt="SynSaude" width={120} />
+
           <h1>Bem vindo de Volta!</h1>
-          <S.FormContent onSubmit={handleSingIn}>
+          <S.FormContent onSubmit={handleSubmit(handleSingIn)}>
             <S.InputContainer>
               <S.InputLabel>Cpf</S.InputLabel>
               <Input
+                control={control}
+                errors={errors}
+                controlName="cpf"
                 placeholder="Digite seu cpf"
-                value={cpf}
                 type="text"
-                onChange={(event) => setCpf(event.target.value)}
+              />
+
+              <Input
+                control={control}
+                errors={errors}
+                mask="(99) 99999-9999"
+                controlName="email"
+                placeholder="Digite seu telefone"
+                type="text"
               />
             </S.InputContainer>
-
+            {/* 
             <S.InputContainer>
               <S.InputLabel>Cpf</S.InputLabel>
-              <InputWithMask
-                mask="999.999.999-99"
-                placeholder="Digite seu cpf"
-                value={cpf}
-                type="text"
-                onChange={(event) => setCpf(event.target.value)}
+
+              <Controller
+                name="cpf"
+                control={control}
+                render={({ field }) => (
+                  <InputWithMask
+                    mask="999.999.999-99"
+                    {...field}
+                    // {...register("cpf")}
+                    placeholder="Digite seu cpf"
+                    // value={form.cpf}
+                    type="text"
+                    // onChange={(event) => setValue("cpf", event.target.value)}
+                  />
+                )}
               />
+
+              <p>{errors.cpf?.message}</p>
             </S.InputContainer>
 
             <S.InputContainer>
@@ -76,11 +113,14 @@ export default function Home() {
 
               <S.InputContent
                 placeholder="Digite sua senha"
+                {...register("senha")}
                 type="password"
-                value={senha}
-                onChange={(event: any) => setSenha(event.target.value)}
+                // value={senha}
+                // onChange={(event: any) => setSenha(event.target.value)}
               />
-            </S.InputContainer>
+              <p>{errors.senha?.message}</p>
+            </S.InputContainer> */}
+
             <S.InputLabel style={{ color: "var(--purple-300)" }}>
               Esqueceu sua senha?
             </S.InputLabel>
@@ -98,13 +138,14 @@ export default function Home() {
           </div>
         </S.LoginContent>
         {/* <Image src={doctorImg} alt="SynSaude" width={690} height={690}/> */}
+        <DevTool control={control} />
       </S.Container>
     </>
   );
 }
 
-export const getServerSideProps = canSSRGuest(async (ctx) => {
-  return {
-    props: {},
-  };
-});
+// export const getServerSideProps = canSSRGuest(async (ctx) => {
+//   return {
+//     props: {},
+//   };
+// });

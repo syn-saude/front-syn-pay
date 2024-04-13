@@ -3,6 +3,8 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import Router from "next/router";
 import { toast } from "react-toastify";
 import { api } from "@/services/apiClient";
+import { SingInProps } from "@/services/auth/types";
+import { authLogin } from "@/services/auth";
 
 type AuthContextData = {
   user: UserProps;
@@ -16,11 +18,6 @@ type UserProps = {
   id: string;
   cpf: string;
   name: string;
-};
-
-type SingInProps = {
-  cpf: string;
-  senha: string;
 };
 
 type SingUpProps = {
@@ -55,14 +52,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function singIn({ cpf, senha }: SingInProps) {
     try {
-      const response = await api.post("/auth/login", {
+      const response = await authLogin({
         cpf,
         senha,
       });
 
-      const { token } = response.data;
+      const { authToken } = response.data;
 
-      setCookie(undefined, "@nextauth.token", token, {
+      setCookie(undefined, "@nextauth.token", authToken, {
         maxAge: 60 * 60 * 1, // 1 hour
         // maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/",
@@ -74,7 +71,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         cpf,
       });
 
-      api.defaults.headers["Authorization"] = `Bearer ${token}`;
+      api.defaults.headers["Authorization"] = `Bearer ${authToken}`;
 
       toast.success("Bem Vindo! " + cpf);
 
