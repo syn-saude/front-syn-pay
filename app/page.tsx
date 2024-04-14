@@ -1,22 +1,28 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
-import Image from "next/image";
-import doctorImg from "../../public/img/logo-2.png";
-import Link from "next/link";
-import { AuthContext } from "@/contexts/AuthContext";
-import { toast } from "react-toastify";
-import { canSSRGuest } from "@/utils/canSSRGuest";
-import Head from "next/head";
-import * as S from "./styles";
-import InputWithMask from "@/components/InputMask";
-import { Input } from "@/components/ui/input";
-import { NavigationMenuDemo } from "@/components/NavigationMenuT";
-import { SingInProps } from "@/services/auth/types";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { DevTool } from "@hookform/devtools";
-import { pt } from "yup-locales";
-import * as yup from "yup";
-yup.setLocale(pt);
+"use client"
+
+import { FormEvent, useContext, useEffect, useState } from "react"
+import Head from "next/head"
+import Image from "next/image"
+import Link from "next/link"
+import { AuthContext } from "@/contexts/AuthContext"
+import doctorImg from "@/public/img/logo-2.png"
+import { SingInProps } from "@/services/auth/types"
+import { canSSRGuest } from "@/utils/canSSRGuest"
+import { DevTool } from "@hookform/devtools"
+import { yupResolver } from "@hookform/resolvers/yup"
+import { Controller, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
+import * as yup from "yup"
+import { pt } from "yup-locales"
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import InputWithMask from "@/components/InputMask"
+import { NavigationMenuDemo } from "@/components/NavigationMenuT"
+
+import * as S from "./styles"
+
+yup.setLocale(pt)
 
 const schema = yup
   .object({
@@ -24,35 +30,36 @@ const schema = yup
     email: yup.string(),
     senha: yup.string().required(),
   })
-  .required();
+  .required()
 
 export default function Home() {
-  const { singIn } = useContext(AuthContext);
+  const { singIn } = useContext(AuthContext)
 
   const { register, watch, handleSubmit, setValue, formState, control } =
     useForm<SingInProps>({
       resolver: yupResolver(schema),
-    });
+    })
 
-  const form = watch();
-  const { errors } = formState;
+  const form = watch()
+  const { errors } = formState
 
-  const [cpf, setCpf] = useState("");
+  const [cpf, setCpf] = useState("")
   // const [senha, setSenha] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   async function handleSingIn(form: SingInProps) {
     try {
-      setLoading(true);
-      await singIn(form);
+      debugger
+      setLoading(true)
+      await singIn(form)
     } catch (error) {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    register("cpf");
-  }, [register]);
+    register("cpf")
+  }, [register])
 
   return (
     <>
@@ -64,7 +71,7 @@ export default function Home() {
         <S.LoginContent>
           <Image src={doctorImg} alt="SynSaude" width={120} />
 
-          <h1>Bem vindo de Volta!</h1>
+          {/* <h1>Bem vindo de Volta!1</h1> */}
           <S.FormContent onSubmit={handleSubmit(handleSingIn)}>
             <S.InputContainer>
               <S.InputLabel>Cpf</S.InputLabel>
@@ -75,14 +82,15 @@ export default function Home() {
                 placeholder="Digite seu cpf"
                 type="text"
               />
-
+            </S.InputContainer>
+            <S.InputContainer>
+              <S.InputLabel>Senha</S.InputLabel>
               <Input
                 control={control}
                 errors={errors}
-                mask="(99) 99999-9999"
-                controlName="email"
-                placeholder="Digite seu telefone"
-                type="text"
+                controlName="senha"
+                placeholder="Digite sua senha"
+                type="password"
               />
             </S.InputContainer>
             {/* 
@@ -125,6 +133,7 @@ export default function Home() {
               Esqueceu sua senha?
             </S.InputLabel>
             <S.ButtonContent type="submit">Acessar</S.ButtonContent>
+            <Button type="submit">Acessar</Button>
           </S.FormContent>
           <div>
             <S.InputLabel> Não possui uma conta?</S.InputLabel>
@@ -138,10 +147,10 @@ export default function Home() {
           </div>
         </S.LoginContent>
         {/* <Image src={doctorImg} alt="SynSaude" width={690} height={690}/> */}
-        <DevTool control={control} />
+        {/* <DevTool control={control} /> */}
       </S.Container>
     </>
-  );
+  )
 }
 
 // export const getServerSideProps = canSSRGuest(async (ctx) => {
