@@ -11,6 +11,7 @@ import { canSSRGuest } from "@/utils/canSSRGuest"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Controller, useForm } from "react-hook-form"
+// import { toast } from "sonner"
 import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
@@ -43,8 +44,6 @@ export default function Home() {
   const form = watch()
   const { errors } = formState
 
-  const [cpf, setCpf] = useState("")
-  // const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false)
 
   async function handleSingIn(form: SingInProps) {
@@ -57,6 +56,9 @@ export default function Home() {
     }
   }
 
+  function notificar() {
+    toast.success("Bem Vindo! ")
+  }
   useEffect(() => {
     register("cpf")
   }, [register])
@@ -67,7 +69,7 @@ export default function Home() {
         <title>SynSaude - login</title>
       </Head>
       <S.Container>
-        <NavigationMenuDemo />
+        {/* <NavigationMenuDemo /> */}
         <S.LoginContent>
           <Image src={doctorImg} alt="SynSaude" width={120} />
 
@@ -93,47 +95,17 @@ export default function Home() {
                 type="password"
               />
             </S.InputContainer>
-            {/* 
-            <S.InputContainer>
-              <S.InputLabel>Cpf</S.InputLabel>
-
-              <Controller
-                name="cpf"
-                control={control}
-                render={({ field }) => (
-                  <InputWithMask
-                    mask="999.999.999-99"
-                    {...field}
-                    // {...register("cpf")}
-                    placeholder="Digite seu cpf"
-                    // value={form.cpf}
-                    type="text"
-                    // onChange={(event) => setValue("cpf", event.target.value)}
-                  />
-                )}
-              />
-
-              <p>{errors.cpf?.message}</p>
-            </S.InputContainer>
-
-            <S.InputContainer>
-              <S.InputLabel>Senha</S.InputLabel>
-
-              <S.InputContent
-                placeholder="Digite sua senha"
-                {...register("senha")}
-                type="password"
-                // value={senha}
-                // onChange={(event: any) => setSenha(event.target.value)}
-              />
-              <p>{errors.senha?.message}</p>
-            </S.InputContainer> */}
 
             <S.InputLabel style={{ color: "var(--purple-300)" }}>
               Esqueceu sua senha?
             </S.InputLabel>
             <S.ButtonContent type="submit">Acessar</S.ButtonContent>
-            <Button type="submit">Acessar</Button>
+            <Button type="button" onClick={notificar}>
+              Acessar
+            </Button>
+            <Button loading type="button" onClick={notificar}>
+              Acessar
+            </Button>
           </S.FormContent>
           <div>
             <S.InputLabel> Não possui uma conta?</S.InputLabel>
