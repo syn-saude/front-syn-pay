@@ -29,7 +29,7 @@ const InputShadcn = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
   }
 )
 
-InputShadcn.displayName = "InputCurrency"
+InputShadcn.displayName = "inputCurrency"
 
 const StyledInput = styled(InputShadcn)``
 
@@ -37,22 +37,24 @@ export default function InputCurrency(props: ControlledInputProps) {
   const { control, controlName, errors, ...rest } = props
 
   return (
-        <Controller
-          name={controlName}
-          control={control}
-          render={({ field }) => (
-            console.log(field.value),
-            <CurrencyInput
-              id="input-example"
-              name="input-name"
-              prefix=" R$ "
-              placeholder="Digite seus valores aqui"
-              defaultValue={0}
-              decimalsLimit={2}
-              value={field.value}
-            />
-          )}
+    <Controller
+      name={controlName}
+      control={control}
+      render={({ field }) => (
+        <CurrencyInput
+          id="input-example"
+          name="input-name"
+          prefix=" R$ "
+          placeholder="Digite seus valores aqui"
+          defaultValue={0}
+          decimalsLimit={2}
+          onValueChange={(value) => {
+            field.onChange(value)
+            // console.log(value)
+          }}
         />
+      )}
+    />
   )
 }
 

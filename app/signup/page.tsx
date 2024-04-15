@@ -9,12 +9,13 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { pt } from "yup-locales"
 import Input from "@/components/ui/input"
+import { DevTool } from "@hookform/devtools"
 
 yup.setLocale(pt)
 
 const schema = yup
   .object({
-    InputCurrency: yup.string().required(),
+    inputCurrency: yup.string().required(),
   })
   .required()
 
@@ -26,30 +27,39 @@ export default function Page() {
     })
   const form = watch()
   const { errors } = formState
+  console.log(form.inputCurrency)
 
   const handleNextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1);
   };
 
-  useEffect(() => {
-    register("InputCurrency")
-  }, [register])
+  const handlePrevStep = () => {
+    setCurrentStep((prevStep) => prevStep - 1);
+  }
   
+  useEffect(() => {
+    register("inputCurrency")
+  }, [register])
+  console.log(form)
+
   return (
     <S.Container>
+
       <MultSteps currentStep={currentStep} qtdSteps={8} />
       <div>
         <S.NextButton onClick={handleNextStep}>Next</S.NextButton>
-        <form>
+        <S.NextButton onClick={handlePrevStep}>Prev</S.NextButton>
         <InputCurrency 
           control={control}
           errors={errors}
-          controlName="InputCurrency"
+          controlName="inputCurrency"
           type="text"
           />
+        <form>
         </form>
       
       </div>
+      <DevTool control={control} />
     </S.Container>
   )
 }
