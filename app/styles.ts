@@ -8,7 +8,6 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   margin: 0px auto;
-  background: var(--white);
 `
 
 export const LoginContent = styled.div`

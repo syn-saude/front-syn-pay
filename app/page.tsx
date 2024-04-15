@@ -55,7 +55,6 @@ export default function Home() {
 
   async function handleSingIn(form: SingInProps) {
     try {
-      debugger
       setLoading(true)
       await singIn(form)
     } catch (error) {

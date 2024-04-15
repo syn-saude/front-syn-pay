@@ -88,6 +88,7 @@ export function SiteHeader() {
               /> */}
             </div>
           </form>
+          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Button variant="secondary" size="icon" className="rounded-full">
