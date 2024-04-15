@@ -1,43 +1,43 @@
-import styled from "styled-components";
+import styled from "styled-components"
+
+import Button from "@/components/ui/button"
 
 export const Container = styled.div`
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10rem;
-  margin: 0px 250px;
+  margin: 0px auto;
   background: var(--white);
-`;
+`
 
 export const LoginContent = styled.div`
-  margin-top: 2rem;
-  width: 600px;
+  width: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-`;
+`
 
 export const FormContent = styled.form`
-  width: 90%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
-`;
+`
 
 export const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 90%;
-`;
+  width: 100%;
+`
 
 export const InputLabel = styled.span`
   font-weight: 600;
-`;
+`
 
 export const InputContent = styled.input`
   margin-bottom: 1rem;
@@ -49,16 +49,14 @@ export const InputContent = styled.input`
   padding: 1rem;
   border: 1.5px solid var(--green-300);
   font-weight: 400;
-`;
+`
 
-export const ButtonContent = styled.button`
-  height: 60px;
-  font-size: 1.3rem;
-  width: 90%;
+export const ButtonContent = styled(Button)`
   background-color: var(--green-300);
-  border-radius: 0.5rem;
   color: var(--white);
-  border: 0;
-`;
+  &:hover {
+    background-color: var(--green-100);
+  }
+`
 
-export default ButtonContent;
+export default ButtonContent

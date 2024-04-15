@@ -5,7 +5,7 @@ import Head from "next/head"
 import Image from "next/image"
 import Link from "next/link"
 import { AuthContext } from "@/contexts/AuthContext"
-import doctorImg from "@/public/img/logo-2.png"
+import logo2 from "@/public/img/logo-2.png"
 import { SingInProps } from "@/services/auth/types"
 import { canSSRGuest } from "@/utils/canSSRGuest"
 import { DevTool } from "@hookform/devtools"
@@ -17,9 +17,16 @@ import * as yup from "yup"
 import { pt } from "yup-locales"
 
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import InputWithMask from "@/components/InputMask"
-import { NavigationMenuDemo } from "@/components/NavigationMenuT"
+import { Label } from "@/components/ui/label"
 
 import * as S from "./styles"
 
@@ -69,14 +76,13 @@ export default function Home() {
         <title>SynSaude - login</title>
       </Head>
       <S.Container>
-        {/* <NavigationMenuDemo /> */}
         <S.LoginContent>
-          <Image src={doctorImg} alt="SynSaude" width={120} />
+          <Image src={logo2} alt="SynSaude" width={120} />
 
           {/* <h1>Bem vindo de Volta!1</h1> */}
           <S.FormContent onSubmit={handleSubmit(handleSingIn)}>
             <S.InputContainer>
-              <S.InputLabel>Cpf</S.InputLabel>
+              <Label>CPF</Label>
               <Input
                 control={control}
                 errors={errors}
@@ -86,7 +92,7 @@ export default function Home() {
               />
             </S.InputContainer>
             <S.InputContainer>
-              <S.InputLabel>Senha</S.InputLabel>
+              <Label>Senha</Label>
               <Input
                 control={control}
                 errors={errors}
@@ -99,13 +105,15 @@ export default function Home() {
             <S.InputLabel style={{ color: "var(--purple-300)" }}>
               Esqueceu sua senha?
             </S.InputLabel>
-            <S.ButtonContent type="submit">Acessar</S.ButtonContent>
-            <Button type="button" onClick={notificar}>
+            <S.ButtonContent type="submit" className="w-full ">
               Acessar
-            </Button>
-            <Button loading type="button" onClick={notificar}>
+            </S.ButtonContent>
+            {/* <Button type="submit"  onClick={notificar}>
               Acessar
-            </Button>
+            </Button> */}
+            {/* <Button loading type="button" onClick={notificar}>
+              Acessar
+            </Button> */}
           </S.FormContent>
           <div>
             <S.InputLabel> Não possui uma conta?</S.InputLabel>
@@ -118,7 +126,6 @@ export default function Home() {
             </Link>
           </div>
         </S.LoginContent>
-        {/* <Image src={doctorImg} alt="SynSaude" width={690} height={690}/> */}
         {/* <DevTool control={control} /> */}
       </S.Container>
     </>

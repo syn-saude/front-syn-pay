@@ -32,9 +32,7 @@ const InputShadcn = React.forwardRef<HTMLInputElement, InputProps>(
 
 InputShadcn.displayName = "Input"
 
-const StyledInput = styled(InputShadcn)`
-  background-color: var(--green-200);
-`
+const StyledInput = styled(InputShadcn)``
 
 export default function Input(props: ControlledInputProps) {
   const { control, controlName, errors, mask, ...rest } = props
