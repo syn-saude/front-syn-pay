@@ -42,7 +42,6 @@ export default function Page() {
   useEffect(() => {
     register("inputCurrency")
   }, [register])
-  console.log(form)
 
   return (
     <S.Container>
