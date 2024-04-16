@@ -57,8 +57,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setStorageUser(userAuthResponse)
       addToken(authToken)
 
-      toast.success("Bem Vindo! " + cpf)
-      router.push("/homepage")
+      // toast.success("Bem Vindo! " + cpf)
+      router.push("/financiamentos")
     } catch (error) {
       toast.error("Usuário ou senha inválidos")
     }

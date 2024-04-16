@@ -11,7 +11,7 @@ export const siteConfig = {
     // },
     {
       title: "Financiamentos",
-      href: "/signup",
+      href: "/financiamentos",
     },
     {
       title: "Recebedores",

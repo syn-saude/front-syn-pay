@@ -4,10 +4,7 @@ import { Check } from "lucide-react"
 import { IStepProps } from "./multStepsInterface"
 import * as S from "./styles"
 
-export default function MultSteps({
-  currentStep,
-  qtdSteps
-}: IStepProps) {
+export default function MultSteps({ currentStep, qtdSteps }: IStepProps) {
   return (
     <S.Container>
       {[...Array(qtdSteps)].map((_, index) => {
