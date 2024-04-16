@@ -6,7 +6,7 @@ export const progressContainer = styled.div`
   flex-direction: column;
 `
 
-export const StepNumberMobile = styled.span<{ progress?: number }>`
+export const StepNumberMobile = styled.span`
   display: flex;
   position: relative;
   left: 80%;

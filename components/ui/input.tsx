@@ -87,3 +87,9 @@ export default function Input(props: ControlledInputProps) {
 }
 
 export { Input }
+
+/* Exemplos de uso:
+<InputWithMask mask="99/99/9999" placeholder="Data de Nascimento" />
+<InputWithMask mask="999.999.999-99" placeholder="CPF" />
+<InputWithMask mask="(99) 99999-9999" placeholder="Telefone" /> 
+*/
