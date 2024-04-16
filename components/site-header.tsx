@@ -1,9 +1,13 @@
 "use client"
 
+import { useRef } from "react"
 import Link from "next/link"
-import { User } from "lucide-react"
+import { singOut } from "@/contexts/AuthProvider"
+import { Menu, Package2, User } from "lucide-react"
+import { useTheme } from "next-themes"
 
 import { siteConfig } from "@/config/site"
+import useAuth from "@/hooks/useAuth"
 import Button, { buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -18,13 +22,19 @@ import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 
-export function SiteHeader() {
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
+
+export default function SiteHeader() {
+  const { user } = useAuth()
+  const { setTheme, theme } = useTheme()
+
   return (
-    <header className="bg-background sticky top-0 z-40 w-full border-b">
+    <header className="bg-background  top-0 z-40 w-full border-b">
+      {/* <header className="bg-background sticky top-0 z-40 w-full border-b"> */}
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <MainNav items={siteConfig.mainNav} />
 
-        {/* <Sheet>
+        <Sheet>
           <SheetTrigger asChild>
             <Button
               variant="outline"
@@ -37,43 +47,18 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent side="left">
             <nav className="grid gap-6 text-lg font-medium">
-              <Link
+              {/* <Link
                 href="#"
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <Package2 className="h-6 w-6" />
                 <span className="sr-only">Acme Inc</span>
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Orders
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Products
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Customers
-              </Link>
-              <Link href="#" className="hover:text-foreground">
-                Settings
-              </Link>
+              </Link> */}
+
+              <MainNav items={siteConfig.mainNav} vertical />
             </nav>
           </SheetContent>
-        </Sheet> */}
+        </Sheet>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <form className="ml-auto flex-1 sm:flex-initial">
             <div className="relative">
@@ -90,21 +75,35 @@ export function SiteHeader() {
           </form>
           <ThemeToggle />
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
 
-            {/* <DropdownMenuTrigger>Open</DropdownMenuTrigger> */}
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Minha conta</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <div className="flex items-center gap-4 w-44 justify-between">
+                  <div>{user?.perfisNome[0].nome}</div>
+                  <ThemeToggle />
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                Alterar para modo {theme === "light" ? "noite" : "dia"}
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={singOut}
+                className="font-bold cursor-pointer text-red-600 hover:bg-red-100 text-red-600"
+              >
+                {/* <Button variant="destructive">Sair</Button> */}
+                Sair
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

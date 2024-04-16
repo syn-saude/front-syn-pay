@@ -6,6 +6,10 @@ A Next.js 14 template for building apps with Radix UI and Tailwind CSS.
 
 https://ui.shadcn.com/docs/components/label
 
+# Protect your route
+
+https://www.youtube.com/watch?v=cj1trlsQ0is&ab_channel=ProgrammingwithUmair
+
 ## Usage
 
 ```bash

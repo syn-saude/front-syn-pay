@@ -1,8 +1,8 @@
 import { ReactNode } from "react"
-import { SingInProps } from "@/services/auth/types"
+import { AuthResponse, SingInProps } from "@/services/auth/types"
 
 export type AuthContextData = {
-  user: UserProps
+  user: AuthResponse | null
   isAuthenticated: boolean
   singIn: (credentials: SingInProps) => Promise<void>
   singOut?: () => void

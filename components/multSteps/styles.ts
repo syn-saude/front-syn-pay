@@ -30,7 +30,7 @@ export const Container = styled.div`
 export const StepContainer = styled.div`
   display: flex;
   gap: 6px;
-  justify-content: center;
+  justify-content: left;
   flex-direction: row;
 `
 export const StepContent = styled.div`
@@ -41,7 +41,7 @@ export const StepContent = styled.div`
 export const StepDivider = styled.div`
   width: 1px;
   height: 30px;
-  background-color:#9e9da1;
+  background-color: #9e9da1;
   margin: 0px 14px;
 `
 
@@ -52,11 +52,10 @@ export const StepNumber = styled.span<{ isNext?: boolean }>`
   height: 30px;
   width: 30px;
   border-radius: 50%;
-  color: ${props => (props?.isNext ? 'var(--white)' : '#9e9da1')};
-  background-color: ${props => (props?.isNext ? '#01a63e' : '#E0E0E0')};
-  cursor : pointer;
+  color: ${(props) => (props?.isNext ? "var(--white)" : "#9e9da1")};
+  background-color: ${(props) => (props?.isNext ? "#01a63e" : "#E0E0E0")};
+  cursor: pointer;
 `
-
 
 export const StepActive = styled.span`
   display: flex;
@@ -70,7 +69,7 @@ export const StepActive = styled.span`
   background-color: #1650cf;
   border: 1.1px solid #1650cf;
   box-shadow: inset 0 0 0 1px white;
-`;
+`
 
 export const StepLabel = styled.span`
   color: var(--black);

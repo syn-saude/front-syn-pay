@@ -1,7 +1,8 @@
 import * as React from "react"
-import { ReloadIcon } from "@radix-ui/react-icons"
+import { forwardRef } from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -43,29 +44,51 @@ export interface ButtonProps
   loadingText?: boolean
 }
 
-const ButtonShadcn = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading,
+      loadingText,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        disabled={loading || props.disabled}
         {...props}
-      />
+      >
+        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {loading ? (!!loadingText ? loadingText : "Aguarde") : children}
+      </Comp>
     )
   }
 )
-ButtonShadcn.displayName = "Button"
+Button.displayName = "Button"
 
-export default function Button(props: ButtonProps) {
-  const { loading, loadingText, children, ...rest } = props
+// export function ButtonStyle(props: ButtonProps) {
+//   const { loading, loadingText, children, ...rest } = props
 
-  return (
-    <ButtonShadcn disabled={loading || props.disabled} {...rest}>
-      {loading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-      {loading ? (!!loadingText ? loadingText : "Aguarde") : children}
-    </ButtonShadcn>
-  )
-}
+//   return (
+//     <ButtonShadcn disabled={loading || props.disabled} {...rest}>
+//       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+//       {loading ? (!!loadingText ? loadingText : "Aguarde") : children}
+//     </ButtonShadcn>
+//   )
+// }
 
+// export const Button = React.forwardRef<React.JSX.Element, ButtonProps>(
+//   (props: ButtonProps, forwardedRef) => {
+//     return <ButtonStyle ref={forwardedRef} {...props} />
+//   }
+// )
+export default Button
 export { Button, buttonVariants }

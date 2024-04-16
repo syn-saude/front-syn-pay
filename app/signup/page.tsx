@@ -1,15 +1,17 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import * as S from "./styles"
-import MultSteps from "@/components/multSteps/multSteps"
-import InputCurrency from "@/components/ui/input-currency"
-import * as yup from "yup"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { pt } from "yup-locales"
-import Input from "@/components/ui/input"
 import { DevTool } from "@hookform/devtools"
+import { yupResolver } from "@hookform/resolvers/yup"
+import { useForm } from "react-hook-form"
+import * as yup from "yup"
+import { pt } from "yup-locales"
+
+import Input from "@/components/ui/input"
+import InputCurrency from "@/components/ui/input-currency"
+import MultSteps from "@/components/multSteps/multSteps"
+
+import * as S from "./styles"
 
 yup.setLocale(pt)
 
@@ -20,7 +22,7 @@ const schema = yup
   .required()
 
 export default function Page() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1)
   const { register, watch, handleSubmit, setValue, formState, control } =
     useForm<any>({
       resolver: yupResolver(schema),
@@ -30,21 +32,19 @@ export default function Page() {
   // console.log(form.inputCurrency)
 
   const handleNextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
-  };
+    setCurrentStep((prevStep) => prevStep + 1)
+  }
 
   const handlePrevStep = () => {
-    setCurrentStep((prevStep) => prevStep - 1);
+    setCurrentStep((prevStep) => prevStep - 1)
   }
 
   useEffect(() => {
     register("inputCurrency")
   }, [register])
 
-
   return (
     <S.Container>
-
       <MultSteps currentStep={currentStep} qtdSteps={8} />
       <div>
         <form>

@@ -3,9 +3,10 @@ import {
   GetServerSideProps,
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next";
-import { parseCookies, destroyCookie } from "nookies";
-import { AuthTokenError } from "../services/errors/AuthTokenError";
+} from "next"
+import { destroyCookie, parseCookies } from "nookies"
+
+import { AuthTokenError } from "../services/errors/AuthTokenError"
 
 //funcao para paginas que podem ser acessadas por usuarios que estiverem autenticado
 
@@ -15,8 +16,8 @@ export function canSSRAuth<P extends { [key: string]: any }>(
   return async (
     ctx: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
-    const cookies = parseCookies(ctx);
-    const token = cookies["@nextauth.token"];
+    const cookies = parseCookies(ctx)
+    const token = cookies["@synauth.token"]
 
     if (!token) {
       return {
@@ -24,22 +25,22 @@ export function canSSRAuth<P extends { [key: string]: any }>(
           destination: "/",
           permanent: false,
         },
-      };
+      }
     }
     try {
-      return await fn(ctx);
+      return await fn(ctx)
     } catch (error) {
       if (error instanceof AuthTokenError) {
-        destroyCookie(ctx, "@nextauth.token");
+        destroyCookie(ctx, "@synauth.token")
         return {
           redirect: {
             destination: "/",
             permanent: false,
           },
-        };
+        }
       }
     }
 
-    return await fn(ctx);
-  };
+    return await fn(ctx)
+  }
 }
