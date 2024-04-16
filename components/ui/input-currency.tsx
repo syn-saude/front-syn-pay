@@ -1,6 +1,6 @@
 import * as React from "react"
+import CurrencyInput from "react-currency-input-field"
 import { Controller } from "react-hook-form"
-import CurrencyInput from 'react-currency-input-field';
 import styled from "styled-components"
 
 import { cn } from "@/lib/utils"
@@ -11,7 +11,7 @@ export interface ControlledInputProps extends InputCurrencyProps {
   errors: any
 }
 export interface InputCurrencyProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const InputShadcn = React.forwardRef<HTMLInputElement, InputCurrencyProps>(
   ({ className, type, ...props }, ref) => {
@@ -44,15 +44,19 @@ export default function InputCurrency(props: ControlledInputProps) {
         <CurrencyInput
           id="input-example"
           name="input-name"
-          prefix=" R$ "
           placeholder="Digite seus valores aqui"
-          defaultValue={0}
-          decimalsLimit={2}
+          defaultValue={0.0}
+          // fixedDecimalLength={2}
+          disableAbbreviations
           groupSeparator="."
           decimalSeparator=","
+          decimalScale={2}
           intlConfig={{ locale: "pt-BR", currency: "BRL" }}
-          onValueChange={(value) => {
-            field.onChange(value)
+          decimalsLimit={2}
+          disableGroupSeparators
+          onValueChange={(value, name, values) => {
+            field.onChange(values?.float)
+            // console.log(values)
           }}
         />
       )}

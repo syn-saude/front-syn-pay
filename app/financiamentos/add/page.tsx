@@ -43,7 +43,7 @@ import withAuth from "@/components/with-auth"
 // import * as S from "./styles"
 
 yup.setLocale(pt)
-
+//#region SCHEMA
 const schema = yup
   .object({
     //Step 1
@@ -52,26 +52,73 @@ const schema = yup
     email: yup.string().required(),
     uf: yup.string().required(),
     //Step 2
-    servico: yup.string().required(),
-    possuiPedido: yup.string().required(),
+    procedimento: yup.string().required(),
+    possuiPedidoMedico: yup.boolean().required(),
     //Step 3
-    valorSolicitado: yup.string().required(),
-    renda: yup.string().required(),
+    valorSolicitado: yup.number().required(),
+    renda: yup.number().required(),
     //Step 4
     cpf: yup.string().required(),
     dataNascimento: yup.string().required(),
   })
   .required()
+//#endregion
 
+interface FinanciamentoRequest {
+  //Step 1
+  nome: string
+  telefone: string
+  email: string
+  uf: string
+  //Step 2
+  procedimento: string //Objeto Id Descricao
+  possuiPedidoMedico: boolean
+  //Step 3
+  valorSolicitado: number
+  renda: number
+  //Step 4
+  cpf: string
+  dataNascimento: string
+}
+//#region ETAPAS
+export enum STEPS_FINANCIAMENTO {
+  proponente = "proponente",
+  procedimento = "procedimento",
+  valores = "valores",
+}
+const etapas = [
+  {
+    step: STEPS_FINANCIAMENTO.proponente,
+    titulo: "Dados do proponente",
+    descricao: "Informe os dados de contato",
+    validacao: ["nome", "telefone", "email", "uf"],
+    ativo: true,
+  },
+  {
+    step: STEPS_FINANCIAMENTO.procedimento,
+    titulo: "Tipo de procedimento",
+    descricao: "",
+    validacao: ["possuiPedidoMedico"],
+    ativo: true,
+  },
+  {
+    step: STEPS_FINANCIAMENTO.valores,
+    titulo: "Valores",
+    descricao: "",
+    validacao: ["valorSolicitado", "renda"],
+    ativo: true,
+  },
+]
+//#endregion
 function Add() {
   const [currentStep, setCurrentStep] = useState(1)
   const { register, watch, handleSubmit, setValue, formState, control } =
-    useForm<any>({
+    useForm<FinanciamentoRequest>({
       resolver: yupResolver(schema),
+      defaultValues: {},
     })
   const form = watch()
   const { errors } = formState
-  console.log(form.inputCurrency)
 
   const handleNextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1)
@@ -82,7 +129,7 @@ function Add() {
   }
 
   useEffect(() => {
-    register("inputCurrency")
+    // register("inputCurrency")
   }, [register])
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
