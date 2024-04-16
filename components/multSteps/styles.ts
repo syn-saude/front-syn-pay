@@ -1,19 +1,35 @@
 import styled from "styled-components"
 
+export const progressContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+`
+
+export const StepNumberMobile = styled.span<{ progress?: number }>`
+  display: flex;
+  position: relative;
+  left: 300px;
+  font-weight: bold;
+  font-size: 14px;
+`
+
 export const ProgressBarContainer = styled.div`
   width: 100%;
   height: 8px;
   background-color: #f0f0f0;
   border-radius: 5px;
   margin-bottom: 10px;
-`;
+  display: flex;
+  gap: 8px;
+`
 
 export const ProgressBar = styled.div`
   height: 100%;
   background-color: #24ae7c;
   border-radius: 5px;
   transition: width 0.3s ease;
-`;
+`
 
 export const Container = styled.div`
   display: flex;
@@ -23,8 +39,7 @@ export const Container = styled.div`
   padding: 10px 20px 20px 20px;
   border-radius: 6px;
   background-color: var(--white);
-  border: 1px solid #E0E0E0;
-
+  border: 1px solid #e0e0e0;
 `
 
 export const StepContainer = styled.div`

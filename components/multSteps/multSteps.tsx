@@ -21,9 +21,12 @@ export default function MultSteps({
 
   return (
     <> {isMobile ? (
-      <S.ProgressBarContainer>
+      <S.progressContainer>
+        <S.StepNumberMobile>{'Passo '+ currentStep}</S.StepNumberMobile>
+        <S.ProgressBarContainer>
           <S.ProgressBar style={{ width: `${progress}%` }} />
         </S.ProgressBarContainer>
+      </S.progressContainer>
     ) : (
       <S.Container>
         {[...Array(qtdSteps)].map((_, index) => {
