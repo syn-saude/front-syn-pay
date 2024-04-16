@@ -46,7 +46,20 @@ yup.setLocale(pt)
 
 const schema = yup
   .object({
-    inputCurrency: yup.string().required(),
+    //Step 1
+    nome: yup.string().required(),
+    telefone: yup.string().required(),
+    email: yup.string().required(),
+    uf: yup.string().required(),
+    //Step 2
+    servico: yup.string().required(),
+    possuiPedido: yup.string().required(),
+    //Step 3
+    valorSolicitado: yup.string().required(),
+    renda: yup.string().required(),
+    //Step 4
+    cpf: yup.string().required(),
+    dataNascimento: yup.string().required(),
   })
   .required()
 
@@ -158,10 +171,6 @@ function Add() {
               className="grid gap-4 text-sm text-muted-foreground"
               x-chunk="dashboard-04-chunk-0"
             >
-              {/* <Link href="#" className="font-semibold text-primary">
-                General
-              </Link>
-              <Link href="#">Security</Link> */}
               <MultSteps currentStep={currentStep} qtdSteps={8} />
 
               <DevTool control={control} />
@@ -197,7 +206,6 @@ function Add() {
                   </form>
                 </CardContent>
                 <CardFooter className="border-t px-6 py-4 gap-4">
-                  {/* <Button>Save</Button> */}
                   <Button
                     size="sm"
                     variant="secondary"
