@@ -1,13 +1,30 @@
 import styled from "styled-components"
 
+export const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-bottom: 10px;
+`;
+
+export const ProgressBar = styled.div`
+  height: 100%;
+  background-color: #24ae7c;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+`;
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  background-color: var(--white);
+  padding: 10px 20px 20px 20px;
+  border-radius: 6px;
+  background-color: var(--white);
+  border: 1px solid #E0E0E0;
 
-  @media (max-width: 600px) {
-    flex-direction: row;
-  }
 `
 
 export const StepContainer = styled.div`
@@ -15,28 +32,17 @@ export const StepContainer = styled.div`
   gap: 6px;
   justify-content: left;
   flex-direction: row;
-  @media (max-width: 600px) {
-    flex-direction: column;
-  }
 `
 export const StepContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  @media (max-width: 600px) {
-    flex-direction: row;
-  }
 `
 export const StepDivider = styled.div`
   width: 1px;
   height: 30px;
   background-color: #9e9da1;
   margin: 0px 14px;
-  @media (max-width: 600px) {
-    width: 30px;
-    height: 2px;
-    margin: 14px 0px;
-  }
 `
 
 export const StepNumber = styled.span<{ isNext?: boolean }>`
@@ -70,7 +76,4 @@ export const StepLabel = styled.span`
   font-size: 16px;
   font-weight: 600;
   justify-content: flex-start;
-  @media (max-width: 600px) {
-    font-size: 10px;
-  }
 `

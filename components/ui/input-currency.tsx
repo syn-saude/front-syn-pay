@@ -48,9 +48,11 @@ export default function InputCurrency(props: ControlledInputProps) {
           placeholder="Digite seus valores aqui"
           defaultValue={0}
           decimalsLimit={2}
+          groupSeparator="."
+          decimalSeparator=","
+          intlConfig={{ locale: "pt-BR", currency: "BRL" }}
           onValueChange={(value) => {
             field.onChange(value)
-            // console.log(value)
           }}
         />
       )}
