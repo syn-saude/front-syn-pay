@@ -50,7 +50,7 @@ const schema = yup
   })
   .required()
 
-export function Add() {
+function Add() {
   const [currentStep, setCurrentStep] = useState(1)
   const { register, watch, handleSubmit, setValue, formState, control } =
     useForm<any>({
@@ -219,3 +219,4 @@ export function Add() {
 }
 
 export default withAuth(<Add />)
+// export default Add

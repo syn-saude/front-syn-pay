@@ -88,7 +88,6 @@ export default function Home() {
                 errors={errors}
                 mask="999.999.999-99"
                 controlName="cpf"
-                mask="999.999.999-99"
                 placeholder="Digite seu cpf"
                 type="text"
               />

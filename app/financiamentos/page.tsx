@@ -65,7 +65,7 @@ import {
 } from "@/components/ui/tooltip"
 import withAuth from "@/components/with-auth"
 
-export function Financiamentos() {
+function Financiamentos() {
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
