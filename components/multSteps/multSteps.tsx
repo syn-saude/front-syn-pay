@@ -6,7 +6,12 @@ import useWindowDimensions from "@/hooks/useWindowDimensions"
 import { IStepProps } from "./multStepsInterface"
 import * as S from "./styles"
 
-export default function MultSteps({ currentStep, qtdSteps }: IStepProps) {
+export default function MultSteps({
+  title = "",
+  subTitle = "",
+  currentStep,
+  qtdSteps,
+}: IStepProps) {
   const { width } = useWindowDimensions()
   const isMobile = width && width < 600
 
@@ -21,7 +26,7 @@ export default function MultSteps({ currentStep, qtdSteps }: IStepProps) {
     <>
       {isMobile ? (
         <S.progressContainer>
-          <S.StepNumberMobile>{"Passo " + currentStep}</S.StepNumberMobile>
+          <S.StepNumberMobile>{`Passo ${currentStep} de ${qtdSteps}`}</S.StepNumberMobile>
           <S.ProgressBarContainer>
             <S.ProgressBar style={{ width: `${progress}%` }} />
           </S.ProgressBarContainer>
@@ -51,9 +56,22 @@ export default function MultSteps({ currentStep, qtdSteps }: IStepProps) {
                       )}
                     </S.StepNumber>
                   )}
-                  {stepNumber < 8 && <S.StepDivider />}
+                  {stepNumber < qtdSteps && <S.StepDivider />}
                 </S.StepContent>
-                <S.StepLabel>Step {stepNumber}</S.StepLabel>
+                <div className="flex flex-col">
+                  <S.StepLabel
+                    className={`${
+                      isCurrentStep
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    } `}
+                  >
+                    {title}
+                  </S.StepLabel>
+                  <span className="text-sm text-muted-foreground">
+                    {subTitle}
+                  </span>
+                </div>
               </S.StepContainer>
             )
           })}

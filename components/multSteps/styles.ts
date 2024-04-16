@@ -87,7 +87,7 @@ export const StepActive = styled.span`
 `
 
 export const StepLabel = styled.span`
-  color: var(--black);
+  // color: var(--black);
   font-size: 16px;
   font-weight: 600;
   justify-content: flex-start;

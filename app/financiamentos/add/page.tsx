@@ -5,18 +5,21 @@ import Link from "next/link"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
+  Bird,
   Home,
   LineChart,
   Package,
   Package2,
   PanelLeft,
+  Rabbit,
   ShoppingCart,
   Users,
 } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
+import { ESTADOS } from "@/config/const/common/states"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,7 +38,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import Input from "@/components/ui/input"
 import InputCurrency from "@/components/ui/input-currency"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
 import withAuth from "@/components/with-auth"
@@ -47,9 +61,9 @@ yup.setLocale(pt)
 const schema = yup
   .object({
     //Step 1
-    nome: yup.string().required(),
-    telefone: yup.string().required(),
-    email: yup.string().required(),
+    nome: yup.string().required().label("Nome"),
+    telefone: yup.string().required().label("Telefone"),
+    email: yup.string().email().required().label("E-mail"),
     uf: yup.string().required(),
     //Step 2
     procedimento: yup.string().required(),
@@ -81,28 +95,28 @@ interface FinanciamentoRequest {
   dataNascimento: string
 }
 //#region ETAPAS
-export enum STEPS_FINANCIAMENTO {
+export enum ETAPAS_FINANCIAMENTO {
   proponente = "proponente",
   procedimento = "procedimento",
   valores = "valores",
 }
 const etapas = [
   {
-    step: STEPS_FINANCIAMENTO.proponente,
+    step: ETAPAS_FINANCIAMENTO.proponente,
     titulo: "Dados do proponente",
     descricao: "Informe os dados de contato",
     validacao: ["nome", "telefone", "email", "uf"],
     ativo: true,
   },
   {
-    step: STEPS_FINANCIAMENTO.procedimento,
+    step: ETAPAS_FINANCIAMENTO.procedimento,
     titulo: "Tipo de procedimento",
     descricao: "",
     validacao: ["possuiPedidoMedico"],
     ativo: true,
   },
   {
-    step: STEPS_FINANCIAMENTO.valores,
+    step: ETAPAS_FINANCIAMENTO.valores,
     titulo: "Valores",
     descricao: "",
     validacao: ["valorSolicitado", "renda"],
@@ -111,22 +125,44 @@ const etapas = [
 ]
 //#endregion
 function Add() {
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(0)
 
-  const { register, watch, handleSubmit, setValue, formState, control } =
-    useForm<FinanciamentoRequest>({
-      resolver: yupResolver(schema),
-      defaultValues: {},
-    })
+  const {
+    register,
+    watch,
+    handleSubmit,
+    setValue,
+    trigger,
+    formState,
+    control,
+  } = useForm<FinanciamentoRequest>({
+    mode: "all",
+    resolver: yupResolver(schema),
+    defaultValues: {},
+  })
   const form = watch()
   const { errors } = formState
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
+    var isValid = await trigger(obterEtapaAtual().validacao as any)
+
+    if (!isValid) {
+      return
+    }
+
     setCurrentStep((prevStep) => prevStep + 1)
   }
 
   const handlePrevStep = () => {
     setCurrentStep((prevStep) => prevStep - 1)
+  }
+
+  function obterEtapasAtivas() {
+    return etapas.filter((e) => e.ativo)
+  }
+
+  function obterEtapaAtual() {
+    return etapas[currentStep]
   }
 
   useEffect(() => {
@@ -219,37 +255,113 @@ function Add() {
               className="grid gap-4 text-sm text-muted-foreground"
               x-chunk="dashboard-04-chunk-0"
             >
-              <MultSteps currentStep={currentStep} qtdSteps={8} />
+              <MultSteps
+                title={obterEtapaAtual().titulo}
+                subTitle={obterEtapaAtual().descricao}
+                currentStep={currentStep}
+                qtdSteps={obterEtapasAtivas().length}
+              />
 
               <DevTool control={control} />
             </nav>
             <div className="grid gap-6 ">
               <Card x-chunk="dashboard-04-chunk-1">
                 <CardHeader>
-                  <CardTitle>Step {currentStep}</CardTitle>
+                  <CardTitle>{obterEtapaAtual().titulo}</CardTitle>
                   <CardDescription>
-                    Used to identify your store in the marketplace.
+                    {obterEtapaAtual().descricao}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form>
-                    {/* <Input placeholder="Store Name" /> */}
-                    <div>
-                      <InputCurrency
-                        control={control}
-                        errors={errors}
-                        controlName="inputCurrency"
-                        type="text"
-                      />
+                    <div
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.proponente && "hidden"
+                      } grid gap-6`}
+                    >
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-3 ">
+                          <Label>Nome completo</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="nome"
+                            placeholder="Informe seu nome"
+                          />
+                        </div>
+                        <div className="grid gap-3">
+                          <Label>Telefone</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            mask="(99) 99999-9999"
+                            controlName="telefone"
+                            placeholder="Informe seu nome"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid gap-3">
+                        <Label>E-mail</Label>
+                        <Input
+                          errors={errors}
+                          control={control}
+                          controlName="email"
+                          placeholder="Informe seu nome"
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label>UF</Label>
+                        <Controller
+                          name="uf"
+                          control={control}
+                          render={({ field }) => (
+                            <>
+                              <Select
+                                onValueChange={(value) => setValue("uf", value)}
+                              >
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue placeholder="Selecione a UF" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>UF</SelectLabel>
+                                    {ESTADOS.map((e) => (
+                                      <SelectItem value={e.Initials}>
+                                        {e.Initials}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                              {!!errors?.uf && (
+                                <span className="text-sm font-medium text-red-500">
+                                  {errors?.uf?.message}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="include" defaultChecked />
-                      <label
-                        htmlFor="include"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Allow administrators to change the directory.
-                      </label>
+
+                    <div
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.procedimento && "hidden"
+                      } grid gap-6`}
+                    >
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-3 ">
+                          <Label>Nome completo</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="nome"
+                            placeholder="Informe seu nome"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </form>
                 </CardContent>
