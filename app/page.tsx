@@ -80,7 +80,6 @@ export default function Home() {
         <S.LoginContent className="bg-white  p-8 pb-10 rounded-md">
           <Image src={logo2} alt="SynSaude" width={120} className="mb-8" />
 
-          {/* <h1>Bem vindo de Volta!1</h1> */}
           <S.FormContent onSubmit={handleSubmit(handleSingIn)}>
             <S.InputContainer>
               <Label>CPF</Label>
@@ -89,6 +88,7 @@ export default function Home() {
                 errors={errors}
                 mask="999.999.999-99"
                 controlName="cpf"
+                mask="999.999.999-99"
                 placeholder="Digite seu cpf"
                 type="text"
               />
