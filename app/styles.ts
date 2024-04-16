@@ -17,6 +17,7 @@ export const LoginContent = styled.div`
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  margin-top: -80px;
 `
 
 export const FormContent = styled.form`

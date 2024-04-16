@@ -13,7 +13,7 @@ export function setupAPIClient(ctx = undefined) {
     // baseURL: 'http://localhost:3300',
     baseURL: "https://synsaude-dev.azurewebsites.net/api",
     headers: {
-      Authorization: `Bearer ${cookies["@nextauth.token"]}`,
+      Authorization: `Bearer ${cookies["@synauth.token"]}`,
     },
   })
 

@@ -1,5 +1,11 @@
+"use client"
+
 import React from "react"
 
-export default function page() {
-  return <div>dash</div>
+import withAuth from "@/components/with-auth"
+
+const Home = () => {
+  return <div className="container py-5">Home page</div>
 }
+
+export default withAuth(<Home />, true)

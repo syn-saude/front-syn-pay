@@ -6,7 +6,7 @@ import { Metadata } from "next"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
-import { SiteHeader } from "@/components/site-header"
+import SiteHeader from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 
 import StyledComponentsRegistry from "./registry"
@@ -45,7 +45,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           <Providers>
             <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
               <StyledComponentsRegistry>
                 <div className="flex-1">{children}</div>
               </StyledComponentsRegistry>

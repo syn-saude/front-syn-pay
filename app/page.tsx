@@ -56,7 +56,9 @@ export default function Home() {
   async function handleSingIn(form: SingInProps) {
     try {
       setLoading(true)
-      await singIn(form)
+      setTimeout(async () => {
+        await singIn(form)
+      }, 3000)
     } catch (error) {
       setLoading(false)
     }
@@ -74,9 +76,9 @@ export default function Home() {
       <Head>
         <title>SynSaude - login</title>
       </Head>
-      <S.Container>
-        <S.LoginContent>
-          <Image src={logo2} alt="SynSaude" width={120} />
+      <S.Container className="bg-slate-900">
+        <S.LoginContent className="bg-white  p-8 pb-10 rounded-md">
+          <Image src={logo2} alt="SynSaude" width={120} className="mb-8" />
 
           {/* <h1>Bem vindo de Volta!1</h1> */}
           <S.FormContent onSubmit={handleSubmit(handleSingIn)}>
@@ -85,6 +87,7 @@ export default function Home() {
               <Input
                 control={control}
                 errors={errors}
+                mask="999.999.999-99"
                 controlName="cpf"
                 placeholder="Digite seu cpf"
                 type="text"
@@ -101,10 +104,14 @@ export default function Home() {
               />
             </S.InputContainer>
 
-            <S.InputLabel style={{ color: "var(--purple-300)" }}>
+            {/* <S.InputLabel style={{ color: "var(--purple-300)" }}>
               Esqueceu sua senha?
-            </S.InputLabel>
-            <S.ButtonContent type="submit" className="w-full ">
+            </S.InputLabel> */}
+            <S.ButtonContent
+              type="submit"
+              loading={loading}
+              className="w-full "
+            >
               Acessar
             </S.ButtonContent>
             {/* <Button type="submit"  onClick={notificar}>
@@ -114,7 +121,7 @@ export default function Home() {
               Acessar
             </Button> */}
           </S.FormContent>
-          <div>
+          {/* <div>
             <S.InputLabel> Não possui uma conta?</S.InputLabel>
             <Link href="/singup">
               <S.InputLabel
@@ -123,7 +130,7 @@ export default function Home() {
                 Cadastre-se!
               </S.InputLabel>
             </Link>
-          </div>
+          </div> */}
         </S.LoginContent>
         {/* <DevTool control={control} /> */}
       </S.Container>
