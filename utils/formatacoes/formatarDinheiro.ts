@@ -1,15 +1,15 @@
-function formatarDinheiro(value) {
+function formatarDinheiro(value: any) {
   try {
     if (!value) {
-      return parseFloat('0.0').toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
+      return parseFloat("0.0").toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
       })
     }
 
-    return parseFloat(value).toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return parseFloat(value).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     })
   } catch (error) {
     return 0

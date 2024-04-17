@@ -1,42 +1,42 @@
-import moment from 'moment'
+import moment from "moment"
 
-function formatarData(value) {
+function formatarData(value: any) {
   if (value) {
-    return moment(String(value)).format('DD/MM/YYYY')
+    return moment(String(value)).format("DD/MM/YYYY")
   }
 }
-function formatarDataHora(value) {
+function formatarDataHora(value: any) {
   if (value) {
-    return moment(String(value)).format('DD/MM/YYYY HH:mm')
-  }
-}
-
-function formatarHora(value) {
-  if (value) {
-    return moment(String(value)).format('HH:mm')
+    return moment(String(value)).format("DD/MM/YYYY HH:mm")
   }
 }
 
-function formatarHoraLocal(value) {
+function formatarHora(value: any) {
   if (value) {
-    return moment.utc(String(value)).local().format('HH:mm')
+    return moment(String(value)).format("HH:mm")
   }
 }
 
-function formatarDataLocal(value) {
+function formatarHoraLocal(value: any) {
   if (value) {
-    return moment.utc(String(value)).local().format('DD/MM/YYYY')
+    return moment.utc(String(value)).local().format("HH:mm")
   }
 }
-function formatarDataHoraLocal(value) {
+
+function formatarDataLocal(value: any) {
   if (value) {
-    return moment.utc(String(value)).local().format('DD/MM/YYYY HH:mm')
+    return moment.utc(String(value)).local().format("DD/MM/YYYY")
+  }
+}
+function formatarDataHoraLocal(value: any) {
+  if (value) {
+    return moment.utc(String(value)).local().format("DD/MM/YYYY HH:mm")
   } else {
-    return ''
+    return ""
   }
 }
 
-function formatarDiferencaData(value) {
+function formatarDiferencaData(value: any) {
   const agora = Date.now()
   const dataModificacao = new Date(value).getTime() - 1000 * 60 * 60 * 3
 
@@ -50,28 +50,28 @@ function formatarDiferencaData(value) {
 
   if (diffAnos >= 1) {
     if (diffAnos === 1) {
-      return '1 ano'
+      return "1 ano"
     } else {
       return `${diffAnos} anos`
     }
   } else {
     if (diffMeses >= 1) {
       if (diffMeses === 1) {
-        return '1 mês'
+        return "1 mês"
       } else {
         return `${diffMeses} meses`
       }
     } else {
       if (diffDias >= 1) {
         if (diffDias === 1) {
-          return '1 dia'
+          return "1 dia"
         } else {
           return `${diffDias} dias`
         }
       } else {
         if (diffHoras >= 1) {
           if (diffHoras === 1) {
-            return '1 hora'
+            return "1 hora"
           } else {
             return `${diffHoras} horas`
           }
@@ -79,7 +79,7 @@ function formatarDiferencaData(value) {
           if (diffMinutos > 1) {
             return `${diffMinutos} minutos`
           } else {
-            return 'menos de 1 minuto'
+            return "menos de 1 minuto"
           }
         }
       }
@@ -87,7 +87,7 @@ function formatarDiferencaData(value) {
   }
 }
 
-function formatarIdade(value) {
+function formatarIdade(value: any) {
   const agora = new Date()
   const dataNascimento = new Date(value)
 
@@ -112,5 +112,5 @@ export {
   formatarDiferencaData,
   formatarIdade,
   formatarHora,
-  formatarHoraLocal
+  formatarHoraLocal,
 }

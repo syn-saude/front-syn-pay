@@ -1,8 +1,8 @@
-function formatarTelefone(value) {
+function formatarTelefone(value: any) {
   if (!value) return
 
   if (value) {
-    value = value.replace(/[^\d]/g, '')
+    value = value.replace(/[^\d]/g, "")
 
     var ddd = value.substr(0, 2)
     var numPart1 = value.substr(2, value.length - 6)

@@ -104,7 +104,7 @@ interface FinanciamentoRequest {
   valorAprovado: number
 }
 //#region ETAPAS
-export enum ETAPAS_FINANCIAMENTO {
+enum ETAPAS_FINANCIAMENTO {
   proponente = "proponente",
   procedimento = "procedimento",
   valores = "valores",

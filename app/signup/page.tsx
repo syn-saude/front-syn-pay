@@ -45,7 +45,7 @@ export default function Page() {
 
   return (
     <S.Container>
-      <MultSteps currentStep={currentStep} qtdSteps={8} />
+      {/* <MultSteps currentStep={currentStep} qtdSteps={8} /> */}
       <div>
         <form>
           <InputCurrency
@@ -55,10 +55,10 @@ export default function Page() {
             type="text"
           />
         </form>
-            <S.NextButton onClick={handleNextStep}>Next</S.NextButton>
-            <S.NextButton onClick={handlePrevStep}>Prev</S.NextButton>
+        <S.NextButton onClick={handleNextStep}>Next</S.NextButton>
+        <S.NextButton onClick={handlePrevStep}>Prev</S.NextButton>
       </div>
       <DevTool control={control} />
     </S.Container>
-  )
+  ) 
 }
