@@ -14,6 +14,8 @@ import {
   Rabbit,
   ShoppingCart,
   Users,
+  Angry,
+  Frown,
 } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import * as yup from "yup"
@@ -68,19 +70,16 @@ const schema = yup
     //Step 1
     nome: yup.string().required().label("Nome"),
     telefone: yup.string().required().label("Telefone"),
+    cpf: yup.string().required().label("CPF"),
+    dataNascimento: yup.string().required().label("Data de nascimento"),
     email: yup.string().email().required().label("E-mail"),
     uf: yup.string().required().label("UF"),
     //Step 2
     procedimento: yup.string().required().label("Procedimento"),
-    possuiPedidoMedico: yup.boolean().required().label("Pedido médico"),
-    //Step 3
     valorSolicitado: yup.number().required().label("Valor solicitado"),
     renda: yup.number().required().label("Renda"),
-    //Step 4
-    cpf: yup.string().required().label("CPF"),
-    dataNascimento: yup.string().required().label("Data de nascimento"),
-    //Step 5
-    valorAprovado: yup.number().required().label("Valor aprovado"),
+    //Step 3
+    detalhes: yup.number().required().label("Valor aprovado"),
   })
   .required()
 //#endregion
@@ -89,26 +88,21 @@ interface FinanciamentoRequest {
   //Step 1
   nome: string
   telefone: string
+  cpf: string
+  dataNascimento: string
   email: string
   uf: string
   //Step 2
-  procedimento: string //Objeto Id Descricao
-  possuiPedidoMedico: boolean
-  //Step 3
+  procedimento: string
   valorSolicitado: number
   renda: number
-  //Step 4
-  cpf: string
-  dataNascimento: string
-  //Step 5
-  valorAprovado: number
+  //Step 3
+  detalhes: any
 }
 //#region ETAPAS
 enum ETAPAS_FINANCIAMENTO {
   proponente = "proponente",
-  procedimento = "procedimento",
   valores = "valores",
-  dataUser = "dataUser",
   valorAprovados = "valorAprovados",
 }
 const etapas = [
@@ -116,35 +110,21 @@ const etapas = [
     step: ETAPAS_FINANCIAMENTO.proponente,
     titulo: "Dados do proponente",
     descricao: "Informe os dados de contato",
-    validacao: ["nome", "telefone", "email", "uf"],
-    ativo: true,
-  },
-  {
-    step: ETAPAS_FINANCIAMENTO.procedimento,
-    titulo: "Tipo de procedimento",
-    descricao: "",
-    validacao: ["procedimento", "possuiPedidoMedico"],
+    validacao: ["nome", "telefone", "cpf", "dataNascimento", "email", "uf"],
     ativo: true,
   },
   {
     step: ETAPAS_FINANCIAMENTO.valores,
     titulo: "De quanto você precisa?",
     descricao: "",
-    validacao: ["valorSolicitado", "renda"],
-    ativo: true,
-  },
-  {
-    step: ETAPAS_FINANCIAMENTO.dataUser,
-    titulo: "Dados para crédito",
-    descricao: "",
-    validacao: ["cpf", "dataNascimento"],
+    validacao: ["procedimento","valorSolicitado", "renda"],
     ativo: true,
   },
   {
     step: ETAPAS_FINANCIAMENTO.valorAprovados,
     titulo: "Propostas pré-aprovados",
     descricao: "",
-    validacao: ["valorAprovado"],
+    validacao: ["detalhes"],
     ativo: true,
   },
 ]
@@ -152,6 +132,8 @@ const etapas = [
 function Add() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isHovered, setIsHovered] = useState(null)
+  const [aprovado, setAprovado] = useState(true)
+  const [reprovado, setReprovado] = useState(false)
 
   const {
     register,
@@ -168,6 +150,10 @@ function Add() {
   })
   const form = watch()
   const { errors } = formState
+
+  const handleFirstStep = () => {
+    setCurrentStep(0)
+  }
 
   const handleNextStep = async () => {
     var isValid = await trigger(obterEtapaAtual().validacao as any)
@@ -195,7 +181,7 @@ function Add() {
   }
 
   useEffect(() => {
-    register("valorAprovado")
+    register("detalhes")
   }, [register])
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -276,9 +262,6 @@ function Add() {
           </Breadcrumb>
         </header>
         <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4  md:gap-8 md:p-10">
-          {/* <div className="mx-auto grid w-full max-w-6xl gap-2">
-            <h1 className="text-3xl font-semibold">Settings</h1>
-          </div> */}
           <div className="mx-auto grid w-full  items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
             {
               //#region STEPPER
@@ -319,28 +302,6 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.proponente && "hidden"
                       } grid gap-6 md:max-w-[600px]`}
                     >
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-3 ">
-                          <Label>Informe os numeros do seu CPF</Label>
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="cpf"
-                            mask="999.999.999-99"
-                            placeholder="CPF"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-3">
-                          <Label>Informe sua data de nascimento</Label>
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="dataNascimento"
-                            mask="99/99/9999"
-                            placeholder="Data de nascimento"
-                          />
-                        </div>
-                      </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-3">
                           <Label>Nome completo</Label>
@@ -363,66 +324,55 @@ function Add() {
                           />
                         </div>
                       </div>
-                      <div className="flex flex-col gap-3 w-[445px]">
-                        <Label>E-mail</Label>
-                        <Input
-                          errors={errors}
-                          control={control}
-                          controlName="email"
-                          placeholder="Informe seu nome"
-                        />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-3 ">
+                          <Label>Informe os numeros do seu CPF</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="cpf"
+                            mask="999.999.999-99"
+                            placeholder="CPF"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          <Label>Informe sua data de nascimento</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="dataNascimento"
+                            mask="99/99/9999"
+                            placeholder="Data de nascimento"
+                          />
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-3">
-                        <Label>Em qual estado o cliente mora?</Label>
-                        <ComboboxControlled
-                          options={ESTADOS.map((p) => {
-                            return {
-                              label: p.Initials,
-                              value: p.Initials,
-                              id: p.Id,
-                            }
-                          })}
-                          control={control}
-                          controlName="uf"
-                          errors={errors}
-                          placeholder="Selecione a UF"
-                        />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-3">
+                          <Label>E-mail</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="email"
+                            placeholder="Informe seu nome"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          <Label>Em qual estado o cliente mora?</Label>
+                          <ComboboxControlled
+                            options={ESTADOS.map((p) => {
+                              return {
+                                label: p.Initials,
+                                value: p.Initials,
+                                id: p.Id,
+                              }
+                            })}
+                            control={control}
+                            controlName="uf"
+                            errors={errors}
+                            placeholder="Selecione a UF"
+                          />
+                        </div>
                       </div>
-                      {/* <div className="grid gap-3">
-                        <Label>UF</Label>
-                        <Controller
-                          name="uf"
-                          control={control}
-                          render={({ field }) => (
-                            <>
-                              <Select
-                                onValueChange={(value: any) =>
-                                  setValue("uf", value)
-                                }
-                              >
-                                <SelectTrigger className="w-[180px]">
-                                  <SelectValue placeholder="Selecione a UF" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectGroup>
-                                    <SelectLabel>UF</SelectLabel>
-                                    {ESTADOS.map((e) => (
-                                      <SelectItem value={e.Initials}>
-                                        {e.Initials}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectGroup>
-                                </SelectContent>
-                              </Select>
-                              {!!errors?.uf && (
-                                <span className="text-sm font-medium text-red-500">
-                                  {errors?.uf?.message}
-                                </span>
-                              )}
-                            </>
-                          )}
-                        />
-                      </div> */}
                     </div>
                     {
                       //#endregion
@@ -433,100 +383,18 @@ function Add() {
                     <div
                       className={`${
                         obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.procedimento && "hidden"
-                      } grid gap-6`}
-                    >
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-3 w-[300px]">
-                          <Label>Procedimentos</Label>
-                          <ComboboxControlled
-                            options={PROCEDIMENTOS.map((p) => {
-                              return {
-                                label: p.Name,
-                                value: p.Name,
-                                id: p.Id,
-                              }
-                            })}
-                            control={control}
-                            controlName="procedimento"
-                            errors={errors}
-                            placeholder="Selecione o procedimento"
-                          />
-                          {/* <Controller
-                            name="procedimento"
-                            control={control}
-                            render={({ field }) => (
-                              <>
-                                <Select
-                                  onValueChange={(value: any) =>
-                                    setValue("procedimento", value)
-                                  }
-                                >
-                                  <SelectTrigger className="w-[280px]">
-                                    <SelectValue placeholder="Selecione o procedimento" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      {PROCEDIMENTOS.map((e) => (
-                                        <SelectItem value={e.Name}>
-                                          {e.Name}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                                <>
-                                  {!!errors?.procedimento && (
-                                    <span className="text-sm font-medium text-red-500">
-                                      {errors?.procedimento?.message}
-                                    </span>
-                                  )}
-                                </>
-                              </>
-                            )}
-                          /> */}
-                        </div>
-                      </div>
-                      <Label>Você já possui um pedido médico?</Label>
-                      <Controller
-                        name="possuiPedidoMedico"
-                        control={control}
-                        render={({ field }) => (
-                          <>
-                            <RadioGroup
-                              onValueChange={field.onChange}
-                              defaultValue={field.value as unknown as string}
-                            >
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="true" id="option-one" />
-                                <Label htmlFor="option-one">Sim</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="false" id="option-two" />
-                                <Label htmlFor="option-two">Não</Label>
-                              </div>
-                            </RadioGroup>
-                            {!!errors?.possuiPedidoMedico && (
-                              <span className="text-sm font-medium text-red-500">
-                                {errors?.possuiPedidoMedico?.message}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      />
-                    </div>
-                    {
-                      //#endregion
-                    }
-                    {
-                      //#region ETAPA 3
-                    }
-                    <div
-                      className={`${
-                        obterEtapaAtual().step !==
                           ETAPAS_FINANCIAMENTO.valores && "hidden"
                       } grid gap-6`}
                     >
+                      <div className="flex flex-col gap-3">
+                          <Label>Procedimento desejado</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="procedimento"
+                            placeholder="Informe seu procedimento"
+                          />
+                        </div>
                       <div className="grid grid-cols-1 gap-4">
                         <div className="flex flex-col gap-3 ">
                           <Label>De quanto você precisa?</Label>
@@ -554,20 +422,7 @@ function Add() {
                       //#endregion
                     }
                     {
-                      //#region ETAPA 4
-                    }
-                    <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.dataUser && "hidden"
-                      } grid gap-6`}
-                    ></div>
-
-                    {
-                      //#endregion
-                    }
-                    {
-                      //#region ETAPA 5
+                      //#region ETAPA 3
                     }
                     <div
                       className={`${
@@ -575,46 +430,61 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
                       } grid gap-6`}
                     >
-                      <div className="grid grid-cols-1 gap-3 ">
-                        {/* justify-items-center */}
+                    { aprovado && (
 
-                        {/* <RadioGroup
-                          defaultValue={form.valorAprovado?.toString()}
-                        > */}
+                      <div className="grid grid-cols-1 gap-3 ">
                         {APROVADOS.map((item, index) => (
                           <CardValorLiberado
                             key={index}
-                            selecionado={form.valorAprovado == item.Id}
+                            selecionado={form.detalhes == item.Id}
                             onValueChange={() =>
-                              setValue("valorAprovado", item.Id)
+                              setValue("detalhes", item.Id)
                             }
                             opcao={item}
                             parcelas={item.Obs}
                             valorLiberado={item.Price}
                           />
                         ))}
-                        {/* </RadioGroup> */}
                       </div>
+                      )}
+                      {
+                        reprovado && (
+                          <div className="grid grid-cols-1 gap-8 justify-items-center">
+
+                            <Frown strokeWidth={1.1} size={70} color="#ff6c2e"/>
+                            <div className="grid grid-cols-1 gap-8 w-[420px] ">
+
+                            <S.LabelNotAprov>Infelizmente não encontramos propostas disponíveis.</S.LabelNotAprov>
+                            <S.LabelNotAprov>Deseja realizar uma nova sumulação com outro CPF?</S.LabelNotAprov>
+                            </div>
+
+                            <S.ButtonNewSimulation onClick={handleFirstStep}>Sim, Simular com outro CPF!</S.ButtonNewSimulation>
+                          </div>
+                        )
+                      }
                     </div>
                     {
-                      //#endregion
+                      //#endregion ff6c2e
                     }
                   </form>
                 </CardContent>
-                <CardFooter className="border-t px-6 py-4 gap-4">
-                  {currentStep > 0 && (
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={handlePrevStep}
-                    >
-                      Voltar
+                {(currentStep !== 2 || !reprovado) && (
+
+                  <CardFooter className="border-t px-6 py-4 gap-4">
+                    {currentStep > 0 && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={handlePrevStep}
+                      >
+                        Voltar
+                      </Button>
+                    )}
+                    <Button size="sm" onClick={handleNextStep}>
+                      Continuar
                     </Button>
-                  )}
-                  <Button size="sm" onClick={handleNextStep}>
-                    Continuar
-                  </Button>
-                </CardFooter>
+                  </CardFooter>
+                )}
               </Card>
             </div>
           </div>

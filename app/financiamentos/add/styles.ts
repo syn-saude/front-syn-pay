@@ -27,3 +27,28 @@ export const LabelInfo = styled.span<{ isHovered?: any }>`
   font-weight: 500;
   color: ${(props) => (props.isHovered ? "white" : "#605dec")};
 `
+export const ButtonNewSimulation =  styled.button`
+  display: flex;
+  height: 50px;
+  width: 360px;
+  border: none;
+  background-color: #605dec;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+  padding: 6px;
+  font-size: 16px;
+
+  &:hover{
+    font-size: 16.1px
+
+  }
+`
+export const LabelNotAprov = styled.span`
+  display: flex;
+  font-size: 20px;
+  font-weight: 700;
+  justify-content: center;
+  align-items: center;
+`
