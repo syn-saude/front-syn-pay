@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
+import { Controller, FieldErrors } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,40 +20,25 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-]
-
 interface IOptionCombobox {
-  id?: string
+  id?: string | number
   label: string
   value: any
 }
 interface IProps {
   placeholder?: string
+  className?: string
   value?: any
+  isInvalid?: boolean
   textNotFound?: string
   options?: IOptionCombobox[]
   onValueChange?: (value: any) => void
+}
+
+interface IControlledProps extends IProps {
+  controlName: string
+  control: any
+  errors: any
 }
 
 export function Combobox({
@@ -60,31 +46,46 @@ export function Combobox({
   options = [],
   placeholder = "Selecione",
   textNotFound = "Nenhum resultado encontrado.",
-  value,
+  value = "",
+  isInvalid,
+  className,
 }: IProps) {
   const [open, setOpen] = React.useState(false)
-  // const [value, setValue] = React.useState("")
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [valueSelected, setValueSelected] = React.useState(value)
 
-  // useEffect(() => {
-  //   onValueChange(value)
-  // }, [value])
+  useEffect(() => {
+    //se for a primeira vez e zerado
+    if (!value && !valueSelected) {
+      return
+    }
+    onValueChange(valueSelected)
+  }, [valueSelected])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          ref={buttonRef}
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={`w-full justify-between ${
+            isInvalid && "border-red-500 text-red-500"
+          } ${className}`}
         >
-          {value
-            ? options.find((o) => o.value === value.toUpperCase())?.label
+          {valueSelected
+            ? options.find(
+                (o) => o.value?.toLowerCase() === valueSelected?.toLowerCase()
+              )?.label
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent
+        key={"chave" + buttonRef.current?.offsetWidth}
+        className={`w-[${buttonRef.current?.offsetWidth}px] p-0`}
+      >
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>{textNotFound}</CommandEmpty>
@@ -94,16 +95,20 @@ export function Combobox({
                 key={o.value}
                 value={o.value}
                 onSelect={(currentValue: any) => {
-                  let v = currentValue === value ? "" : currentValue
-                  onValueChange(v)
-                  // setValue(currentValue === value ? "" : currentValue)
+                  let v = currentValue === valueSelected ? "" : currentValue
+                  // onValueChange(v)
+                  setValueSelected(
+                    currentValue === valueSelected ? "" : currentValue
+                  )
                   setOpen(false)
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === o.value ? "opacity-100" : "opacity-0"
+                    valueSelected === o.value?.toLowerCase()
+                      ? "opacity-100"
+                      : "opacity-0"
                   )}
                 />
                 {o.label}
@@ -113,5 +118,34 @@ export function Combobox({
         </Command>
       </PopoverContent>
     </Popover>
+  )
+}
+
+export function ComboboxControlled({
+  control,
+  controlName,
+  errors,
+  ...props
+}: IControlledProps) {
+  return (
+    <Controller
+      name={controlName}
+      control={control}
+      render={({ field }) => (
+        <>
+          <Combobox
+            onValueChange={field.onChange}
+            value={field.value}
+            isInvalid={!!errors?.[controlName]}
+            {...props}
+          />
+          {!!errors?.[controlName] && (
+            <span className="text-sm font-medium text-red-500">
+              {errors?.[controlName]?.message}
+            </span>
+          )}
+        </>
+      )}
+    />
   )
 }

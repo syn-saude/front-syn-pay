@@ -18,12 +18,10 @@ import {
 import { Controller, useForm } from "react-hook-form"
 import * as yup from "yup"
 import { pt } from "yup-locales"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
-import { ESTADOS } from "@/config/const/common/states"
-import { PROCEDIMENTOS } from "@/config/const/common/procedimentos"
 import { APROVADOS } from "@/config/const/common/aprovados"
-
+import { PROCEDIMENTOS } from "@/config/const/common/procedimentos"
+import { ESTADOS } from "@/config/const/common/states"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -42,9 +40,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Combobox, ComboboxControlled } from "@/components/ui/combobox"
 import Input from "@/components/ui/input"
 import InputCurrency from "@/components/ui/input-currency"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Select,
   SelectContent,
@@ -58,6 +58,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
 import withAuth from "@/components/with-auth"
 
+import CardValorLiberado from "./cardValorLiberado"
 import * as S from "./styles"
 
 yup.setLocale(pt)
@@ -68,18 +69,18 @@ const schema = yup
     nome: yup.string().required().label("Nome"),
     telefone: yup.string().required().label("Telefone"),
     email: yup.string().email().required().label("E-mail"),
-    uf: yup.string().required(),
+    uf: yup.string().required().label("UF"),
     //Step 2
-    procedimento: yup.string().required(),
-    possuiPedidoMedico: yup.boolean().required(),
+    procedimento: yup.string().required().label("Procedimento"),
+    possuiPedidoMedico: yup.boolean().required().label("Pedido médico"),
     //Step 3
-    valorSolicitado: yup.number().required(),
-    renda: yup.number().required(),
+    valorSolicitado: yup.number().required().label("Valor solicitado"),
+    renda: yup.number().required().label("Renda"),
     //Step 4
-    cpf: yup.string().required(),
-    dataNascimento: yup.string().required(),
+    cpf: yup.string().required().label("CPF"),
+    dataNascimento: yup.string().required().label("Data de nascimento"),
     //Step 5
-    valorAprovado: yup.string().required(),
+    valorAprovado: yup.number().required().label("Valor aprovado"),
   })
   .required()
 //#endregion
@@ -100,7 +101,7 @@ interface FinanciamentoRequest {
   cpf: string
   dataNascimento: string
   //Step 5
-  valorAprovado: string
+  valorAprovado: number
 }
 //#region ETAPAS
 export enum ETAPAS_FINANCIAMENTO {
@@ -150,7 +151,7 @@ const etapas = [
 //#endregion
 function Add() {
   const [currentStep, setCurrentStep] = useState(0)
-  const [isHovered, setIsHovered] = useState(null);
+  const [isHovered, setIsHovered] = useState(null)
 
   const {
     register,
@@ -179,6 +180,9 @@ function Add() {
   }
 
   const handlePrevStep = () => {
+    if (currentStep <= 0) {
+      return
+    }
     setCurrentStep((prevStep) => prevStep - 1)
   }
 
@@ -191,7 +195,7 @@ function Add() {
   }
 
   useEffect(() => {
-    // register("inputCurrency")
+    register("valorAprovado")
   }, [register])
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -276,19 +280,26 @@ function Add() {
             <h1 className="text-3xl font-semibold">Settings</h1>
           </div> */}
           <div className="mx-auto grid w-full  items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
+            {
+              //#region STEPPER
+            }
             <nav
               className="grid gap-4 text-sm text-muted-foreground"
               x-chunk="dashboard-04-chunk-0"
             >
               <MultSteps
-                title={obterEtapaAtual().titulo}
-                subTitle={obterEtapaAtual().descricao}
+                steps={obterEtapasAtivas().map((e) => {
+                  return { title: e.titulo, subTitle: e.descricao }
+                })}
                 currentStep={currentStep}
                 qtdSteps={obterEtapasAtivas().length}
               />
 
               <DevTool control={control} />
             </nav>
+            {
+              //#endregion
+            }
             <div className="grid gap-6 ">
               <Card x-chunk="dashboard-04-chunk-1">
                 <CardHeader>
@@ -299,14 +310,39 @@ function Add() {
                 </CardHeader>
                 <CardContent>
                   <form>
-                    {/* primeiro step */}
+                    {
+                      //#region ETAPA 1
+                    }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.proponente && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.proponente && "hidden"
+                      } grid gap-6 md:max-w-[600px]`}
                     >
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-3 ">
+                          <Label>Informe os numeros do seu CPF</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="cpf"
+                            mask="999.999.999-99"
+                            placeholder="CPF"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          <Label>Informe sua data de nascimento</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="dataNascimento"
+                            mask="99/99/9999"
+                            placeholder="Data de nascimento"
+                          />
+                        </div>
+                      </div>
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-3 ">
+                        <div className="flex flex-col gap-3">
                           <Label>Nome completo</Label>
                           <Input
                             errors={errors}
@@ -315,7 +351,8 @@ function Add() {
                             placeholder="Informe seu nome"
                           />
                         </div>
-                        <div className="grid gap-3 w-[180px]">
+
+                        <div className="flex flex-col gap-3 ">
                           <Label>Telefone</Label>
                           <Input
                             errors={errors}
@@ -326,7 +363,7 @@ function Add() {
                           />
                         </div>
                       </div>
-                      <div className="grid gap-3 w-[445px]">
+                      <div className="flex flex-col gap-3 w-[445px]">
                         <Label>E-mail</Label>
                         <Input
                           errors={errors}
@@ -335,7 +372,23 @@ function Add() {
                           placeholder="Informe seu nome"
                         />
                       </div>
-                      <div className="grid gap-3">
+                      <div className="flex flex-col gap-3">
+                        <Label>Em qual estado o cliente mora?</Label>
+                        <ComboboxControlled
+                          options={ESTADOS.map((p) => {
+                            return {
+                              label: p.Initials,
+                              value: p.Initials,
+                              id: p.Id,
+                            }
+                          })}
+                          control={control}
+                          controlName="uf"
+                          errors={errors}
+                          placeholder="Selecione a UF"
+                        />
+                      </div>
+                      {/* <div className="grid gap-3">
                         <Label>UF</Label>
                         <Controller
                           name="uf"
@@ -343,7 +396,9 @@ function Add() {
                           render={({ field }) => (
                             <>
                               <Select
-                                onValueChange={(value: any) => setValue("uf", value)}
+                                onValueChange={(value: any) =>
+                                  setValue("uf", value)
+                                }
                               >
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Selecione a UF" />
@@ -367,24 +422,45 @@ function Add() {
                             </>
                           )}
                         />
-                      </div>
+                      </div> */}
                     </div>
-                    {/* segundo step */}
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 2
+                    }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.procedimento && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.procedimento && "hidden"
+                      } grid gap-6`}
                     >
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-3">
+                        <div className="flex flex-col gap-3 w-[300px]">
                           <Label>Procedimentos</Label>
-                          <Controller
+                          <ComboboxControlled
+                            options={PROCEDIMENTOS.map((p) => {
+                              return {
+                                label: p.Name,
+                                value: p.Name,
+                                id: p.Id,
+                              }
+                            })}
+                            control={control}
+                            controlName="procedimento"
+                            errors={errors}
+                            placeholder="Selecione o procedimento"
+                          />
+                          {/* <Controller
                             name="procedimento"
                             control={control}
                             render={({ field }) => (
                               <>
                                 <Select
-                                  onValueChange={(value: any) => setValue("procedimento", value)}
+                                  onValueChange={(value: any) =>
+                                    setValue("procedimento", value)
+                                  }
                                 >
                                   <SelectTrigger className="w-[280px]">
                                     <SelectValue placeholder="Selecione o procedimento" />
@@ -399,14 +475,16 @@ function Add() {
                                     </SelectGroup>
                                   </SelectContent>
                                 </Select>
-                                {!!errors?.uf && (
-                                  <span className="text-sm font-medium text-red-500">
-                                    {errors?.uf?.message}
-                                  </span>
-                                )}
+                                <>
+                                  {!!errors?.procedimento && (
+                                    <span className="text-sm font-medium text-red-500">
+                                      {errors?.procedimento?.message}
+                                    </span>
+                                  )}
+                                </>
                               </>
                             )}
-                          />
+                          /> */}
                         </div>
                       </div>
                       <Label>Você já possui um pedido médico?</Label>
@@ -437,24 +515,33 @@ function Add() {
                         )}
                       />
                     </div>
-                    {/* terceirto step */}
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 3
+                    }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.valores && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.valores && "hidden"
+                      } grid gap-6`}
                     >
                       <div className="grid grid-cols-1 gap-4">
-                        <div className="grid gap-3 w-[280px]">
+                        <div className="flex flex-col gap-3 ">
                           <Label>De quanto você precisa?</Label>
-                          <InputCurrency
+                          <Input
+                            money
                             errors={errors}
                             control={control}
                             controlName="valorSolicitado"
-                            placeholder="Informe o valor solicitado!" />
+                            placeholder="Informe o valor solicitado!"
+                          />
                         </div>
-                        <div className="grid gap-3 w-[280px]">
+                        <div className="flex flex-col gap-3 ">
                           <Label>Qual é o valor da sua renda?</Label>
-                          <InputCurrency
+                          <Input
+                            money
                             errors={errors}
                             control={control}
                             controlName="renda"
@@ -463,93 +550,67 @@ function Add() {
                         </div>
                       </div>
                     </div>
-
-                    {/* quarto step */}
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 4
+                    }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.dataUser && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.dataUser && "hidden"
+                      } grid gap-6`}
+                    ></div>
+
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 5
+                    }
+                    <div
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
+                      } grid gap-6`}
                     >
-                      <div className="grid grid-cols-1 gap-3">
-                        <Label>Informe os numeros do seu CPF</Label>
-                        <div className="w-[160px]">
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="cpf"
-                            mask="999.999.999-99"
-                            placeholder="CPF" />
-                        </div>
-                        <Label>Informe sua data de nascimento</Label>
-                        <div className="w-[160px]">
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="dataNascimento"
-                            mask="99/99/9999"
-                            placeholder="Data de nascimento"
+                      <div className="grid grid-cols-1 gap-3 ">
+                        {/* justify-items-center */}
+
+                        {/* <RadioGroup
+                          defaultValue={form.valorAprovado?.toString()}
+                        > */}
+                        {APROVADOS.map((item, index) => (
+                          <CardValorLiberado
+                            key={index}
+                            selecionado={form.valorAprovado == item.Id}
+                            onValueChange={() =>
+                              setValue("valorAprovado", item.Id)
+                            }
+                            opcao={item}
+                            parcelas={item.Obs}
+                            valorLiberado={item.Price}
                           />
-                        </div>
+                        ))}
+                        {/* </RadioGroup> */}
                       </div>
                     </div>
-
-                    {/* quinto step */}
-                    <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
-                        } grid gap-6`}
-                    >
-                      <div className="grid grid-cols-1 gap-3 "> {/* justify-items-center */}
-                        {
-                          <Controller
-                            name="valorAprovado"
-                            control={control}
-                            render={({ field }) => (
-                              <>
-                                <RadioGroup
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value as string}
-                                >
-                                  {APROVADOS.map((item, index) => (
-                                    <S.AprovadoContainer key={index}
-                                    onMouseEnter={() => setIsHovered(index as any)}
-                                    onMouseLeave={() => setIsHovered(null)}>
-                                      <div>
-                                        <RadioGroupItem value={"item.Id"} id="option-one" />
-                                      </div>
-                                      <S.ValorContainer>
-                                        <S.LabelInfo isHovered={isHovered === index }>valor liberado:</S.LabelInfo>
-                                        <S.LabelValue isHovered={isHovered === index }>
-                                          {'R$ ' + item.Price}
-                                        </S.LabelValue>
-                                        <S.LabelValue isHovered={isHovered === index }>
-                                          {item.Obs}
-                                        </S.LabelValue>
-                                      </S.ValorContainer>
-                                      <div>
-                                        <span>
-                                          Ver mais
-                                        </span>
-                                      </div>
-                                    </S.AprovadoContainer>
-                                  ))}
-                                </RadioGroup>
-                              </>
-                            )}
-                          />
-                        }
-                      </div>
-                    </div>
+                    {
+                      //#endregion
+                    }
                   </form>
                 </CardContent>
                 <CardFooter className="border-t px-6 py-4 gap-4">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={handlePrevStep}
-                  >
-                    Voltar
-                  </Button>
+                  {currentStep > 0 && (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={handlePrevStep}
+                    >
+                      Voltar
+                    </Button>
+                  )}
                   <Button size="sm" onClick={handleNextStep}>
                     Continuar
                   </Button>

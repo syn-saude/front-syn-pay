@@ -7,8 +7,7 @@ import { IStepProps } from "./multStepsInterface"
 import * as S from "./styles"
 
 export default function MultSteps({
-  title = "",
-  subTitle = "",
+  steps,
   currentStep,
   qtdSteps,
 }: IStepProps) {
@@ -33,10 +32,10 @@ export default function MultSteps({
         </S.progressContainer>
       ) : (
         <S.Container>
-          {[...Array(qtdSteps)].map((_, index) => {
+          {steps.map((step, index) => {
             const stepNumber = index + 1
-            const isCurrentStep = stepNumber === currentStep
-            const isConfirmated = stepNumber < currentStep
+            const isCurrentStep = index === currentStep
+            const isConfirmated = index < currentStep
 
             return (
               <S.StepContainer key={stepNumber}>
@@ -66,10 +65,10 @@ export default function MultSteps({
                         : "text-muted-foreground"
                     } `}
                   >
-                    {title}
+                    {step.title}
                   </S.StepLabel>
                   <span className="text-sm text-muted-foreground">
-                    {subTitle}
+                    {step.subTitle}
                   </span>
                 </div>
               </S.StepContainer>
