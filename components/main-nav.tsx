@@ -17,7 +17,7 @@ export function MainNav({ items, vertical = false }: MainNavProps) {
   return (
     <div className={`flex gap-6 ${vertical && "flex-col"} md:gap-10`}>
       <Link
-        href="/"
+        href="/homepage"
         className="flex items-center space-x-2 "
         style={{ width: "90px" }}
       >

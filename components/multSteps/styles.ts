@@ -35,11 +35,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background-color: var(--white);
-  padding: 10px 20px 20px 20px;
-  border-radius: 6px;
-  background-color: var(--white);
-  border: 1px solid #e0e0e0;
 `
 
 export const StepContainer = styled.div`
