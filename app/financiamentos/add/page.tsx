@@ -18,8 +18,12 @@ import {
 import { Controller, useForm } from "react-hook-form"
 import * as yup from "yup"
 import { pt } from "yup-locales"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 import { ESTADOS } from "@/config/const/common/states"
+import { PROCEDIMENTOS } from "@/config/const/common/procedimentos"
+import { APROVADOS } from "@/config/const/common/aprovados"
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -54,7 +58,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
 import withAuth from "@/components/with-auth"
 
-// import * as S from "./styles"
+import * as S from "./styles"
 
 yup.setLocale(pt)
 //#region SCHEMA
@@ -74,6 +78,8 @@ const schema = yup
     //Step 4
     cpf: yup.string().required(),
     dataNascimento: yup.string().required(),
+    //Step 5
+    valorAprovado: yup.string().required(),
   })
   .required()
 //#endregion
@@ -93,12 +99,16 @@ interface FinanciamentoRequest {
   //Step 4
   cpf: string
   dataNascimento: string
+  //Step 5
+  valorAprovado: string
 }
 //#region ETAPAS
 export enum ETAPAS_FINANCIAMENTO {
   proponente = "proponente",
   procedimento = "procedimento",
   valores = "valores",
+  dataUser = "dataUser",
+  valorAprovados = "valorAprovados",
 }
 const etapas = [
   {
@@ -112,20 +122,35 @@ const etapas = [
     step: ETAPAS_FINANCIAMENTO.procedimento,
     titulo: "Tipo de procedimento",
     descricao: "",
-    validacao: ["possuiPedidoMedico"],
+    validacao: ["procedimento", "possuiPedidoMedico"],
     ativo: true,
   },
   {
     step: ETAPAS_FINANCIAMENTO.valores,
-    titulo: "Valores",
+    titulo: "De quanto você precisa?",
     descricao: "",
     validacao: ["valorSolicitado", "renda"],
+    ativo: true,
+  },
+  {
+    step: ETAPAS_FINANCIAMENTO.dataUser,
+    titulo: "Dados para crédito",
+    descricao: "",
+    validacao: ["cpf", "dataNascimento"],
+    ativo: true,
+  },
+  {
+    step: ETAPAS_FINANCIAMENTO.valorAprovados,
+    titulo: "Propostas pré-aprovados",
+    descricao: "",
+    validacao: ["valorAprovado"],
     ativo: true,
   },
 ]
 //#endregion
 function Add() {
   const [currentStep, setCurrentStep] = useState(0)
+  const [isHovered, setIsHovered] = useState(null);
 
   const {
     register,
@@ -274,11 +299,11 @@ function Add() {
                 </CardHeader>
                 <CardContent>
                   <form>
+                    {/* primeiro step */}
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.proponente && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.proponente && "hidden"
+                        } grid gap-6`}
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-3 ">
@@ -290,7 +315,7 @@ function Add() {
                             placeholder="Informe seu nome"
                           />
                         </div>
-                        <div className="grid gap-3">
+                        <div className="grid gap-3 w-[180px]">
                           <Label>Telefone</Label>
                           <Input
                             errors={errors}
@@ -301,7 +326,7 @@ function Add() {
                           />
                         </div>
                       </div>
-                      <div className="grid gap-3">
+                      <div className="grid gap-3 w-[445px]">
                         <Label>E-mail</Label>
                         <Input
                           errors={errors}
@@ -318,7 +343,7 @@ function Add() {
                           render={({ field }) => (
                             <>
                               <Select
-                                onValueChange={(value) => setValue("uf", value)}
+                                onValueChange={(value: any) => setValue("uf", value)}
                               >
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Selecione a UF" />
@@ -344,23 +369,175 @@ function Add() {
                         />
                       </div>
                     </div>
-
+                    {/* segundo step */}
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.procedimento && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.procedimento && "hidden"
+                        } grid gap-6`}
                     >
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-3 ">
-                          <Label>Nome completo</Label>
+                        <div className="grid gap-3">
+                          <Label>Procedimentos</Label>
+                          <Controller
+                            name="procedimento"
+                            control={control}
+                            render={({ field }) => (
+                              <>
+                                <Select
+                                  onValueChange={(value: any) => setValue("procedimento", value)}
+                                >
+                                  <SelectTrigger className="w-[280px]">
+                                    <SelectValue placeholder="Selecione o procedimento" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      {PROCEDIMENTOS.map((e) => (
+                                        <SelectItem value={e.Name}>
+                                          {e.Name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                                {!!errors?.uf && (
+                                  <span className="text-sm font-medium text-red-500">
+                                    {errors?.uf?.message}
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <Label>Você já possui um pedido médico?</Label>
+                      <Controller
+                        name="possuiPedidoMedico"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value as unknown as string}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="true" id="option-one" />
+                                <Label htmlFor="option-one">Sim</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="false" id="option-two" />
+                                <Label htmlFor="option-two">Não</Label>
+                              </div>
+                            </RadioGroup>
+                            {!!errors?.possuiPedidoMedico && (
+                              <span className="text-sm font-medium text-red-500">
+                                {errors?.possuiPedidoMedico?.message}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      />
+                    </div>
+                    {/* terceirto step */}
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.valores && "hidden"
+                        } grid gap-6`}
+                    >
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="grid gap-3 w-[280px]">
+                          <Label>De quanto você precisa?</Label>
+                          <InputCurrency
+                            errors={errors}
+                            control={control}
+                            controlName="valorSolicitado"
+                            placeholder="Informe o valor solicitado!" />
+                        </div>
+                        <div className="grid gap-3 w-[280px]">
+                          <Label>Qual é o valor da sua renda?</Label>
+                          <InputCurrency
+                            errors={errors}
+                            control={control}
+                            controlName="renda"
+                            placeholder="Informe o valor da sua renda!"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* quarto step */}
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.dataUser && "hidden"
+                        } grid gap-6`}
+                    >
+                      <div className="grid grid-cols-1 gap-3">
+                        <Label>Informe os numeros do seu CPF</Label>
+                        <div className="w-[160px]">
                           <Input
                             errors={errors}
                             control={control}
-                            controlName="nome"
-                            placeholder="Informe seu nome"
+                            controlName="cpf"
+                            mask="999.999.999-99"
+                            placeholder="CPF" />
+                        </div>
+                        <Label>Informe sua data de nascimento</Label>
+                        <div className="w-[160px]">
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="dataNascimento"
+                            mask="99/99/9999"
+                            placeholder="Data de nascimento"
                           />
                         </div>
+                      </div>
+                    </div>
+
+                    {/* quinto step */}
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
+                        } grid gap-6`}
+                    >
+                      <div className="grid grid-cols-1 gap-3 "> {/* justify-items-center */}
+                        {
+                          <Controller
+                            name="valorAprovado"
+                            control={control}
+                            render={({ field }) => (
+                              <>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value as string}
+                                >
+                                  {APROVADOS.map((item, index) => (
+                                    <S.AprovadoContainer key={index}
+                                    onMouseEnter={() => setIsHovered(index as any)}
+                                    onMouseLeave={() => setIsHovered(null)}>
+                                      <div>
+                                        <RadioGroupItem value={"item.Id"} id="option-one" />
+                                      </div>
+                                      <S.ValorContainer>
+                                        <S.LabelInfo isHovered={isHovered === index }>valor liberado:</S.LabelInfo>
+                                        <S.LabelValue isHovered={isHovered === index }>
+                                          {'R$ ' + item.Price}
+                                        </S.LabelValue>
+                                        <S.LabelValue isHovered={isHovered === index }>
+                                          {item.Obs}
+                                        </S.LabelValue>
+                                      </S.ValorContainer>
+                                      <div>
+                                        <span>
+                                          Ver mais
+                                        </span>
+                                      </div>
+                                    </S.AprovadoContainer>
+                                  ))}
+                                </RadioGroup>
+                              </>
+                            )}
+                          />
+                        }
                       </div>
                     </div>
                   </form>
