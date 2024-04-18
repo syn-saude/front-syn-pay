@@ -1,4 +1,8 @@
-export const BV_NACIONALIDADE = ["BRASILEIRO", "ESTRANGEIRO", "NATURALIZADO"]
+export const BV_NACIONALIDADE = [
+  { Id: 1, Name: "BRASILEIRO" }, 
+  { Id: 2, Name: "ESTRANGEIRO" }, 
+  { Id: 2, Name: "NATURALIZADO" }
+]
 
 export const BV_SITUACAO_IMOVEL = [
   {
@@ -29,11 +33,11 @@ export const BV_SITUACAO_IMOVEL = [
 ]
 
 export const BV_ESTADO_CIVIL = [
-  {
-    codigo: null,
-    descricao: "INFORME ESTADO CIVIL",
-    ativo: true,
-  },
+  // {
+  //   codigo: null,
+  //   descricao: "INFORME ESTADO CIVIL",
+  //   ativo: true,
+  // },
   {
     codigo: 5,
     descricao: "CASADO",
