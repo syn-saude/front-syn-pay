@@ -5,7 +5,9 @@ import Link from "next/link"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
+  Angry,
   Bird,
+  Frown,
   Home,
   LineChart,
   Package,
@@ -14,8 +16,6 @@ import {
   Rabbit,
   ShoppingCart,
   Users,
-  Angry,
-  Frown,
 } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import * as yup from "yup"
@@ -117,7 +117,7 @@ const etapas = [
     step: ETAPAS_FINANCIAMENTO.valores,
     titulo: "De quanto você precisa?",
     descricao: "",
-    validacao: ["procedimento","valorSolicitado", "renda"],
+    validacao: ["procedimento", "valorSolicitado", "renda"],
     ativo: true,
   },
   {
@@ -130,10 +130,14 @@ const etapas = [
 ]
 //#endregion
 function Add() {
+  //#region USE STATE
   const [currentStep, setCurrentStep] = useState(0)
   const [isHovered, setIsHovered] = useState(null)
-  const [aprovado, setAprovado] = useState(true)
-  const [reprovado, setReprovado] = useState(false)
+  const [aprovado, setAprovado] = useState(false)
+  const [reprovado, setReprovado] = useState(true)
+  //#endregion
+
+  //#region USE FORM
 
   const {
     register,
@@ -151,6 +155,7 @@ function Add() {
   const form = watch()
   const { errors } = formState
 
+  //#endregion
   const handleFirstStep = () => {
     setCurrentStep(0)
   }
@@ -387,14 +392,14 @@ function Add() {
                       } grid gap-6`}
                     >
                       <div className="flex flex-col gap-3">
-                          <Label>Procedimento desejado</Label>
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="procedimento"
-                            placeholder="Informe seu procedimento"
-                          />
-                        </div>
+                        <Label>Procedimento desejado</Label>
+                        <Input
+                          errors={errors}
+                          control={control}
+                          controlName="procedimento"
+                          placeholder="Informe seu procedimento"
+                        />
+                      </div>
                       <div className="grid grid-cols-1 gap-4">
                         <div className="flex flex-col gap-3 ">
                           <Label>De quanto você precisa?</Label>
@@ -430,38 +435,45 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
                       } grid gap-6`}
                     >
-                    { aprovado && (
-
-                      <div className="grid grid-cols-1 gap-3 ">
-                        {APROVADOS.map((item, index) => (
-                          <CardValorLiberado
-                            key={index}
-                            selecionado={form.detalhes == item.Id}
-                            onValueChange={() =>
-                              setValue("detalhes", item.Id)
-                            }
-                            opcao={item}
-                            parcelas={item.Obs}
-                            valorLiberado={item.Price}
-                          />
-                        ))}
-                      </div>
+                      {aprovado && (
+                        <div className="grid grid-cols-1 gap-3 ">
+                          {APROVADOS.map((item, index) => (
+                            <CardValorLiberado
+                              key={index}
+                              selecionado={form.detalhes == item.Id}
+                              onValueChange={() =>
+                                setValue("detalhes", item.Id)
+                              }
+                              opcao={item}
+                              parcelas={item.Obs}
+                              valorLiberado={item.Price}
+                            />
+                          ))}
+                        </div>
                       )}
-                      {
-                        reprovado && (
-                          <div className="grid grid-cols-1 gap-8 justify-items-center">
-
-                            <Frown strokeWidth={1.1} size={70} color="#ff6c2e"/>
-                            <div className="grid grid-cols-1 gap-8 w-[420px] ">
-
-                            <S.LabelNotAprov>Infelizmente não encontramos propostas disponíveis.</S.LabelNotAprov>
-                            <S.LabelNotAprov>Deseja realizar uma nova sumulação com outro CPF?</S.LabelNotAprov>
-                            </div>
-
-                            <S.ButtonNewSimulation onClick={handleFirstStep}>Sim, Simular com outro CPF!</S.ButtonNewSimulation>
+                      {reprovado && (
+                        <div className="grid grid-cols-1 gap-8 justify-items-center">
+                          <Frown strokeWidth={1.1} size={70} color="#ff6c2e" />
+                          <div className="grid grid-cols-1 gap-8 w-[420px] ">
+                            <S.LabelNotAprov>
+                              Infelizmente não encontramos propostas
+                              disponíveis.
+                            </S.LabelNotAprov>
+                            <S.LabelNotAprov>
+                              Deseja realizar uma nova sumulação com outro CPF?
+                            </S.LabelNotAprov>
                           </div>
-                        )
-                      }
+
+                          <Button
+                            size="lg"
+                            variant="default"
+                            type="button"
+                            onClick={handleFirstStep}
+                          >
+                            Sim, Simular com outro CPF!
+                          </Button>
+                        </div>
+                      )}
                     </div>
                     {
                       //#endregion ff6c2e
@@ -469,7 +481,6 @@ function Add() {
                   </form>
                 </CardContent>
                 {(currentStep !== 2 || !reprovado) && (
-
                   <CardFooter className="border-t px-6 py-4 gap-4">
                     {currentStep > 0 && (
                       <Button
