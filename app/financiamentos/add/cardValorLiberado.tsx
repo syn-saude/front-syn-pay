@@ -24,7 +24,6 @@ export default function CardValorLiberado({
   ...props
 }: IProps) {
   function handleChange() {
-    debugger
     onValueChange(opcao)
   }
   return (

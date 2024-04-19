@@ -674,7 +674,7 @@ function Add() {
                               errors={errors}
                               control={control}
                               controlName="identidade"
-                              mask="9999999999"
+                              // mask="9999999999"
                               placeholder="RG ou RNE"
                             />
                           </div>
