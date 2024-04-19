@@ -1,27 +1,17 @@
 export type SingInProps = {
-  cpf: string;
-  email?: string;
-  senha: string;
-};
+  cpf: string
+  email?: string
+  senha: string
+}
 
 export interface AuthResponse {
-  id: string;
-  cpf: string;
-  nome: string;
-  perfis: string[];
-  perfisPorTenant: any[];
-  authToken: string;
-  dataExpiracaoToken: Date;
-  primeiroAcesso: boolean;
-  resetarToken: boolean;
-  tipoParceiro: string;
-  aceitouPoliticaPrivacidade: boolean;
-  verResumoAtualizacoes: boolean;
-  setorFuncionario: string;
-  aceitouTermo: boolean;
-  verDashboard: boolean;
-  temPacote: boolean;
-  perfisNome: any[];
-  mostrarTutorial: boolean;
-  lstSetorFuncionario: string[];
+  id: string
+  cpf: string
+  perfisPorTenant: any[]
+  authToken: string
+  dataExpiracaoToken: Date
+  primeiroAcesso: boolean
+  aceitouPoliticaPrivacidade: boolean
+  verResumoAtualizacoes: boolean
+  aceitouTermo: boolean
 }
