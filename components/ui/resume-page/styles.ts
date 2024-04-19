@@ -28,7 +28,6 @@ export const ContentBoxSimulation = styled.div`
 `
 export const TextInfoSimulation = styled.span`
   font-size: 12px;
-
 `
 export const InforBox = styled.div`
 display: flex;
@@ -37,4 +36,10 @@ max-width: 40%;
 padding: 16px;
 border: 1px solid #605dec;
 background-color: #f4f3fe;
+`;
+
+export const ConfirContainer = styled.div`
+display: flex;
+gap: 8px;
+align-items: center;
 `;
