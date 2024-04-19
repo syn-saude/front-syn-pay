@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { obterCep } from "@/services/cep"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
@@ -48,6 +49,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ComboboxControlled } from "@/components/ui/combobox"
 import Input from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { ResumePage } from "@/components/ui/resume-page/resumePage"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
@@ -66,13 +68,13 @@ const schema = yup
     cpf: yup.string().required().label("CPF"),
     dataNascimento: yup.string().required().label("Data de nascimento"),
     email: yup.string().email().required().label("E-mail"),
-    uf: yup.string().required().label("UF"),
+    ufProponente: yup.string().required().label("UF"),
     //Step 2
     procedimento: yup.string().required().label("Procedimento"),
     valorSolicitado: yup.number().required().label("Valor solicitado"),
     renda: yup.number().required().label("Renda"),
     //Step 3
-    detalhes: yup.number().required().label("Valor aprovado"),
+    preAprovado: yup.number().required().label("Valor aprovado"),
     //Step 4
     //visualizar arquivo de validação
     //Step 5
@@ -84,9 +86,9 @@ const schema = yup
     patrimonio: yup.number().required().label("Valor do Patrimônio"),
     //Step 6
     cep: yup.string().required().label("CEP"),
-    ufResidencial: yup.string().required().label("UF Residencial"),
-    cidade: yup.string().required().label("Cidade"),
-    endereco: yup.string().required().label("Endereço"),
+    uf: yup.string().required().label("UF Residencial"),
+    localidade: yup.string().required().label("Cidade"),
+    logradouro: yup.string().required().label("Endereço"),
     bairro: yup.string().required().label("Bairro"),
     complemento: yup.string().label("Complemento"),
     numero: yup.string().required().label("Número"),
@@ -114,13 +116,14 @@ interface FinanciamentoRequest {
   cpf: string
   dataNascimento: string
   email: string
-  uf: string
+  ufProponente: string
   //Step 2
   procedimento: string
   valorSolicitado: number
   renda: number
   //Step 3
-  detalhes: any
+  preAprovado: any
+  //Step 4
   //visualizar arquivo de validação
   //Step 5
   nacionalidade: string
@@ -131,9 +134,9 @@ interface FinanciamentoRequest {
   patrimonio: number
   //Step 6
   cep: string
-  ufResidencial: string
-  cidade: string
-  endereco: string
+  uf: string
+  localidade: string
+  logradouro: string
   bairro: string
   numero: string
   situacaoImovel: string
@@ -145,7 +148,7 @@ interface FinanciamentoRequest {
   anos: number
   meses: number
   //Step 8
-  ciente: string
+  ciente: boolean
   //visualização e validação
 }
 //#region ETAPAS
@@ -161,13 +164,22 @@ enum ETAPAS_FINANCIAMENTO {
 }
 const etapas = [
   {
+    //step 1
     step: ETAPAS_FINANCIAMENTO.proponente,
     titulo: "Dados do proponente",
     descricao: "Informe os dados de contato",
-    validacao: ["nome", "telefone", "cpf", "dataNascimento", "email", "uf"],
+    validacao: [
+      "nome",
+      "telefone",
+      "cpf",
+      "dataNascimento",
+      "email",
+      "ufProponente",
+    ],
     ativo: true,
   },
   {
+    //step 2
     step: ETAPAS_FINANCIAMENTO.valores,
     titulo: "De quanto você precisa?",
     descricao: "",
@@ -175,13 +187,15 @@ const etapas = [
     ativo: true,
   },
   {
+    //step 3
     step: ETAPAS_FINANCIAMENTO.valorAprovados,
     titulo: "Propostas pré-aprovados",
     descricao: "",
-    validacao: ["detalhes"],
+    validacao: ["preAprovado"],
     ativo: true,
   },
   {
+    //step 4
     step: ETAPAS_FINANCIAMENTO.resumoSimulacao,
     titulo: "Confira os detalhes da sua simulação",
     descricao: "",
@@ -189,6 +203,7 @@ const etapas = [
     ativo: true,
   },
   {
+    //step 5
     step: ETAPAS_FINANCIAMENTO.dadosPessoais,
     titulo: "Complete seus dados pessoais",
     descricao: "",
@@ -203,14 +218,15 @@ const etapas = [
     ativo: true,
   },
   {
+    //step 6
     step: ETAPAS_FINANCIAMENTO.residencia,
     titulo: "Qual é o seu endereço residencial?",
     descricao: "",
     validacao: [
       "cep",
-      "ufResidencial",
-      "cidade",
-      "endereco",
+      "uf",
+      "localidade",
+      "logradouro",
       "bairro",
       "complemento",
       "numero",
@@ -219,6 +235,7 @@ const etapas = [
     ativo: true,
   },
   {
+    //step 7
     step: ETAPAS_FINANCIAMENTO.profissao,
     titulo: "Informe seus dados profissionais",
     descricao: "",
@@ -232,10 +249,11 @@ const etapas = [
     ativo: true,
   },
   {
+    //step 8
     step: ETAPAS_FINANCIAMENTO.resumoSolicitacao,
     titulo: "Revise o resumo da sua solicitação",
     descricao: "",
-    validacao: ["detalhes"],
+    validacao: ["ciente"],
     ativo: true,
   },
 ]
@@ -243,9 +261,11 @@ const etapas = [
 function Add() {
   //#region USE STATE
   const [currentStep, setCurrentStep] = useState(0)
+
   const [isHovered, setIsHovered] = useState(null)
   const [aprovado, setAprovado] = useState(true)
   const [reprovado, setReprovado] = useState(false)
+
   //#endregion
 
   //#region USE FORM
@@ -264,7 +284,35 @@ function Add() {
   })
   const form = watch()
   const { errors } = formState
+  const msgError = () => errors.ciente?.message
+  const isValid = () => !msgError()
+  console.log("errors", errors)
 
+  //#endregion
+  //#region Request Cep
+  const handleCEPChange = async (event: any) => {
+    const cep = event.target.value.replace(/\D/g, "")
+    if (cep.length === 8) {
+      try {
+        const response = await obterCep(cep)
+        const data = response.data
+        setValue("cep", data.cep)
+        setValue("uf", data.uf)
+        setValue("localidade", data.localidade)
+        setValue("logradouro", data.logradouro)
+        setValue("bairro", data.bairro)
+        setValue("complemento", data.complemento)
+      } catch (error) {
+        console.error("Erro ao obter CEP:", error)
+        setValue("cep", "")
+        setValue("uf", "")
+        setValue("localidade", "")
+        setValue("logradouro", "")
+        setValue("bairro", "")
+        setValue("complemento", "")
+      }
+    }
+  }
   //#endregion
   const handleFirstStep = () => {
     setCurrentStep(0)
@@ -295,9 +343,6 @@ function Add() {
     return etapas[currentStep]
   }
 
-  useEffect(() => {
-    register("detalhes")
-  }, [register])
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -488,7 +533,7 @@ function Add() {
                               }
                             })}
                             control={control}
-                            controlName="uf"
+                            controlName="ufProponente"
                             errors={errors}
                             placeholder="Selecione a UF"
                           />
@@ -556,13 +601,17 @@ function Add() {
                       } grid gap-6`}
                     >
                       {aprovado && (
-                        <div className="grid grid-cols-1 gap-2 ">
+                        <Controller
+                        control={control}
+                        name="preAprovado"
+                        render={({ field }) => (
+                          <div className="grid grid-cols-1 gap-2 ">
                           {APROVADOS.map((item, index) => (
                             <CardValorLiberado
                               key={index}
-                              selecionado={form.detalhes == item.Id}
+                              selecionado={form.preAprovado == item.Id}
                               onValueChange={() =>
-                                setValue("detalhes", item.Id)
+                                setValue("preAprovado", item.Id)
                               }
                               opcao={item}
                               parcelas={item.Obs}
@@ -570,6 +619,8 @@ function Add() {
                             />
                           ))}
                         </div>
+                        )}
+                      />
                       )}
                       {reprovado && (
                         <div className="grid grid-cols-1 gap-8 justify-items-center">
@@ -624,10 +675,10 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
                       } grid gap-6`}
                     >
-                      <div className="flex gap-3 grid-cols-2 gap-1">
+                      <div className="flex grid-cols-2 gap-1">
                         <div>
                           <Label className="text-xs">
-                            Em qual estado o cliente mora?
+                            Em qual sua nacionalidade?
                           </Label>
                           <ComboboxControlled
                             options={BV_NACIONALIDADE.map((p) => {
@@ -678,15 +729,26 @@ function Add() {
                           </div>
                         </div>
                         <div className="flex gap-3 flex-col justify-end">
-                          {/* controlName="genero" */}
-                          <div className="flex gap-1">
-                            <Checkbox id="terms" />
-                            <Label>masculino</Label>
-                          </div>
-                          <div className="flex gap-1">
-                            <Checkbox id="terms" />
-                            <Label>Feminino</Label>
-                          </div>
+                          <Label className="text-xs">Informe seu genero</Label>
+                          <Controller
+                            control={control}
+                            name="genero"
+                            render={({ field }) => (
+                              <RadioGroup
+                                defaultValue="comfortable"
+                                onValueChange={field.onChange}
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="M" id="r1" />
+                                  <Label htmlFor="r1">Masculino</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="F" id="r2" />
+                                  <Label htmlFor="r2">Feminino</Label>
+                                </div>
+                              </RadioGroup>
+                            )}
+                          />
                         </div>
                       </div>
                       <div className="flex flex-col gap-1">
@@ -726,13 +788,16 @@ function Add() {
                     >
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-1 ">
-                          <Label className="text-xs">Informe o seu CEP</Label>
+                          <Label className="text-xs">
+                            Informe seu RG ou RNE
+                          </Label>
                           <Input
                             errors={errors}
                             control={control}
                             controlName="cep"
                             mask="99999-999"
                             placeholder="RG ou RNE"
+                            onChange={handleCEPChange}
                           />
                         </div>
                         <div className="flex gap-3 grid-cols-2">
@@ -749,7 +814,7 @@ function Add() {
                                 }
                               })}
                               control={control}
-                              controlName="ufResidencial"
+                              controlName="uf"
                               errors={errors}
                               placeholder="UF"
                             />
@@ -761,7 +826,7 @@ function Add() {
                             <Input
                               errors={errors}
                               control={control}
-                              controlName="cidade"
+                              controlName="localidade"
                               placeholder="Qual a sua cidade?"
                             />
                           </div>
@@ -773,7 +838,7 @@ function Add() {
                           <Input
                             errors={errors}
                             control={control}
-                            controlName="endereco"
+                            controlName="logradouro"
                             placeholder="Qual a seu endereço?"
                           />
                         </div>
@@ -889,13 +954,11 @@ function Add() {
 
                         <div className="flex flex-col gap-2 ">
                           <Label className="text-xs">
-                            Há quato tempo esta na sua ocupação atual?
+                            A quanto tempo esta na sua ocupação atual?
                           </Label>
                           <div className="flex gap-3 grid-cols-2">
                             <div>
-                              <Label className="text-xs">
-                                Há quantos anos?
-                              </Label>
+                              <Label className="text-xs">A quantos anos?</Label>
                               <Input
                                 errors={errors}
                                 control={control}
@@ -905,7 +968,7 @@ function Add() {
                             </div>
                             <div>
                               <Label className="text-xs">
-                                Há quantos meses?
+                                A quantos meses?
                               </Label>
                               <Input
                                 errors={errors}
@@ -931,6 +994,31 @@ function Add() {
                       } grid gap-6`}
                     >
                       <ResumePage />
+                      <div>
+                        <Controller
+                          control={control}
+                          name="ciente"
+                          render={({ field }) => (
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                className="flex items-center space-x-2"
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+
+                              <Label htmlFor="r1">
+                                Confirmo que estou ciente sobre o CET e taxas do
+                                meu contrato
+                              </Label>
+                            </div>
+                          )}
+                        />
+                        {!isValid() && (
+                          <span className="text-sm font-medium text-red-500">
+                            {msgError()}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {
                       //#endregion
@@ -963,4 +1051,3 @@ function Add() {
 }
 
 export default withAuth(<Add />)
-// export default Add
