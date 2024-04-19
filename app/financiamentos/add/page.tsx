@@ -5,15 +5,12 @@ import Link from "next/link"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
-  Angry,
-  Bird,
   Frown,
   Home,
   LineChart,
   Package,
   Package2,
   PanelLeft,
-  Rabbit,
   ShoppingCart,
   Users,
 } from "lucide-react"
@@ -22,7 +19,8 @@ import * as yup from "yup"
 import { pt } from "yup-locales"
 
 import { APROVADOS } from "@/config/const/common/aprovados"
-import { PROCEDIMENTOS } from "@/config/const/common/procedimentos"
+import { BV_ESTADO_CIVIL, BV_NACIONALIDADE, BV_PROFISSOES, BV_SITUACAO_IMOVEL, BV_TIPOS_PROFISSOES } from "@/config/const/bv/dominio"
+
 import { ESTADOS } from "@/config/const/common/states"
 import {
   Breadcrumb,
@@ -41,27 +39,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Combobox, ComboboxControlled } from "@/components/ui/combobox"
+import { ComboboxControlled } from "@/components/ui/combobox"
 import Input from "@/components/ui/input"
-import InputCurrency from "@/components/ui/input-currency"
+
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
 import withAuth from "@/components/with-auth"
 
 import CardValorLiberado from "./cardValorLiberado"
 import * as S from "./styles"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ResumePage } from "@/components/ui/resume-page/resumePage"
 
 yup.setLocale(pt)
 //#region SCHEMA
@@ -80,6 +69,33 @@ const schema = yup
     renda: yup.number().required().label("Renda"),
     //Step 3
     detalhes: yup.number().required().label("Valor aprovado"),
+    //Step 4
+    //visualizar arquivo de validação
+    //Step 5
+    nacionalidade: yup.string().required().label("Nacionalidade"),
+    estadoCivil: yup.string().required().label("Estado civil"),
+    identidade: yup.string().required().label("Identidade"),
+    genero: yup.string().label("Gênero"),
+    nomeMae: yup.string().required().label("Nome da mãe"),
+    patrimonio: yup.number().required().label("Valor do Patrimônio"),
+    //Step 6
+    cep: yup.string().required().label("CEP"),
+    ufResidencial: yup.string().required().label("UF Residencial"),
+    cidade: yup.string().required().label("Cidade"),
+    endereco: yup.string().required().label("Endereço"),
+    bairro: yup.string().required().label("Bairro"),
+    complemento: yup.string().label("Complemento"),
+    numero: yup.string().required().label("Número"),
+    situacaoImovel: yup.string().required().label("Situação do imóvel"),
+    //Step 7
+    tipoEmprego: yup.string().required().label("Tipo de emprego"),
+    atividade: yup.string().required().label("Atividade"),
+    rendaProfissional: yup.number().required().label("Renda profissional"),
+    anos: yup.number().required().label("Anos"),
+    meses: yup.number().required().label("Meses"),
+    //Step 8
+    ciente: yup.boolean().required().oneOf([true], "Você precisa aceitar os termos"),
+    //visualização e validação
   })
   .required()
 //#endregion
@@ -98,12 +114,43 @@ interface FinanciamentoRequest {
   renda: number
   //Step 3
   detalhes: any
+  //visualizar arquivo de validação
+  //Step 5
+  nacionalidade: string
+  estadoCivil: string
+  identidade: string
+  genero: string
+  nomeMae: string
+  patrimonio: number
+  //Step 6
+  cep: string
+  ufResidencial: string
+  cidade: string
+  endereco: string
+  bairro: string
+  numero: string
+  situacaoImovel: string
+  complemento: string
+  //Step 7
+  tipoEmprego: string
+  atividade: string
+  rendaProfissional: number
+  anos: number
+  meses: number
+  //Step 8
+  ciente: string
+  //visualização e validação
 }
 //#region ETAPAS
 enum ETAPAS_FINANCIAMENTO {
   proponente = "proponente",
   valores = "valores",
   valorAprovados = "valorAprovados",
+  resumoSimulacao = "resumoSimulacao",
+  dadosPessoais = "dadosPessoais",
+  residencia = "residencia",
+  profissao = "profissao",
+  resumoSolicitacao = "resumoSolicitacao",
 }
 const etapas = [
   {
@@ -127,18 +174,52 @@ const etapas = [
     validacao: ["detalhes"],
     ativo: true,
   },
+  {
+    step: ETAPAS_FINANCIAMENTO.resumoSimulacao,
+    titulo: "Confira os detalhes da sua simulação",
+    descricao: "",
+    validacao: ["detalhes"],
+    ativo: true,
+  },
+  {
+    step: ETAPAS_FINANCIAMENTO.dadosPessoais,
+    titulo: "Complete seus dados pessoais",
+    descricao: "",
+    validacao: ["nacionalidade", "estadoCivil", "identidade", "genero", "nomeMae", "patrimonio"],
+    ativo: true,
+  },
+  {
+    step: ETAPAS_FINANCIAMENTO.residencia,
+    titulo: "Qual é o seu endereço residencial?",
+    descricao: "",
+    validacao: ["cep", "ufResidencial", "cidade", "endereco", "bairro", "complemento", "numero", "situacaoImovel"],
+    ativo: true,
+  },
+  {
+    step: ETAPAS_FINANCIAMENTO.profissao,
+    titulo: "Informe seus dados profissionais",
+    descricao: "",
+    validacao: ["tipoEmprego", "atividade", "rendaProfissional", "anos", "meses"],
+    ativo: true,
+  },
+  {
+    step: ETAPAS_FINANCIAMENTO.resumoSolicitacao,
+    titulo: "Revise o resumo da sua solicitação",
+    descricao: "",
+    validacao: ["detalhes"],
+    ativo: true,
+  },
 ]
 //#endregion
 function Add() {
   //#region USE STATE
   const [currentStep, setCurrentStep] = useState(0)
   const [isHovered, setIsHovered] = useState(null)
-  const [aprovado, setAprovado] = useState(false)
-  const [reprovado, setReprovado] = useState(true)
+  const [aprovado, setAprovado] = useState(true)
+  const [reprovado, setReprovado] = useState(false)
   //#endregion
 
   //#region USE FORM
-
   const {
     register,
     watch,
@@ -302,14 +383,13 @@ function Add() {
                       //#region ETAPA 1
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.proponente && "hidden"
-                      } grid gap-6 md:max-w-[600px]`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.proponente && "hidden"
+                        } grid gap-6 md:max-w-[600px]`}
                     >
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-3">
-                          <Label>Nome completo</Label>
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Nome completo</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -318,8 +398,8 @@ function Add() {
                           />
                         </div>
 
-                        <div className="flex flex-col gap-3 ">
-                          <Label>Telefone</Label>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Telefone</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -330,8 +410,8 @@ function Add() {
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-3 ">
-                          <Label>Informe os numeros do seu CPF</Label>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Informe os numeros do seu CPF</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -340,8 +420,8 @@ function Add() {
                             placeholder="CPF"
                           />
                         </div>
-                        <div className="flex flex-col gap-3">
-                          <Label>Informe sua data de nascimento</Label>
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Informe sua data de nascimento</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -352,8 +432,8 @@ function Add() {
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-3">
-                          <Label>E-mail</Label>
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">E-mail</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -361,8 +441,8 @@ function Add() {
                             placeholder="Informe seu nome"
                           />
                         </div>
-                        <div className="flex flex-col gap-3">
-                          <Label>Em qual estado o cliente mora?</Label>
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Em qual estado o cliente mora?</Label>
                           <ComboboxControlled
                             options={ESTADOS.map((p) => {
                               return {
@@ -386,13 +466,12 @@ function Add() {
                       //#region ETAPA 2
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.valores && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.valores && "hidden"
+                        } grid gap-6`}
                     >
-                      <div className="flex flex-col gap-3">
-                        <Label>Procedimento desejado</Label>
+                      <div className="flex flex-col gap-1">
+                        <Label className="text-xs">Procedimento desejado</Label>
                         <Input
                           errors={errors}
                           control={control}
@@ -401,8 +480,8 @@ function Add() {
                         />
                       </div>
                       <div className="grid grid-cols-1 gap-4">
-                        <div className="flex flex-col gap-3 ">
-                          <Label>De quanto você precisa?</Label>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">De quanto você precisa?</Label>
                           <Input
                             money
                             errors={errors}
@@ -411,8 +490,8 @@ function Add() {
                             placeholder="Informe o valor solicitado!"
                           />
                         </div>
-                        <div className="flex flex-col gap-3 ">
-                          <Label>Qual é o valor da sua renda?</Label>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Qual é o valor da sua renda?</Label>
                           <Input
                             money
                             errors={errors}
@@ -430,13 +509,12 @@ function Add() {
                       //#region ETAPA 3
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
+                        } grid gap-6`}
                     >
                       {aprovado && (
-                        <div className="grid grid-cols-1 gap-3 ">
+                        <div className="grid grid-cols-1 gap-2 ">
                           {APROVADOS.map((item, index) => (
                             <CardValorLiberado
                               key={index}
@@ -476,7 +554,319 @@ function Add() {
                       )}
                     </div>
                     {
-                      //#endregion ff6c2e
+                      //#endregion
+                    }
+
+                    {
+                      //#region ETAPA 4
+                    }
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.resumoSimulacao && "hidden"
+                        } grid gap-6`}
+                    >
+                      <ResumePage />
+                    </div>
+
+                    {
+                      //#endregion
+                    }
+
+                    {
+                      //#region ETAPA 5
+                    }
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
+                        } grid gap-6`}
+                    >
+                      <div className="flex gap-3 grid-cols-2 gap-1">
+                        <div>
+
+                          <Label className="text-xs">Em qual estado o cliente mora?</Label>
+                          <ComboboxControlled
+                            options={BV_NACIONALIDADE.map((p) => {
+                              return {
+                                label: p.Name,
+                                value: p.Name,
+                                id: p.Id,
+                              }
+                            })}
+                            control={control}
+                            controlName="nacionalidade"
+                            errors={errors}
+                            placeholder="Sua nacionalidade"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Qual seu estado civil</Label>
+                          <ComboboxControlled
+                            options={BV_ESTADO_CIVIL.map((p) => {
+                              return {
+                                label: p.descricao,
+                                value: p.descricao,
+                                id: p.codigo as number,
+                              }
+                            })}
+                            control={control}
+                            controlName="estadoCivil"
+                            errors={errors}
+                            placeholder="Seus stado civil"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-8 grid-cols-2">
+
+                        <div className="flex flex-col gap-3 ">
+                          <Label className="text-xs">Informe os numeros da sua identidade</Label>
+                          <div className="flex gap-8 grid-cols-2">
+
+                            <Input
+                              errors={errors}
+                              control={control}
+                              controlName="identidade"
+                              mask="9999999999"
+                              placeholder="RG ou RNE"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex gap-3 flex-col justify-end">
+                          {/* controlName="genero" */}
+                          <div className="flex gap-1">
+                            <Checkbox id="terms" />
+                            <Label>masculino</Label>
+                          </div>
+                          <div className="flex gap-1">
+                            <Checkbox id="terms" />
+                            <Label>Feminino</Label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <Label className="text-xs" >Nome da mãe</Label>
+                        <Input
+                          errors={errors}
+                          control={control}
+                          controlName="nomeMae"
+                          placeholder="Informe o nome da sua mãe"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1 ">
+                        <Label className="text-xs">Valor do seu patrimonio</Label>
+                        <Input
+                          money
+                          errors={errors}
+                          control={control}
+                          controlName="patrimonio"
+                          placeholder="Informe o valor"
+                        />
+                      </div>
+                      {/* <Check className="h-4 w-4 bg-green-800 rounded-xl p-1" /> */}
+                    </div>
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 6
+                    }
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.residencia && "hidden"
+                        } grid gap-6`}
+                    >
+                      <div className="flex flex-col gap-3">
+
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Informe o seu CEP</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="cep"
+                            mask="99999-999"
+                            placeholder="RG ou RNE"
+                          />
+                        </div>
+                        <div className="flex gap-3 grid-cols-2">
+                          <div className="flex flex-col gap-1">
+                            <Label className="text-xs">Em qual estado o cliente mora?</Label>
+                            <ComboboxControlled
+                              options={ESTADOS.map((p) => {
+                                return {
+                                  label: p.Initials,
+                                  value: p.Initials,
+                                  id: p.Id,
+                                }
+                              })}
+                              control={control}
+                              controlName="ufResidencial"
+                              errors={errors}
+                              placeholder="UF"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1 ">
+                            <Label className="text-xs">Informe sua cidade</Label>
+                            <Input
+                              errors={errors}
+                              control={control}
+                              controlName="cidade"
+                              placeholder="Qual a sua cidade?"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Informe seu endereço</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="endereco"
+                            placeholder="Qual a seu endereço?"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Informe seu bairro</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="bairro"
+                            placeholder="Qual a seu bairro?"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Complemento</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="complemento"
+                            placeholder="Possui algum complemento?"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Numero</Label>
+                          <Input
+                            errors={errors}
+                            control={control}
+                            controlName="numero"
+                            placeholder="Informe o numero da sua residência"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Situação do seu imovel</Label>
+                          <ComboboxControlled
+                            options={BV_SITUACAO_IMOVEL.map((p) => {
+                              return {
+                                label: p.descricao,
+                                value: p.descricao,
+                                id: p.codigo,
+                              }
+                            })}
+                            control={control}
+                            controlName="situacaoImovel"
+                            errors={errors}
+                            placeholder="Qual a situação do seu imovel?"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 7
+                    }
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.profissao && "hidden"
+                        } grid gap-6`}
+                    >
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <Label className="text-xs">Qual sua ocupação?</Label>
+                          <ComboboxControlled
+                            options={BV_TIPOS_PROFISSOES.map((p) => {
+                              return {
+                                label: p.descricao,
+                                value: p.descricao,
+                                id: p.codigo,
+                              }
+                            })}
+                            control={control}
+                            controlName="tipoEmprego"
+                            errors={errors}
+                            placeholder="Qual a sua ocupação"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                          <Label className="text-xs">Qual seu ramo de ocupação?</Label>
+                          <ComboboxControlled
+                            options={BV_PROFISSOES.map((p) => {
+                              return {
+                                label: p.descricao,
+                                value: p.descricao,
+                                id: p.codigo,
+                              }
+                            })}
+                            control={control}
+                            controlName="atividade"
+                            errors={errors}
+                            placeholder="Qual seu ramo de ocupação"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1 ">
+                          <Label className="text-xs">Valor do seu patrimonio</Label>
+                          <Input
+                            money
+                            errors={errors}
+                            control={control}
+                            controlName="rendaProfissional"
+                            placeholder="De quanto é sua renda?"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-2 ">
+                          <Label className="text-xs">Há quato tempo esta na sua ocupação atual?</Label>
+                          <div className="flex gap-3 grid-cols-2">
+                            <div>
+
+                              <Label className="text-xs">Há quantos anos?</Label>
+                              <Input
+                                errors={errors}
+                                control={control}
+                                controlName="anos"
+                                placeholder="Anos"
+                              />
+                            </div>
+                            <div>
+
+                              <Label className="text-xs">Há quantos meses?</Label>
+                              <Input
+                                errors={errors}
+                                control={control}
+                                controlName="meses"
+                                placeholder="Meses"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {
+                      //#endregion
+                    }
+                    {
+                      //#region ETAPA 8
+                    }
+                    <div
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.resumoSolicitacao && "hidden"
+                        } grid gap-6`}
+                    >
+                      <ResumePage />
+                    </div>
+                    {
+                      //#endregion
                     }
                   </form>
                 </CardContent>
