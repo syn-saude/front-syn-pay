@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { addToken } from "@/services/apiClient"
+import { addTenant, addToken } from "@/services/apiClient"
 import { authLogin } from "@/services/auth"
 import { AuthResponse, SingInProps } from "@/services/auth/types"
 import { destroyCookie, parseCookies, setCookie } from "nookies"
@@ -53,10 +53,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
         path: "/",
       })
 
+      setCookie(
+        undefined,
+        "@synauth.tenant",
+        userAuthResponse.perfisPorTenant[0],
+        {
+          // maxAge: 60 * 60 * 1, // 1 hour
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+          path: "/",
+        }
+      )
+
       setUser(userAuthResponse)
       setStorageUser(userAuthResponse)
       addToken(authToken)
-
+      // addTenant()
       // toast.success("Bem Vindo! " + cpf)
       router.push("/financiamentos")
     } catch (error) {
