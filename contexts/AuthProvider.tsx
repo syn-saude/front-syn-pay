@@ -21,19 +21,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticated = !!user
 
   useEffect(() => {
-    const { "@synauth.token": token } = parseCookies()
+    const { "@synauth.token": token, "@synauth.tenant": tenant } =
+      parseCookies()
     if (token) {
       setUser(storageUser)
       addToken(token)
-      // api
-      //   .get("/me")
-      //   .then((response) => {
-      //     const { id, name, cpf } = response.data
-      //     setUser({ id, name, cpf })
-      //   })
-      //   .catch(() => {
-      //     singOut()
-      //   })
+      addTenant(tenant)
     }
   }, [])
 
@@ -53,21 +46,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         path: "/",
       })
 
-      setCookie(
-        undefined,
-        "@synauth.tenant",
-        userAuthResponse.perfisPorTenant[0],
-        {
-          // maxAge: 60 * 60 * 1, // 1 hour
-          maxAge: 60 * 60 * 24 * 30, // 30 days
-          path: "/",
-        }
-      )
+      let tenantId = userAuthResponse.perfisPorTenant[0]?.tenantId
+      setCookie(undefined, "@synauth.tenant", tenantId, {
+        // maxAge: 60 * 60 * 1, // 1 hour
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      })
 
       setUser(userAuthResponse)
       setStorageUser(userAuthResponse)
       addToken(authToken)
-      // addTenant()
+      addTenant(tenantId)
       // toast.success("Bem Vindo! " + cpf)
       router.push("/financiamentos")
     } catch (error) {
@@ -85,6 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export function singOut() {
   try {
     destroyCookie(undefined, "@synauth.token")
+    destroyCookie(undefined, "@synauth.tenant")
     localStorage.removeItem("@synauth.user")
     window.location.href = "/"
     // router.push("/")
