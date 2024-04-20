@@ -20,7 +20,7 @@ import SiteHeader from "../site-header"
 
 export default function withAuth(
   Component: ReactNode,
-  profiles = [SYN_PROFILES.PARCEIRO],
+  profiles = [SYN_PROFILES.CLINICA_SYNPAY],
   showHeader = true
 ) {
   const session = sessionStatus
@@ -41,7 +41,9 @@ export default function withAuth(
 
       if (!!user && profiles.length > 0) {
         //Verificar se usuário logado tem o perfil requisitado
-        const profileExist = profiles.find((p) => user?.perfis.includes(p))
+        const profileExist = profiles.find((p) =>
+          user?.perfisPorTenant[0].perfis.map((p) => p.idPerfil).includes(p)
+        )
         if (!profileExist) {
           replaceToSignin()
         }

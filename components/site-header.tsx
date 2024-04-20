@@ -85,7 +85,7 @@ export default function SiteHeader() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>
                 <div className="flex items-center gap-4 w-44 justify-between">
-                  <div>{user?.perfisNome[0].nome}</div>
+                  <div>{user?.perfisPorTenant[0].descricao}</div>
                   <ThemeToggle />
                 </div>
               </DropdownMenuLabel>

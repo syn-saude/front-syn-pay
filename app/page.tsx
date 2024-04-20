@@ -56,9 +56,9 @@ export default function Home() {
   async function handleSingIn(form: SingInProps) {
     try {
       setLoading(true)
-      setTimeout(async () => {
-        await singIn(form)
-      }, 3000)
+
+      await singIn(form)
+      setLoading(false)
     } catch (error) {
       setLoading(false)
     }
