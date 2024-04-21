@@ -59,12 +59,13 @@ function useListagem<T, F>(
     setTermoPesquisa("")
     setFiltroStatus(" ")
     setFiltroGeral(undefined)
-    // debounced.callback()
+    debounced()
   }
 
   const handlePesquisarDados = () => {
     setLoading(true)
     // debounced.callback()
+    debounced()
   }
 
   const handleSetTermoPesquisarCodigo = (codigo: any) => {

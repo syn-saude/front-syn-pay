@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -20,6 +21,7 @@ import {
   Users,
 } from "lucide-react"
 
+import useListagem from "@/hooks/listagem/useListagem"
 import { Badge } from "@/components/ui/badge"
 import {
   Breadcrumb,
@@ -66,6 +68,21 @@ import {
 import withAuth from "@/components/with-auth"
 
 function Financiamentos() {
+  const novas = useListagem(10, listagemFinanciamentos)
+
+  function listagemFinanciamentos(query, primeiraBusca?: boolean) {
+    query["tipo"] = 2
+    return _notificacoes.listagemNotificacoes(query)
+  }
+
+  // useEffect(() => {
+  //   inicio()
+  // }, [])
+
+  // async function inicio() {
+
+  // }
+
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
