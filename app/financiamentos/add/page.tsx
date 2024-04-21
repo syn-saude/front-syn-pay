@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { setupAPIClient } from "@/services/api"
 import { obterCep } from "@/services/cep"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -15,6 +16,7 @@ import {
   ShoppingCart,
   Users,
 } from "lucide-react"
+import moment from "moment"
 import { Controller, useForm } from "react-hook-form"
 import * as yup from "yup"
 import { pt } from "yup-locales"
@@ -68,35 +70,34 @@ const schema = yup
     cpf: yup.string().required().label("CPF"),
     dataNascimento: yup.string().required().label("Data de nascimento"),
     email: yup.string().email().required().label("E-mail"),
-    ufProponente: yup.string().required().label("UF"),
+    uf: yup.string().required().label("UF"),
     //Step 2
     procedimento: yup.string().required().label("Procedimento"),
     valorSolicitado: yup.number().required().label("Valor solicitado"),
     renda: yup.number().required().label("Renda"),
     //Step 3
-    preAprovado: yup.number().required().label("Valor aprovado"),
+    qtdParcelas: yup.number().required().label("Valor aprovado"),
     //Step 4
     //visualizar arquivo de validação
     //Step 5
     nacionalidade: yup.string().required().label("Nacionalidade"),
-    estadoCivil: yup.string().required().label("Estado civil"),
-    identidade: yup.string().required().label("Identidade"),
-    genero: yup.string().label("Gênero"),
+    estadoCivil: yup.number().required().label("Estado civil"),
+    rg: yup.string().required().label("Identidade"),
+    sexo: yup.string().label("Gênero"),
     nomeMae: yup.string().required().label("Nome da mãe"),
     patrimonio: yup.number().required().label("Valor do Patrimônio"),
     //Step 6
     cep: yup.string().required().label("CEP"),
-    uf: yup.string().required().label("UF Residencial"),
-    localidade: yup.string().required().label("Cidade"),
-    logradouro: yup.string().required().label("Endereço"),
+    endereco: yup.string().required().label("Endereço"),
+    estado: yup.string().required().label("UF Residencial"),
     bairro: yup.string().required().label("Bairro"),
+    cidade: yup.string().required().label("Cidade"),
     complemento: yup.string().label("Complemento"),
     numero: yup.string().required().label("Número"),
-    situacaoImovel: yup.string().required().label("Situação do imóvel"),
+    situacaoImovel: yup.number().required().label("Situação do imóvel"),
     //Step 7
-    tipoEmprego: yup.string().required().label("Tipo de emprego"),
-    atividade: yup.string().required().label("Atividade"),
-    rendaProfissional: yup.number().required().label("Renda profissional"),
+    tipoProfissao: yup.number().required().label("Tipo de emprego"),
+    profissao: yup.number().required().label("profissao"),
     anos: yup.number().required().label("Anos"),
     meses: yup.number().required().label("Meses"),
     //Step 8
@@ -110,41 +111,41 @@ const schema = yup
 //#endregion
 
 interface FinanciamentoRequest {
+  id: string
   //Step 1
   nome: string
   telefone: string
   cpf: string
   dataNascimento: string
+  uf: string
   email: string
-  ufProponente: string
   //Step 2
   procedimento: string
   valorSolicitado: number
   renda: number
   //Step 3
-  preAprovado: any
+  qtdParcelas: number
   //Step 4
   //visualizar arquivo de validação
   //Step 5
   nacionalidade: string
-  estadoCivil: string
-  identidade: string
-  genero: string
+  estadoCivil: number
+  rg: string
+  sexo: string
   nomeMae: string
   patrimonio: number
   //Step 6
   cep: string
-  uf: string
-  localidade: string
-  logradouro: string
+  endereco: string
+  estado: string
   bairro: string
-  numero: string
-  situacaoImovel: string
+  cidade: string
   complemento: string
+  numero: string
+  situacaoImovel: number
   //Step 7
-  tipoEmprego: string
-  atividade: string
-  rendaProfissional: number
+  tipoProfissao: number
+  profissao: number
   anos: number
   meses: number
   //Step 8
@@ -165,21 +166,16 @@ enum ETAPAS_FINANCIAMENTO {
 const etapas = [
   {
     //step 1
+    nuStep: 1,
     step: ETAPAS_FINANCIAMENTO.proponente,
     titulo: "Dados do proponente",
     descricao: "Informe os dados de contato",
-    validacao: [
-      "nome",
-      "telefone",
-      "cpf",
-      "dataNascimento",
-      "email",
-      "ufProponente",
-    ],
+    validacao: ["nome", "telefone", "cpf", "dataNascimento", "email", "uf"],
     ativo: true,
   },
   {
     //step 2
+    nuStep: 2,
     step: ETAPAS_FINANCIAMENTO.valores,
     titulo: "De quanto você precisa?",
     descricao: "",
@@ -188,14 +184,16 @@ const etapas = [
   },
   {
     //step 3
+    nuStep: 3,
     step: ETAPAS_FINANCIAMENTO.valorAprovados,
     titulo: "Propostas pré-aprovados",
     descricao: "",
-    validacao: ["preAprovado"],
+    validacao: ["qtdParcelas"],
     ativo: true,
   },
   {
     //step 4
+    nuStep: 4,
     step: ETAPAS_FINANCIAMENTO.resumoSimulacao,
     titulo: "Confira os detalhes da sua simulação",
     descricao: "",
@@ -204,14 +202,15 @@ const etapas = [
   },
   {
     //step 5
+    nuStep: 5,
     step: ETAPAS_FINANCIAMENTO.dadosPessoais,
     titulo: "Complete seus dados pessoais",
     descricao: "",
     validacao: [
       "nacionalidade",
       "estadoCivil",
-      "identidade",
-      "genero",
+      "rg",
+      "sexo",
       "nomeMae",
       "patrimonio",
     ],
@@ -219,15 +218,16 @@ const etapas = [
   },
   {
     //step 6
+    nuStep: 6,
     step: ETAPAS_FINANCIAMENTO.residencia,
     titulo: "Qual é o seu endereço residencial?",
     descricao: "",
     validacao: [
       "cep",
-      "uf",
-      "localidade",
-      "logradouro",
+      "endereco",
+      "estado",
       "bairro",
+      "cidade",
       "complemento",
       "numero",
       "situacaoImovel",
@@ -236,13 +236,14 @@ const etapas = [
   },
   {
     //step 7
+    nuStep: 7,
     step: ETAPAS_FINANCIAMENTO.profissao,
     titulo: "Informe seus dados profissionais",
     descricao: "",
     validacao: [
-      "tipoEmprego",
-      "atividade",
-      "rendaProfissional",
+      "tipoProfissao",
+      "profissao",
+      // "rendaProfissional",
       "anos",
       "meses",
     ],
@@ -250,6 +251,7 @@ const etapas = [
   },
   {
     //step 8
+    nuStep: 8,
     step: ETAPAS_FINANCIAMENTO.resumoSolicitacao,
     titulo: "Revise o resumo da sua solicitação",
     descricao: "",
@@ -261,10 +263,12 @@ const etapas = [
 function Add() {
   //#region USE STATE
   const [currentStep, setCurrentStep] = useState(0)
-
+  const [id, setId] = useState("")
   const [isHovered, setIsHovered] = useState(null)
   const [aprovado, setAprovado] = useState(true)
   const [reprovado, setReprovado] = useState(false)
+  const [respSimulacao, setRespSimulacao] = useState([])
+  console.log(respSimulacao)
 
   //#endregion
 
@@ -286,7 +290,6 @@ function Add() {
   const { errors } = formState
   const msgError = () => errors.ciente?.message
   const isValid = () => !msgError()
-  console.log("errors", errors)
 
   //#endregion
   //#region Request Cep
@@ -297,31 +300,60 @@ function Add() {
         const response = await obterCep(cep)
         const data = response.data
         setValue("cep", data.cep)
-        setValue("uf", data.uf)
-        setValue("localidade", data.localidade)
-        setValue("logradouro", data.logradouro)
+        setValue("estado", data.uf)
+        setValue("cidade", data.localidade)
+        setValue("endereco", data.logradouro)
         setValue("bairro", data.bairro)
         setValue("complemento", data.complemento)
       } catch (error) {
         console.error("Erro ao obter CEP:", error)
         setValue("cep", "")
-        setValue("uf", "")
-        setValue("localidade", "")
-        setValue("logradouro", "")
+        setValue("estado", "")
+        setValue("cidade", "")
+        setValue("endereco", "")
         setValue("bairro", "")
         setValue("complemento", "")
       }
     }
   }
   //#endregion
+
+  //#region Request Envio
+  async function handleCreateFinanciamento(event: React.FormEvent) {
+    event.preventDefault()
+    const apiClient = setupAPIClient()
+
+    try {
+      let body = {
+        ...form,
+        etapa: etapas[currentStep].nuStep,
+        dataNascimento: moment(form.dataNascimento, "DD/MM/yyyy").format(
+          "yyyy-MM-DD"
+        ),
+      } as FinanciamentoRequest
+      if (id) {
+        body.id = id
+      }
+      const response = await apiClient.post("/synpay/financiamentos", body)
+      setId(response.data.id)
+      if (etapas[currentStep].nuStep === 2) {
+        setRespSimulacao(response.data.simulacao)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  //#endregion
+
   const handleFirstStep = () => {
     setCurrentStep(0)
   }
 
-  const handleNextStep = async () => {
+  const handleNextStep = async (event: React.FormEvent<Element>) => {
+    handleCreateFinanciamento(event)
     var isValid = await trigger(obterEtapaAtual().validacao as any)
-
     if (!isValid) {
+      // console.log(!isValid)
       return
     }
 
@@ -533,7 +565,7 @@ function Add() {
                               }
                             })}
                             control={control}
-                            controlName="ufProponente"
+                            controlName="uf"
                             errors={errors}
                             placeholder="Selecione a UF"
                           />
@@ -602,25 +634,25 @@ function Add() {
                     >
                       {aprovado && (
                         <Controller
-                        control={control}
-                        name="preAprovado"
-                        render={({ field }) => (
-                          <div className="grid grid-cols-1 gap-2 ">
-                          {APROVADOS.map((item, index) => (
-                            <CardValorLiberado
-                              key={index}
-                              selecionado={form.preAprovado == item.Id}
-                              onValueChange={() =>
-                                setValue("preAprovado", item.Id)
-                              }
-                              opcao={item}
-                              parcelas={item.Obs}
-                              valorLiberado={item.Price}
-                            />
-                          ))}
-                        </div>
-                        )}
-                      />
+                          control={control}
+                          name="qtdParcelas"
+                          render={({ field }) => (
+                            <div className="grid grid-cols-1 gap-2 ">
+                              {APROVADOS.map((item, index) => (
+                                <CardValorLiberado
+                                  key={index}
+                                  selecionado={form.qtdParcelas == item.Id}
+                                  onValueChange={() =>
+                                    setValue("qtdParcelas", item.Id)
+                                  }
+                                  opcao={item}
+                                  parcelas={item.Obs}
+                                  valorLiberado={item.Price}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        />
                       )}
                       {reprovado && (
                         <div className="grid grid-cols-1 gap-8 justify-items-center">
@@ -702,7 +734,7 @@ function Add() {
                             options={BV_ESTADO_CIVIL.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.descricao,
+                                value: p.codigo,
                                 id: p.codigo as number,
                               }
                             })}
@@ -722,7 +754,7 @@ function Add() {
                             <Input
                               errors={errors}
                               control={control}
-                              controlName="identidade"
+                              controlName="rg"
                               // mask="9999999999"
                               placeholder="RG ou RNE"
                             />
@@ -732,7 +764,7 @@ function Add() {
                           <Label className="text-xs">Informe seu genero</Label>
                           <Controller
                             control={control}
-                            name="genero"
+                            name="sexo"
                             render={({ field }) => (
                               <RadioGroup
                                 defaultValue="comfortable"
@@ -814,7 +846,7 @@ function Add() {
                                 }
                               })}
                               control={control}
-                              controlName="uf"
+                              controlName="estado"
                               errors={errors}
                               placeholder="UF"
                             />
@@ -826,7 +858,7 @@ function Add() {
                             <Input
                               errors={errors}
                               control={control}
-                              controlName="localidade"
+                              controlName="cidade"
                               placeholder="Qual a sua cidade?"
                             />
                           </div>
@@ -838,7 +870,7 @@ function Add() {
                           <Input
                             errors={errors}
                             control={control}
-                            controlName="logradouro"
+                            controlName="endereco"
                             placeholder="Qual a seu endereço?"
                           />
                         </div>
@@ -878,7 +910,7 @@ function Add() {
                             options={BV_SITUACAO_IMOVEL.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.descricao,
+                                value: p.codigo,
                                 id: p.codigo,
                               }
                             })}
@@ -909,12 +941,12 @@ function Add() {
                             options={BV_TIPOS_PROFISSOES.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.descricao,
+                                value: p.codigo,
                                 id: p.codigo,
                               }
                             })}
                             control={control}
-                            controlName="tipoEmprego"
+                            controlName="tipoProfissao"
                             errors={errors}
                             placeholder="Qual a sua ocupação"
                           />
@@ -928,27 +960,14 @@ function Add() {
                             options={BV_PROFISSOES.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.descricao,
+                                value: p.codigo,
                                 id: p.codigo,
                               }
                             })}
                             control={control}
-                            controlName="atividade"
+                            controlName="profissao"
                             errors={errors}
                             placeholder="Qual seu ramo de ocupação"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-1 ">
-                          <Label className="text-xs">
-                            Valor do seu patrimonio
-                          </Label>
-                          <Input
-                            money
-                            errors={errors}
-                            control={control}
-                            controlName="rendaProfissional"
-                            placeholder="De quanto é sua renda?"
                           />
                         </div>
 
