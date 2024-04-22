@@ -247,11 +247,19 @@ function Financiamentos() {
                     <TableBody>
                       {dados.map((item) => (
                         <TableRow>
-                          <TableCell className="font-medium">
+                          <TableCell className="font-medium flex flex-col">
                             {item.nome}
+                            <span
+                              // variant="secondary"
+                              className="text-xs w-max text-muted-foreground italic"
+                            >
+                              última etapa {item.etapa}
+                            </span>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">{item.statusSyn}</Badge>
+                            <Badge variant="outline">
+                              {item.descricaoStatusSyn}
+                            </Badge>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             {formatarDinheiro(item.valorSolicitado)}
