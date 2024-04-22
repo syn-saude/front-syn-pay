@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { SetStateAction, useEffect, useState } from "react"
 import Link from "next/link"
 import { setupAPIClient } from "@/services/api"
 import { obterCep } from "@/services/cep"
@@ -53,13 +53,15 @@ import { ComboboxControlled } from "@/components/ui/combobox"
 import Input from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ResumePage } from "@/components/ui/resume-page/resumePage"
+import { ParcelaBV, SimulacaoResponse } from "@/components/ui/resume-page/types"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
 import withAuth from "@/components/with-auth"
 
 import CardValorLiberado from "./cardValorLiberado"
 import * as S from "./styles"
+import Router from "next/router"
+import ResumePage from "@/components/ui/resume-page/resumePage"
 
 yup.setLocale(pt)
 //#region SCHEMA
@@ -263,14 +265,17 @@ const etapas = [
 ]
 //#endregion
 function Add() {
+  // const router = useRouter()
   //#region USE STATE
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(7)
   const [id, setId] = useState("")
-  const [isHovered, setIsHovered] = useState(null)
-  const [aprovado, setAprovado] = useState(true)
+  const [aprovado, setAprovado] = useState(false)
   const [reprovado, setReprovado] = useState(false)
-  const [respSimulacao, setRespSimulacao] = useState([])
-  console.log(respSimulacao)
+
+  const [respSimulacao, setRespSimulacao] = useState<SimulacaoResponse>()
+  
+  const [detailSimulacao, setDetailSimulacao] = useState<ParcelaBV>()
+  // console.log("detailSimulacao", detailSimulacao)
 
   //#endregion
 
@@ -346,19 +351,36 @@ function Add() {
   }
   //#endregion
 
+  useEffect(() => {
+   if(respSimulacao?.listaParcelas !== null){
+    setAprovado(true)
+   } else {
+    setReprovado(true)
+   }
+  }, []);
+
+  useEffect(() => {
+    const filteredSimulacao = respSimulacao?.listaParcelas?.filter((simulacao: ParcelaBV) => simulacao.quantidadeParcelas === form.qtdParcelas);
+    setDetailSimulacao(filteredSimulacao as SetStateAction<ParcelaBV | undefined>);
+    // console.log(filteredSimulacao)
+  }, [form.qtdParcelas, respSimulacao]);
+
   const handleFirstStep = () => {
     setCurrentStep(0)
   }
 
   const handleNextStep = async (event: React.FormEvent<Element>) => {
-    handleCreateFinanciamento(event)
-    var isValid = await trigger(obterEtapaAtual().validacao as any)
-    if (!isValid) {
-      // console.log(!isValid)
-      return
+    if (etapas[currentStep].nuStep <= 7) {
+      handleCreateFinanciamento(event)
+      var isValid = await trigger(obterEtapaAtual().validacao as any)
+      if (!isValid) {
+        return
+      }
+  
+      setCurrentStep((prevStep) => prevStep + 1)
+    } else{
+      Router.push('/homepage');
     }
-
-    setCurrentStep((prevStep) => prevStep + 1)
   }
 
   const handlePrevStep = () => {
@@ -637,18 +659,23 @@ function Add() {
                           name="qtdParcelas"
                           render={({ field }) => (
                             <div className="grid grid-cols-1 gap-2 ">
-                              {APROVADOS.map((item, index) => (
-                                <CardValorLiberado
-                                  key={index}
-                                  selecionado={form.qtdParcelas == item.Id}
-                                  onValueChange={() =>
-                                    setValue("qtdParcelas", item.Id)
-                                  }
-                                  opcao={item}
-                                  parcelas={item.Obs}
-                                  valorLiberado={item.Price}
-                                />
-                              ))}
+                              {respSimulacao?.listaParcelas?.map(
+                                (item: ParcelaBV, index: number) => (
+                                  <CardValorLiberado
+                                    key={index}
+                                    selecionado={
+                                      form.qtdParcelas ===
+                                      item.quantidadeParcelas
+                                    }
+                                    onValueChange={() =>
+                                      setValue("qtdParcelas",
+                                        item.quantidadeParcelas
+                                      )
+                                    }
+                                    opcao={item}
+                                  />
+                                )
+                              )}
                             </div>
                           )}
                         />
@@ -690,7 +717,7 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.resumoSimulacao && "hidden"
                       } grid gap-6`}
                     >
-                      <ResumePage />
+                      {detailSimulacao && <ResumePage parcela={detailSimulacao} />}
                     </div>
 
                     {
@@ -733,14 +760,14 @@ function Add() {
                             options={BV_ESTADO_CIVIL.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.codigo,
+                                value: p.codigo.toString(),
                                 id: p.codigo as number,
                               }
                             })}
                             control={control}
                             controlName="estadoCivil"
                             errors={errors}
-                            placeholder="Seus stado civil"
+                            placeholder="Seus estado civil"
                           />
                         </div>
                       </div>
@@ -909,7 +936,7 @@ function Add() {
                             options={BV_SITUACAO_IMOVEL.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.codigo,
+                                value: p.codigo.toString(),
                                 id: p.codigo,
                               }
                             })}
@@ -940,7 +967,7 @@ function Add() {
                             options={BV_TIPOS_PROFISSOES.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.codigo,
+                                value: p.codigo.toString(),
                                 id: p.codigo,
                               }
                             })}
@@ -959,7 +986,7 @@ function Add() {
                             options={BV_PROFISSOES.map((p) => {
                               return {
                                 label: p.descricao,
-                                value: p.codigo,
+                                value: p.codigo.toString(),
                                 id: p.codigo,
                               }
                             })}
@@ -1011,7 +1038,7 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.resumoSolicitacao && "hidden"
                       } grid gap-6`}
                     >
-                      <ResumePage />
+                      {detailSimulacao && <ResumePage parcela={detailSimulacao} />}
                       <div>
                         <Controller
                           control={control}

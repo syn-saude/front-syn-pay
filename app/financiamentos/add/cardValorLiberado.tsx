@@ -1,28 +1,37 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import formatarDinheiro from "@/utils/formatacoes/formatarDinheiro"
 import { Check } from "lucide-react"
 
 import Button from "@/components/ui/button"
 import { RadioGroupItem } from "@/components/ui/radio-group"
+import ResumePage from "@/components/ui/resume-page/resumePage"
 
 import * as S from "./styles"
+import ModalDetail from "../modalDetail/page"
+import { ParcelaBV } from "@/components/ui/resume-page/types"
 
 interface IProps {
-  opcao: any
+  opcao: ParcelaBV
   selecionado: boolean
-  valorLiberado: number
-  parcelas: string
   onValueChange: (value: any) => void
 }
 
 export default function CardValorLiberado({
-  valorLiberado,
-  opcao,
   onValueChange,
-  parcelas,
+  opcao,
   selecionado,
   ...props
 }: IProps) {
+  const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false);
+
+  function handleCloseModal() {
+    setModalDetailIsOpen(false);
+  }
+  
+  function handleOpemModalView(qtdParcelas: number) {
+    setModalDetailIsOpen(true);
+  }
+
   function handleChange() {
     onValueChange(opcao)
   }
@@ -35,8 +44,6 @@ export default function CardValorLiberado({
       } w-full md:max-w-[300px]`}
     >
       <div>
-        {/* <div className="h-6 w-6 d-flex center bg-white d-block rounded-xl">
-        </div> */}
         {selecionado ? (
           <Check className="h-4 w-4 bg-green-800 rounded-xl p-1" />
         ) : (
@@ -52,18 +59,28 @@ export default function CardValorLiberado({
       <div className="flex flex-col">
         <div className="text-sm">Valor liberado:</div>
         <div className="text-lg font-bold">
-          {formatarDinheiro(valorLiberado)}
+          {formatarDinheiro(opcao.valorLiberado)}
         </div>
-        <div className="text-sm font-bold">{parcelas}</div>
+        <div className="text-sm font-bold">
+          x{opcao.quantidadeParcelas} de {formatarDinheiro(opcao.valorParcelaSemSeguro)}
+        </div>
       </div>
       <div>
         <Button
           className={`${selecionado && "selecionado"}`}
           variant="link"
           type="button"
+          onClick={() => handleOpemModalView(opcao.quantidadeParcelas)}
         >
           ver mais
         </Button>
+        {modalDetailIsOpen && 
+        <ModalDetail 
+        isOpen={modalDetailIsOpen} 
+        onRequestClose={handleCloseModal} 
+        optionDetail={opcao} 
+        />
+        }
       </div>
     </S.AprovadoContainer>
   )

@@ -1,17 +1,17 @@
 export interface SimulacaoResponse {
-  listaStatusRespostaServico: ListaStatusRespostaServico[]
-  codigoSimulacaoProposta: number
-  indicadorRestricaoCredito: boolean
-  codigoTabelaFinanciamento: string
-  dataMinimaCarenciaFinanciamento: string
-  dataMaximaCarenciaFinanciamento: string
-  simulacaoInteligente: boolean
-  valorMaximoDeParcelaPermitido: number
-  numeroMaximoDeParcelasPermitidas: number
-  listaParcelas: ParcelaBV[]
-  listaPrazoNaoCalculado: any[]
-  valorMaximoFinanciado: number
-  existeValorParcial: boolean
+  listaStatusRespostaServico?: ListaStatusRespostaServico[]
+  codigoSimulacaoProposta?: number
+  indicadorRestricaoCredito?: boolean
+  codigoTabelaFinanciamento?: string
+  dataMinimaCarenciaFinanciamento?: string
+  dataMaximaCarenciaFinanciamento?: string
+  simulacaoInteligente?: boolean
+  valorMaximoDeParcelaPermitido?: number
+  numeroMaximoDeParcelasPermitidas?: number
+  listaParcelas?: ParcelaBV[]
+  listaPrazoNaoCalculado?: any[]
+  valorMaximoFinanciado?: number
+  existeValorParcial?: boolean
 }
 
 export interface ListaStatusRespostaServico {
