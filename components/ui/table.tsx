@@ -1,19 +1,30 @@
 import * as React from "react"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const Table = React.forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
-))
+interface IPropsTable extends React.HTMLAttributes<HTMLTableElement> {
+  loading?: boolean
+}
+
+const Table = React.forwardRef<HTMLTableElement, IPropsTable>(
+  ({ loading = false, className, ...props }, ref) => (
+    <div className="relative w-full overflow-auto">
+      {loading ? (
+        <div className=" flex flex-col justify-center items-center">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <p className="text-sm text-muted-foreground ">carregando...</p>
+        </div>
+      ) : (
+        <table
+          ref={ref}
+          className={cn("w-full caption-bottom text-sm", className)}
+          {...props}
+        />
+      )}
+    </div>
+  )
+)
 Table.displayName = "Table"
 
 const TableHeader = React.forwardRef<

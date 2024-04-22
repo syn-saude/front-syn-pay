@@ -23,6 +23,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const { "@synauth.token": token, "@synauth.tenant": tenant } =
       parseCookies()
+
     if (token) {
       setUser(storageUser)
       addToken(token)

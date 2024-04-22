@@ -77,7 +77,7 @@ export default function Home() {
         <title>SynSaude - login</title>
       </Head>
       <S.Container className="bg-slate-900">
-        <S.LoginContent className="bg-white  p-8 pb-10 rounded-md">
+        <S.LoginContent className="bg-white p-8 pb-10 rounded-md  dark:bg-slate-950">
           <Image src={logo2} alt="SynSaude" width={120} className="mb-8" />
 
           <S.FormContent onSubmit={handleSubmit(handleSingIn)}>

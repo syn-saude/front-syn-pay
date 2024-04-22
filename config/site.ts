@@ -13,10 +13,6 @@ export const siteConfig = {
       title: "Financiamentos",
       href: "/financiamentos",
     },
-    {
-      title: "Recebedores",
-      href: "/signup",
-    },
   ],
   links: {
     twitter: "https://twitter.com/shadcn",

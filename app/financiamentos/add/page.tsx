@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { setupAPIClient } from "@/services/api"
 import { obterCep } from "@/services/cep"
+import { salvarFinanciamento } from "@/services/financiamentos"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
@@ -65,6 +66,7 @@ yup.setLocale(pt)
 const schema = yup
   .object({
     //Step 1
+    id: yup.string().nullable().label("Nome"),
     nome: yup.string().required().label("Nome"),
     telefone: yup.string().required().label("Telefone"),
     cpf: yup.string().required().label("CPF"),
@@ -111,7 +113,7 @@ const schema = yup
 //#endregion
 
 interface FinanciamentoRequest {
-  id: string
+  id?: string
   //Step 1
   nome: string
   telefone: string
@@ -283,7 +285,7 @@ function Add() {
     control,
   } = useForm<FinanciamentoRequest>({
     mode: "all",
-    resolver: yupResolver(schema),
+    resolver: yupResolver<FinanciamentoRequest>(schema as any),
     defaultValues: {},
   })
   const form = watch()
@@ -321,7 +323,6 @@ function Add() {
   //#region Request Envio
   async function handleCreateFinanciamento(event: React.FormEvent) {
     event.preventDefault()
-    const apiClient = setupAPIClient()
 
     try {
       let body = {
@@ -334,7 +335,7 @@ function Add() {
       if (id) {
         body.id = id
       }
-      const response = await apiClient.post("/synpay/financiamentos", body)
+      const response = await salvarFinanciamento(body)
       setId(response.data.id)
       if (etapas[currentStep].nuStep === 2) {
         setRespSimulacao(response.data.simulacao)
@@ -436,19 +437,17 @@ function Add() {
           <Breadcrumb className="hidden md:flex">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="#">Dashboard</Link>
-                </BreadcrumbLink>
+                <BreadcrumbLink>Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Financiamentos</Link>
+                  <Link href="/financiamentos">Financiamentos</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Todos Financiamentos</BreadcrumbPage>
+                <BreadcrumbPage>Novo financiamento</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

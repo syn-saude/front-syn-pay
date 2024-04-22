@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { AxiosResponse } from "axios"
 import { toast } from "react-toastify"
 // import { showNotificationErrorAPI } from "src/core/helpers/notification"
-import { useDebouncedCallback } from "use-debounce/dist"
+import { useDebouncedCallback } from "use-debounce"
 
 import useAuth from "../useAuth"
 import { ListagemResponse, ObjetoDescricaoGenerico } from "./types"
@@ -31,13 +31,13 @@ function useListagem<T, F>(
   const [listaStatus, setListaStatus] = useState<ObjetoDescricaoGenerico[]>([])
 
   // Filtro Geral
-  const [filtroGeral, setFiltroGeral] = useState<F>()
+  const [filtroGeral, setFiltroGeral] = useState<F>({ pagina: 1 } as any)
   const [primeiraBusca, setPrimeiraBusca] = useState(true)
 
   const [debouncedTermoPesquisa, setDebouncedTermoPesquisa] = useState("")
   const debounced = useDebouncedCallback(() => {
     setDebouncedTermoPesquisa(termoPesquisa)
-    carregarListagem({ resetarPaginacao: true })
+    // carregarListagem({ resetarPaginacao: true })
   }, 1200)
 
   //LISTAGEM
@@ -58,14 +58,14 @@ function useListagem<T, F>(
     setLoading(true)
     setTermoPesquisa("")
     setFiltroStatus(" ")
-    setFiltroGeral(undefined)
-    debounced()
+    setFiltroGeral(undefined as any)
+    // debounced()
   }
 
   const handlePesquisarDados = () => {
     setLoading(true)
     // debounced.callback()
-    debounced()
+    // debounced()
   }
 
   const handleSetTermoPesquisarCodigo = (codigo: any) => {
@@ -87,6 +87,7 @@ function useListagem<T, F>(
   }
 
   function handleProxPagina() {
+    debugger
     if (qtdAllDados > allDados?.length) {
       setPagina((oldState) => oldState + 1)
     }
@@ -153,7 +154,8 @@ function useListagem<T, F>(
         Math.ceil(Math.max(1, response.data.qtdTotal) / qtdPorPagina)
       )
 
-      if (resetarPaginacao) {
+      debugger
+      if (resetarPaginacao || filtroFinal.pagina != pagina) {
         setPagina(1)
       }
 
@@ -196,7 +198,7 @@ function useListagem<T, F>(
     // }
     try {
       // setLoading(true)
-
+      debugger
       if (resetarPaginacao) {
         setPagina(1)
       }
@@ -231,6 +233,7 @@ function useListagem<T, F>(
     setDados(response.data.items)
     setQtdPaginas(Math.ceil(Math.max(1, response.data.qtdTotal) / qtdPorPagina))
 
+    debugger
     if (resetarPaginacao) {
       setPagina(1)
     }
@@ -278,13 +281,17 @@ function useListagem<T, F>(
   }
 
   useEffect(() => {
-    carregarListagem({
-      resetarPaginacao: false,
-      filtro: filtroGeral,
-    })
+    debugger
+    if (pagina != (filtroGeral as any)?.pagina) {
+      carregarListagem({
+        resetarPaginacao: false,
+        filtro: filtroGeral,
+      })
+    }
   }, [pagina])
 
   useEffect(() => {
+    debugger
     if (!primeiraBusca) {
       carregarListagem({
         filtro: filtroGeral,
@@ -293,6 +300,12 @@ function useListagem<T, F>(
     }
   }, [filtroGeral])
 
+  useEffect(() => {
+    carregarListagem({
+      resetarPaginacao: false,
+      filtro: filtroGeral,
+    })
+  }, [])
   // function obterDadosUnicos(dados: T[]) {
   //   return dados
   //   const myList = dados

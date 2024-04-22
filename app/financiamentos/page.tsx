@@ -4,6 +4,16 @@ import { useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
+  ItemListagemFinanciamento,
+  ListagemQuery,
+  obterListagemFinanciamento,
+} from "@/services/financiamentos"
+import {
+  formatarDataHora,
+  formatarDataHoraLocal,
+} from "@/utils/formatacoes/formatarData"
+import formatarDinheiro from "@/utils/formatacoes/formatarDinheiro"
+import {
   File,
   Filter,
   FilterIcon,
@@ -21,6 +31,7 @@ import {
   Users,
 } from "lucide-react"
 
+import { ListagemResponse } from "@/hooks/listagem/types"
 import useListagem from "@/hooks/listagem/useListagem"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -68,12 +79,24 @@ import {
 import withAuth from "@/components/with-auth"
 
 function Financiamentos() {
-  const novas = useListagem(10, listagemFinanciamentos)
+  const {
+    allDados,
+    dados,
+    loading,
+    carregarListagem,
+    filtroGeral,
+    qtdAllDados,
+    handleProxPagina,
+  } = useListagem<ItemListagemFinanciamento, ListagemQuery>(
+    1000,
+    obterListagemFinanciamento as any
+    // listagemFinanciamento as any
+  )
 
-  function listagemFinanciamentos(query, primeiraBusca?: boolean) {
-    query["tipo"] = 2
-    return _notificacoes.listagemNotificacoes(query)
-  }
+  // function listagemFinanciamento(query: any, primeiraBusca?: boolean) {
+  //   query["tipo"] = 2
+  //   return obterListagemFinanciamento(query)
+  // }
 
   // useEffect(() => {
   //   inicio()
@@ -144,19 +167,13 @@ function Financiamentos() {
           <Breadcrumb className="hidden md:flex">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="#">Dashboard</Link>
-                </BreadcrumbLink>
+                <BreadcrumbLink>Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
                   <Link href="#">Financiamentos</Link>
                 </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Todos Financiamentos</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -165,12 +182,18 @@ function Financiamentos() {
           <Tabs defaultValue="all">
             <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="draft">Draft</TabsTrigger>
-                <TabsTrigger value="archived" className="hidden sm:flex">
-                  Archived
+                <TabsTrigger value="all">
+                  Todos
+                  <Badge variant="secondary" className="ml-2">
+                    {qtdAllDados}
+                  </Badge>
                 </TabsTrigger>
+                <TabsTrigger value="active">Rascunho</TabsTrigger>
+                <TabsTrigger value="draft">Em análise</TabsTrigger>
+                <TabsTrigger value="reprovada">Reprovadas</TabsTrigger>
+                {/* <TabsTrigger value="archived" className="hidden sm:flex">
+                  Archived
+                </TabsTrigger> */}
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
                 <DropdownMenu>
@@ -178,7 +201,7 @@ function Financiamentos() {
                     <Button variant="outline" size="sm" className="h-8 gap-1">
                       <Filter className="h-3.5 w-3.5" />
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Filter
+                        Filtrar
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -211,86 +234,92 @@ function Financiamentos() {
                 <CardHeader>
                   <CardTitle>Financiamentos</CardTitle>
                   <CardDescription>
-                    Manage your products and view their sales performance.
+                    Acompanhe as solicitações de financiamentos.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Table>
+                  <Table loading={loading}>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="hidden w-[100px] sm:table-cell">
-                          <span className="sr-only">Image</span>
-                        </TableHead>
-                        <TableHead>Name</TableHead>
+                        <TableHead>Cliente</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="hidden md:table-cell">
-                          Price
+                          Valor solicitado
                         </TableHead>
                         <TableHead className="hidden md:table-cell">
-                          Total Sales
-                        </TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Created at
+                          Solicitado
                         </TableHead>
                         <TableHead>
-                          <span className="sr-only">Actions</span>
+                          <span className="sr-only">Ações</span>
                         </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      <TableRow>
-                        <TableCell className="hidden sm:table-cell">
-                          <Image
-                            alt="Product image"
-                            className="aspect-square rounded-md object-cover"
-                            height="64"
-                            src="https://ui.shadcn.com/placeholder.svg"
-                            width="64"
-                          />
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          Laser Lemonade Machine
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">Draft</Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          $499.99
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          25
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          2023-07-12 10:42 AM
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>Edit</DropdownMenuItem>
-                              <DropdownMenuItem>Delete</DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
+                      {dados.map((item) => (
+                        <TableRow>
+                          <TableCell className="font-medium">
+                            {item.nome}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{item.statusSyn}</Badge>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            {formatarDinheiro(item.valorSolicitado)}
+                          </TableCell>
+
+                          <TableCell className="hidden md:table-cell">
+                            {formatarDataHoraLocal(item.criado)}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  aria-haspopup="true"
+                                  size="icon"
+                                  variant="ghost"
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+                                <DropdownMenuItem>Visualizar</DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  Continuar solicitação
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>Editar</DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <span className="text-destructive hover:text-destructive">
+                                    Remover
+                                  </span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {/* <TableRow>
+                        <TableCell colSpan={5}></TableCell>
+                      </TableRow> */}
                     </TableBody>
                   </Table>
+                  {/* {qtdAllDados !== allDados.length && (
+                    <Button
+                      loading={loading}
+                      className="w-full"
+                      variant="outline"
+                      onClick={handleProxPagina}
+                    >
+                      Carregar mais
+                    </Button>
+                  )} */}
                 </CardContent>
                 <CardFooter>
-                  <div className="text-xs text-muted-foreground">
+                  {/* <div className="text-xs text-muted-foreground">
                     Showing <strong>1-10</strong> of <strong>32</strong>{" "}
                     products
-                  </div>
+                  </div> */}
                 </CardFooter>
               </Card>
             </TabsContent>
