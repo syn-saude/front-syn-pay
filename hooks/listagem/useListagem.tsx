@@ -87,7 +87,6 @@ function useListagem<T, F>(
   }
 
   function handleProxPagina() {
-    debugger
     if (qtdAllDados > allDados?.length) {
       setPagina((oldState) => oldState + 1)
     }
@@ -154,7 +153,6 @@ function useListagem<T, F>(
         Math.ceil(Math.max(1, response.data.qtdTotal) / qtdPorPagina)
       )
 
-      debugger
       if (resetarPaginacao || filtroFinal.pagina != pagina) {
         setPagina(1)
       }
@@ -198,7 +196,7 @@ function useListagem<T, F>(
     // }
     try {
       // setLoading(true)
-      debugger
+
       if (resetarPaginacao) {
         setPagina(1)
       }
@@ -233,7 +231,6 @@ function useListagem<T, F>(
     setDados(response.data.items)
     setQtdPaginas(Math.ceil(Math.max(1, response.data.qtdTotal) / qtdPorPagina))
 
-    debugger
     if (resetarPaginacao) {
       setPagina(1)
     }
@@ -281,7 +278,6 @@ function useListagem<T, F>(
   }
 
   useEffect(() => {
-    debugger
     if (pagina != (filtroGeral as any)?.pagina) {
       carregarListagem({
         resetarPaginacao: false,
@@ -291,7 +287,6 @@ function useListagem<T, F>(
   }, [pagina])
 
   useEffect(() => {
-    debugger
     if (!primeiraBusca) {
       carregarListagem({
         filtro: filtroGeral,
