@@ -60,7 +60,8 @@ import withAuth from "@/components/with-auth"
 
 import CardValorLiberado from "./cardValorLiberado"
 import * as S from "./styles"
-import Router from "next/router"
+import { useRouter } from 'next/navigation'
+// import Router from "next/router"
 import ResumePage from "@/components/ui/resume-page/resumePage"
 
 yup.setLocale(pt)
@@ -265,6 +266,7 @@ const etapas = [
 ]
 //#endregion
 function Add() {
+  const router = useRouter()
   // const router = useRouter()
   //#region USE STATE
   const [currentStep, setCurrentStep] = useState(7)
@@ -273,7 +275,7 @@ function Add() {
   const [reprovado, setReprovado] = useState(false)
 
   const [respSimulacao, setRespSimulacao] = useState<SimulacaoResponse>()
-  
+
   const [detailSimulacao, setDetailSimulacao] = useState<ParcelaBV>()
   // console.log("detailSimulacao", detailSimulacao)
 
@@ -352,11 +354,11 @@ function Add() {
   //#endregion
 
   useEffect(() => {
-   if(respSimulacao?.listaParcelas !== null){
-    setAprovado(true)
-   } else {
-    setReprovado(true)
-   }
+    if (respSimulacao?.listaParcelas !== null) {
+      setAprovado(true)
+    } else {
+      setReprovado(true)
+    }
   }, []);
 
   useEffect(() => {
@@ -376,11 +378,12 @@ function Add() {
       if (!isValid) {
         return
       }
-  
       setCurrentStep((prevStep) => prevStep + 1)
-    } else{
-      Router.push('/homepage');
     }
+  }
+
+  function handleConfirm() {
+    router.push('/financiamentos')
   }
 
   const handlePrevStep = () => {
@@ -510,10 +513,9 @@ function Add() {
                       //#region ETAPA 1
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.proponente && "hidden"
-                      } grid gap-6 md:max-w-[600px]`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.proponente && "hidden"
+                        } grid gap-6 md:max-w-[600px]`}
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
@@ -600,10 +602,9 @@ function Add() {
                       //#region ETAPA 2
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.valores && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.valores && "hidden"
+                        } grid gap-6`}
                     >
                       <div className="flex flex-col gap-1">
                         <Label className="text-xs">Procedimento desejado</Label>
@@ -648,10 +649,9 @@ function Add() {
                       //#region ETAPA 3
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
+                        } grid gap-6`}
                     >
                       {aprovado && (
                         <Controller
@@ -712,10 +712,9 @@ function Add() {
                       //#region ETAPA 4
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.resumoSimulacao && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.resumoSimulacao && "hidden"
+                        } grid gap-6`}
                     >
                       {detailSimulacao && <ResumePage parcela={detailSimulacao} />}
                     </div>
@@ -728,10 +727,9 @@ function Add() {
                       //#region ETAPA 5
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
+                        } grid gap-6`}
                     >
                       <div className="flex grid-cols-2 gap-1">
                         <div>
@@ -839,10 +837,9 @@ function Add() {
                       //#region ETAPA 6
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.residencia && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.residencia && "hidden"
+                        } grid gap-6`}
                     >
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-1 ">
@@ -955,10 +952,9 @@ function Add() {
                       //#region ETAPA 7
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.profissao && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.profissao && "hidden"
+                        } grid gap-6`}
                     >
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-1">
@@ -1033,10 +1029,9 @@ function Add() {
                       //#region ETAPA 8
                     }
                     <div
-                      className={`${
-                        obterEtapaAtual().step !==
-                          ETAPAS_FINANCIAMENTO.resumoSolicitacao && "hidden"
-                      } grid gap-6`}
+                      className={`${obterEtapaAtual().step !==
+                        ETAPAS_FINANCIAMENTO.resumoSolicitacao && "hidden"
+                        } grid gap-6`}
                     >
                       {detailSimulacao && <ResumePage parcela={detailSimulacao} />}
                       <div>
@@ -1070,7 +1065,7 @@ function Add() {
                     }
                   </form>
                 </CardContent>
-                {(currentStep !== 2 || !reprovado) && (
+                {(currentStep !== 2 || !reprovado) && currentStep !== 7 && (
                   <CardFooter className="border-t px-6 py-4 gap-4">
                     {currentStep > 0 && (
                       <Button
@@ -1085,6 +1080,12 @@ function Add() {
                       Continuar
                     </Button>
                   </CardFooter>
+                )}
+
+                {currentStep === 7 && (
+                  <Button size="sm" onClick={handleConfirm}>
+                    Solicitar financiamento
+                  </Button>
                 )}
               </Card>
             </div>
