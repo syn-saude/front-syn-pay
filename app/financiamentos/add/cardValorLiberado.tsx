@@ -78,7 +78,8 @@ export default function CardValorLiberado({
         <ModalDetail 
         isOpen={modalDetailIsOpen} 
         onRequestClose={handleCloseModal} 
-        optionDetail={opcao} 
+        optionDetail={opcao}
+
         />
         }
       </div>

@@ -269,7 +269,7 @@ function Add() {
   const router = useRouter()
   // const router = useRouter()
   //#region USE STATE
-  const [currentStep, setCurrentStep] = useState(7)
+  const [currentStep, setCurrentStep] = useState(0)
   const [id, setId] = useState("")
   const [aprovado, setAprovado] = useState(false)
   const [reprovado, setReprovado] = useState(false)
@@ -277,7 +277,6 @@ function Add() {
   const [respSimulacao, setRespSimulacao] = useState<SimulacaoResponse>()
 
   const [detailSimulacao, setDetailSimulacao] = useState<ParcelaBV>()
-  // console.log("detailSimulacao", detailSimulacao)
 
   //#endregion
 
@@ -364,7 +363,6 @@ function Add() {
   useEffect(() => {
     const filteredSimulacao = respSimulacao?.listaParcelas?.filter((simulacao: ParcelaBV) => simulacao.quantidadeParcelas === form.qtdParcelas);
     setDetailSimulacao(filteredSimulacao as SetStateAction<ParcelaBV | undefined>);
-    // console.log(filteredSimulacao)
   }, [form.qtdParcelas, respSimulacao]);
 
   const handleFirstStep = () => {
