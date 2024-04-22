@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -78,6 +78,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import withAuth from "@/components/with-auth"
+import { IFinanciamentoRequest } from "./interface"
+import { api } from "@/services/apiClient"
+import ModalDetail from "./modalDetail/page"
 
 function Financiamentos() {
   const router = useRouter()
@@ -94,10 +97,19 @@ function Financiamentos() {
     1000,
     obterListagemFinanciamento as any
   )
+  const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false);
+  const [financiamentoDetail, setFinanciamentoDetail] = useState<IFinanciamentoRequest[]>();
 
-  function handleVisualizar(id: string): void {
-    throw new Error("Function not implemented.")
+  async function handleVisualizar(id: string) {
+    const response = await api.get(`/synpay/financiamentos/${id}`)
+    setFinanciamentoDetail(response.data);
+    setModalDetailIsOpen(true);
   }
+
+  function handleCloseModal() {
+    setModalDetailIsOpen(false);
+  }
+
 
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
@@ -335,6 +347,14 @@ function Financiamentos() {
               </Card>
             </TabsContent>
           </Tabs>
+          {modalDetailIsOpen &&
+            <ModalDetail
+              isOpen={modalDetailIsOpen}
+              onRequestClose={handleCloseModal}
+              financiamentoDetail={financiamentoDetail}
+              isView={true}
+            />
+          }
         </main>
       </div>
     </div>

@@ -275,7 +275,7 @@ function Add() {
   const searchParams = useSearchParams()
 
   //#region USE STATE
-  const [currentStep, setCurrentStep] = useState(7)
+  const [currentStep, setCurrentStep] = useState(0)
 
   const [id, setId] = useState(searchParams.get("id"))
   const [aprovado, setAprovado] = useState(false)
