@@ -5,14 +5,15 @@ import { Check } from "lucide-react"
 import Button from "@/components/ui/button"
 import { RadioGroupItem } from "@/components/ui/radio-group"
 import ResumePage from "@/components/ui/resume-page/resumePage"
+import { ParcelaBV, SimulacaoResponse } from "@/components/ui/resume-page/types"
 
-import * as S from "./styles"
 import ModalDetail from "../modalDetail/page"
-import { ParcelaBV } from "@/components/ui/resume-page/types"
+import * as S from "./styles"
 
 interface IProps {
   opcao: ParcelaBV
   selecionado: boolean
+  simulacao: SimulacaoResponse
   onValueChange: (value: any) => void
 }
 
@@ -20,16 +21,17 @@ export default function CardValorLiberado({
   onValueChange,
   opcao,
   selecionado,
+  simulacao,
   ...props
 }: IProps) {
-  const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false);
+  const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false)
 
   function handleCloseModal() {
-    setModalDetailIsOpen(false);
+    setModalDetailIsOpen(false)
   }
-  
+
   function handleOpemModalView(qtdParcelas: number) {
-    setModalDetailIsOpen(true);
+    setModalDetailIsOpen(true)
   }
 
   function handleChange() {
@@ -39,9 +41,9 @@ export default function CardValorLiberado({
     <S.AprovadoContainer
       onClick={handleChange}
       {...props}
-      className={`text-purple-800 ${
+      className={`text-primary border-slate-400 ${
         selecionado && "selecionado"
-      } w-full md:max-w-[300px]`}
+      } w-full md:max-w-[300px] hover:bg-slate-300 `}
     >
       <div>
         {selecionado ? (
@@ -50,8 +52,8 @@ export default function CardValorLiberado({
           <div
             className={`h-4 w-4 d-block rounded-xl  ${
               selecionado
-                ? "bg-white  hover:bg-slate-300 border-purple-900 border"
-                : "bg-white  hover:bg-slate-300 border-purple-900 border"
+                ? "bg-white  hover:bg-slate-300 border-primary border"
+                : "bg-white  hover:bg-slate-300 border-primary border"
             } `}
           ></div>
         )}
@@ -62,7 +64,8 @@ export default function CardValorLiberado({
           {formatarDinheiro(opcao.valorLiberado)}
         </div>
         <div className="text-sm font-bold">
-          x{opcao.quantidadeParcelas} de {formatarDinheiro(opcao.valorParcelaSemSeguro)}
+          x{opcao.quantidadeParcelas} de{" "}
+          {formatarDinheiro(opcao.valorParcelaSemSeguro)}
         </div>
       </div>
       <div>
@@ -74,13 +77,14 @@ export default function CardValorLiberado({
         >
           ver mais
         </Button>
-        {modalDetailIsOpen && 
-        <ModalDetail 
-        isOpen={modalDetailIsOpen} 
-        onRequestClose={handleCloseModal} 
-        optionDetail={opcao} 
-        />
-        }
+        {modalDetailIsOpen && (
+          <ModalDetail
+            isOpen={modalDetailIsOpen}
+            simulacao={simulacao}
+            onRequestClose={handleCloseModal}
+            optionDetail={opcao}
+          />
+        )}
       </div>
     </S.AprovadoContainer>
   )

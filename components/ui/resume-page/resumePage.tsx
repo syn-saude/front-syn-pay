@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { formatarData } from "@/utils/formatacoes/formatarData"
 import formatarDinheiro from "@/utils/formatacoes/formatarDinheiro"
 
 import * as S from "./styles"
@@ -6,10 +7,10 @@ import { ParcelaBV, SimulacaoResponse } from "./types"
 
 interface IParcela {
   parcela: ParcelaBV
+  simulacao: SimulacaoResponse | undefined
 }
 
-export default function ResumePage({ parcela }: IParcela) {
-// console.log("parcela", parcela)
+export default function ResumePage({ parcela, simulacao }: IParcela) {
   return (
     <div className="grid gap-4">
       <div>
@@ -38,7 +39,9 @@ export default function ResumePage({ parcela }: IParcela) {
         <S.ContentBoxSimulation>
           <S.TextSimulation>Vencimento</S.TextSimulation>
           <S.TextInfoSimulation>
-            1ª parcela 18/05/2024 "(daqui a 30 dias)"
+            {`1ª parcela ${formatarData(
+              simulacao?.dataMinimaCarenciaFinanciamento
+            )} "(daqui a 30 dias)"`}
           </S.TextInfoSimulation>
         </S.ContentBoxSimulation>
         <S.ContainerBoxSimulation>

@@ -1,7 +1,7 @@
 export const BV_NACIONALIDADE = [
-  { Id: 1, Name: "BRASILEIRO" }, 
-  { Id: 2, Name: "ESTRANGEIRO" }, 
-  { Id: 2, Name: "NATURALIZADO" }
+  { Id: 1, Name: "BRASILEIRO" },
+  { Id: 2, Name: "ESTRANGEIRO" },
+  { Id: 2, Name: "NATURALIZADO" },
 ]
 
 export const BV_SITUACAO_IMOVEL = [

@@ -52,7 +52,7 @@ export function Combobox({
 }: IProps) {
   const [open, setOpen] = React.useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const [valueSelected, setValueSelected] = React.useState(value)
+  const [valueSelected, setValueSelected] = React.useState<string>(value)
 
   useEffect(() => {
     //se for a primeira vez e zerado
@@ -76,7 +76,9 @@ export function Combobox({
         >
           {valueSelected
             ? options.find(
-                (o) => o.value?.toLowerCase() === valueSelected?.toLowerCase()
+                (o) =>
+                  o.value?.toLowerCase() ===
+                  valueSelected?.toString()?.toLowerCase()
               )?.label
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -89,7 +91,7 @@ export function Combobox({
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>{textNotFound}</CommandEmpty>
-          <CommandGroup>
+          <CommandGroup className="max-h-[200px]  overflow-y-scroll">
             {options.map((o) => (
               <CommandItem
                 key={o.value}
@@ -106,7 +108,7 @@ export function Combobox({
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    valueSelected === o.value
+                    valueSelected === o.value?.toLowerCase()
                       ? "opacity-100"
                       : "opacity-0"
                   )}
@@ -134,6 +136,7 @@ export function ComboboxControlled({
       render={({ field }) => (
         <>
           <Combobox
+            key={field.value}
             onValueChange={field.onChange}
             value={field.value}
             isInvalid={!!errors?.[controlName]}

@@ -1,20 +1,30 @@
 import * as React from "react"
+import { dividerClasses } from "@mui/material"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
-      className
-    )}
-    {...props}
-  />
-))
+interface IProps extends React.HTMLAttributes<HTMLDivElement> {
+  loading?: boolean
+}
+const Card = React.forwardRef<HTMLDivElement, IProps>(
+  ({ loading, className, ...props }, ref) =>
+    loading ? (
+      <div className=" flex flex-col justify-center items-center">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        <p className="text-sm text-muted-foreground ">carregando...</p>
+      </div>
+    ) : (
+      <div
+        ref={ref}
+        className={cn(
+          "rounded-xl border bg-card text-card-foreground shadow",
+          className
+        )}
+        {...props}
+      />
+    )
+)
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<

@@ -3,7 +3,7 @@ import styled from "styled-components"
 export const AprovadoContainer = styled.div<{ isHovered?: any }>`
   display: flex;
   height: 80px;
-  border: 1px solid #605dec;
+  // border: 1px solid #605dec;
   border-radius: 8px;
   justify-content: space-between;
   align-items: center;
@@ -11,7 +11,6 @@ export const AprovadoContainer = styled.div<{ isHovered?: any }>`
   background-color: #f4f3fe;
   cursor: pointer;
 
-  &:hover,
   &.selecionado {
     background-color: #36bf76;
     border: none;
@@ -27,7 +26,7 @@ export const LabelInfo = styled.span<{ isHovered?: any }>`
   font-weight: 500;
   color: ${(props) => (props.isHovered ? "white" : "#605dec")};
 `
-export const ButtonNewSimulation =  styled.button`
+export const ButtonNewSimulation = styled.button`
   display: flex;
   height: 50px;
   width: 360px;
@@ -40,9 +39,8 @@ export const ButtonNewSimulation =  styled.button`
   padding: 6px;
   font-size: 16px;
 
-  &:hover{
-    font-size: 16.1px
-
+  &:hover {
+    font-size: 16.1px;
   }
 `
 export const LabelNotAprov = styled.span`
@@ -81,13 +79,12 @@ export const ContentBoxSimulation = styled.div`
 `
 export const TextInfoSimulation = styled.span`
   font-size: 12px;
-
 `
 export const InforBox = styled.div`
-display: flex;
-flex-direction: column;
-max-width: 40%;
-padding: 16px;
-border: 1px solid #605dec;
-background-color: #f4f3fe;
-`;
+  display: flex;
+  flex-direction: column;
+  max-width: 40%;
+  padding: 16px;
+  border: 1px solid #605dec;
+  background-color: #f4f3fe;
+`

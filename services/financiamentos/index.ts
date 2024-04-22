@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios"
 
 import { ListagemResponse } from "@/hooks/listagem/types"
 import { SimulacaoResponse } from "@/components/ui/resume-page/types"
+import { FinanciamentoRequest } from "@/app/financiamentos/add/page"
 
 import { setupAPIClient } from "../api"
 import { api } from "../apiClient"
@@ -40,4 +41,10 @@ export const obterListagemFinanciamento: (
 ) => {
   var params = new URLSearchParams(query)
   return api.get(`/synpay/financiamentos?${params}`)
+}
+
+export const obterFinanciamentoPorId: (
+  id: string
+) => Promise<AxiosResponse<FinanciamentoRequest>> = (id) => {
+  return api.get(`/synpay/financiamentos/${id}`)
 }

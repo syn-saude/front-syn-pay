@@ -2,9 +2,14 @@
 
 import { SetStateAction, useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { setupAPIClient } from "@/services/api"
 import { obterCep } from "@/services/cep"
-import { salvarFinanciamento } from "@/services/financiamentos"
+import {
+  obterFinanciamentoPorId,
+  salvarFinanciamento,
+} from "@/services/financiamentos"
+import { formatarDataHoraLocal } from "@/utils/formatacoes/formatarData"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
@@ -19,6 +24,7 @@ import {
 } from "lucide-react"
 import moment from "moment"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
@@ -53,6 +59,8 @@ import { ComboboxControlled } from "@/components/ui/combobox"
 import Input from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+// import Router from "next/router"
+import ResumePage from "@/components/ui/resume-page/resumePage"
 import { ParcelaBV, SimulacaoResponse } from "@/components/ui/resume-page/types"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import MultSteps from "@/components/multSteps/multSteps"
@@ -60,9 +68,6 @@ import withAuth from "@/components/with-auth"
 
 import CardValorLiberado from "./cardValorLiberado"
 import * as S from "./styles"
-import { useRouter } from 'next/navigation'
-// import Router from "next/router"
-import ResumePage from "@/components/ui/resume-page/resumePage"
 
 yup.setLocale(pt)
 //#region SCHEMA
@@ -115,7 +120,7 @@ const schema = yup
   .required()
 //#endregion
 
-interface FinanciamentoRequest {
+export interface FinanciamentoRequest {
   id?: string
   //Step 1
   nome: string
@@ -267,19 +272,58 @@ const etapas = [
 //#endregion
 function Add() {
   const router = useRouter()
-  // const router = useRouter()
+  const searchParams = useSearchParams()
+
   //#region USE STATE
   const [currentStep, setCurrentStep] = useState(7)
-  const [id, setId] = useState("")
+
+  const [id, setId] = useState(searchParams.get("id"))
   const [aprovado, setAprovado] = useState(false)
   const [reprovado, setReprovado] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [loadingSalvar, setLoadingSalvar] = useState(false)
 
-  const [respSimulacao, setRespSimulacao] = useState<SimulacaoResponse>()
+  const [simulacao, setSimulacao] = useState<SimulacaoResponse>()
 
-  const [detailSimulacao, setDetailSimulacao] = useState<ParcelaBV>()
-  // console.log("detailSimulacao", detailSimulacao)
-
+  const [parcelaSelecionada, setParcelaSelecionada] = useState<ParcelaBV>()
   //#endregion
+
+  useEffect(() => {
+    verificarEdicao()
+  }, [])
+
+  async function verificarEdicao() {
+    let idQuery = searchParams.get("id")
+    if (idQuery) {
+      try {
+        setLoading(true)
+        var response = await obterFinanciamentoPorId(idQuery)
+        let financiamento = response.data
+        Object.keys(financiamento).forEach(
+          (key: keyof FinanciamentoRequest) => {
+            let valor = financiamento[key]
+
+            if (key == "dataNascimento") {
+              valor = moment(financiamento[key]).format("DD/MM/yyyy")
+            }
+
+            if (key == "uf") {
+              valor = financiamento[key].toLocaleLowerCase()
+            }
+
+            if (valor == null) return
+
+            setValue(key, valor, { shouldValidate: false })
+          }
+        )
+
+        console.log("finnanciamento por id", response.data)
+      } catch (error) {
+        toast.error("Erro ao obter simulacao")
+      }
+    }
+    setLoading(false)
+  }
 
   //#region USE FORM
   const {
@@ -295,6 +339,7 @@ function Add() {
     resolver: yupResolver<FinanciamentoRequest>(schema as any),
     defaultValues: {},
   })
+
   const form = watch()
   const { errors } = formState
   const msgError = () => errors.ciente?.message
@@ -328,10 +373,11 @@ function Add() {
   //#endregion
 
   //#region Request Envio
-  async function handleCreateFinanciamento(event: React.FormEvent) {
-    event.preventDefault()
-
+  async function handleSalvarFinanciamento() {
     try {
+      setLoadingSalvar(true)
+
+      //Monta body
       let body = {
         ...form,
         etapa: etapas[currentStep].nuStep,
@@ -339,51 +385,66 @@ function Add() {
           "yyyy-MM-DD"
         ),
       } as FinanciamentoRequest
+
+      //Add id no body se for edição
       if (id) {
         body.id = id
       }
+
+      //Chama endpoint para salvar financiamento
       const response = await salvarFinanciamento(body)
       setId(response.data.id)
+
       if (etapas[currentStep].nuStep === 2) {
-        setRespSimulacao(response.data.simulacao)
+        setSimulacao(response.data.simulacao)
       }
     } catch (error) {
       console.error(error)
     }
+    setLoadingSalvar(false)
   }
   //#endregion
 
   useEffect(() => {
-    if (respSimulacao?.listaParcelas !== null) {
+    if (simulacao?.listaParcelas !== null) {
       setAprovado(true)
     } else {
       setReprovado(true)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    const filteredSimulacao = respSimulacao?.listaParcelas?.filter((simulacao: ParcelaBV) => simulacao.quantidadeParcelas === form.qtdParcelas);
-    setDetailSimulacao(filteredSimulacao as SetStateAction<ParcelaBV | undefined>);
+    const parcela = simulacao?.listaParcelas?.find(
+      (p) => p.quantidadeParcelas === form.qtdParcelas
+    )
+    setParcelaSelecionada(parcela)
     // console.log(filteredSimulacao)
-  }, [form.qtdParcelas, respSimulacao]);
+  }, [form.qtdParcelas, simulacao])
 
   const handleFirstStep = () => {
     setCurrentStep(0)
   }
 
-  const handleNextStep = async (event: React.FormEvent<Element>) => {
-    if (etapas[currentStep].nuStep <= 7) {
-      handleCreateFinanciamento(event)
-      var isValid = await trigger(obterEtapaAtual().validacao as any)
-      if (!isValid) {
-        return
-      }
-      setCurrentStep((prevStep) => prevStep + 1)
-    }
-  }
+  //#region Handle Next prev Step
+  const handleNextStep = async () => {
+    //Verifica se formulário é válido
+    var isValid = await trigger(obterEtapaAtual().validacao as any)
 
-  function handleConfirm() {
-    router.push('/financiamentos')
+    if (!isValid) {
+      return
+    }
+
+    //Salva etapa
+    if (etapas[currentStep].nuStep <= 8) {
+      await handleSalvarFinanciamento()
+    }
+
+    //Muda etapa após salvar e se não for a última
+    if (etapas[currentStep].nuStep <= 7) {
+      setCurrentStep((prevStep) => prevStep + 1)
+    } else {
+      router.replace("/financiamentos/sucesso")
+    }
   }
 
   const handlePrevStep = () => {
@@ -392,6 +453,7 @@ function Add() {
     }
     setCurrentStep((prevStep) => prevStep - 1)
   }
+  //#endregion
 
   function obterEtapasAtivas() {
     return etapas.filter((e) => e.ativo)
@@ -500,7 +562,7 @@ function Add() {
               //#endregion
             }
             <div className="grid gap-6 ">
-              <Card x-chunk="dashboard-04-chunk-1">
+              <Card x-chunk="dashboard-04-chunk-1" loading={loading}>
                 <CardHeader>
                   <CardTitle>{obterEtapaAtual().titulo}</CardTitle>
                   <CardDescription>
@@ -513,9 +575,10 @@ function Add() {
                       //#region ETAPA 1
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.proponente && "hidden"
-                        } grid gap-6 md:max-w-[600px]`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.proponente && "hidden"
+                      } grid gap-6 md:max-w-[600px]`}
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
@@ -542,7 +605,7 @@ function Add() {
                       <div className="grid grid-cols-2 gap-3">
                         <div className="flex flex-col gap-1 ">
                           <Label className="text-xs">
-                            Informe os numeros do seu CPF
+                            Informe os números do seu CPF
                           </Label>
                           <Input
                             errors={errors}
@@ -602,9 +665,10 @@ function Add() {
                       //#region ETAPA 2
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.valores && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.valores && "hidden"
+                      } grid gap-6`}
                     >
                       <div className="flex flex-col gap-1">
                         <Label className="text-xs">Procedimento desejado</Label>
@@ -622,6 +686,7 @@ function Add() {
                           </Label>
                           <Input
                             money
+                            defaultValue={form.valorSolicitado}
                             errors={errors}
                             control={control}
                             controlName="valorSolicitado"
@@ -649,9 +714,10 @@ function Add() {
                       //#region ETAPA 3
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
+                      } grid gap-6`}
                     >
                       {aprovado && (
                         <Controller
@@ -659,16 +725,18 @@ function Add() {
                           name="qtdParcelas"
                           render={({ field }) => (
                             <div className="grid grid-cols-1 gap-2 ">
-                              {respSimulacao?.listaParcelas?.map(
+                              {simulacao?.listaParcelas?.map(
                                 (item: ParcelaBV, index: number) => (
                                   <CardValorLiberado
+                                    simulacao={simulacao}
                                     key={index}
                                     selecionado={
                                       form.qtdParcelas ===
                                       item.quantidadeParcelas
                                     }
                                     onValueChange={() =>
-                                      setValue("qtdParcelas",
+                                      setValue(
+                                        "qtdParcelas",
                                         item.quantidadeParcelas
                                       )
                                     }
@@ -712,11 +780,17 @@ function Add() {
                       //#region ETAPA 4
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.resumoSimulacao && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.resumoSimulacao && "hidden"
+                      } grid gap-6`}
                     >
-                      {detailSimulacao && <ResumePage parcela={detailSimulacao} />}
+                      {parcelaSelecionada && (
+                        <ResumePage
+                          parcela={parcelaSelecionada}
+                          simulacao={simulacao}
+                        />
+                      )}
                     </div>
 
                     {
@@ -727,9 +801,10 @@ function Add() {
                       //#region ETAPA 5
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
+                      } grid gap-6`}
                     >
                       <div className="flex grid-cols-2 gap-1">
                         <div>
@@ -785,13 +860,13 @@ function Add() {
                           </div>
                         </div>
                         <div className="flex gap-3 flex-col justify-end">
-                          <Label className="text-xs">Informe seu genero</Label>
+                          <Label className="text-xs">Informe seu sexo</Label>
                           <Controller
                             control={control}
                             name="sexo"
                             render={({ field }) => (
                               <RadioGroup
-                                defaultValue="comfortable"
+                                defaultValue={field.value}
                                 onValueChange={field.onChange}
                               >
                                 <div className="flex items-center space-x-2">
@@ -837,15 +912,14 @@ function Add() {
                       //#region ETAPA 6
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.residencia && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.residencia && "hidden"
+                      } grid gap-6`}
                     >
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-1 ">
-                          <Label className="text-xs">
-                            Informe seu RG ou RNE
-                          </Label>
+                          <Label className="text-xs">Informe seu CEP</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -917,7 +991,7 @@ function Add() {
                           />
                         </div>
                         <div className="flex flex-col gap-1 ">
-                          <Label className="text-xs">Numero</Label>
+                          <Label className="text-xs">Número</Label>
                           <Input
                             errors={errors}
                             control={control}
@@ -927,7 +1001,7 @@ function Add() {
                         </div>
                         <div className="flex flex-col gap-1">
                           <Label className="text-xs">
-                            Situação do seu imovel
+                            Situação do seu imóvel
                           </Label>
                           <ComboboxControlled
                             options={BV_SITUACAO_IMOVEL.map((p) => {
@@ -952,9 +1026,10 @@ function Add() {
                       //#region ETAPA 7
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.profissao && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.profissao && "hidden"
+                      } grid gap-6`}
                     >
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-1">
@@ -995,7 +1070,7 @@ function Add() {
 
                         <div className="flex flex-col gap-2 ">
                           <Label className="text-xs">
-                            A quanto tempo esta na sua ocupação atual?
+                            A quanto tempo está na sua ocupação atual?
                           </Label>
                           <div className="flex gap-3 grid-cols-2">
                             <div>
@@ -1029,11 +1104,17 @@ function Add() {
                       //#region ETAPA 8
                     }
                     <div
-                      className={`${obterEtapaAtual().step !==
-                        ETAPAS_FINANCIAMENTO.resumoSolicitacao && "hidden"
-                        } grid gap-6`}
+                      className={`${
+                        obterEtapaAtual().step !==
+                          ETAPAS_FINANCIAMENTO.resumoSolicitacao && "hidden"
+                      } grid gap-6`}
                     >
-                      {detailSimulacao && <ResumePage parcela={detailSimulacao} />}
+                      {parcelaSelecionada && (
+                        <ResumePage
+                          parcela={parcelaSelecionada}
+                          simulacao={simulacao}
+                        />
+                      )}
                       <div>
                         <Controller
                           control={control}
@@ -1065,7 +1146,7 @@ function Add() {
                     }
                   </form>
                 </CardContent>
-                {(currentStep !== 2 || !reprovado) && currentStep !== 7 && (
+                {!reprovado && (
                   <CardFooter className="border-t px-6 py-4 gap-4">
                     {currentStep > 0 && (
                       <Button
@@ -1076,16 +1157,22 @@ function Add() {
                         Voltar
                       </Button>
                     )}
-                    <Button size="sm" onClick={handleNextStep}>
-                      Continuar
-                    </Button>
-                  </CardFooter>
-                )}
+                    {currentStep !== 7 && (
+                      <Button
+                        size="sm"
+                        onClick={handleNextStep}
+                        loading={loadingSalvar}
+                      >
+                        Continuar
+                      </Button>
+                    )}
 
-                {currentStep === 7 && (
-                  <Button size="sm" onClick={handleConfirm}>
-                    Solicitar financiamento
-                  </Button>
+                    {currentStep === 7 && (
+                      <Button size="sm" onClick={handleNextStep}>
+                        Solicitar financiamento
+                      </Button>
+                    )}
+                  </CardFooter>
                 )}
               </Card>
             </div>

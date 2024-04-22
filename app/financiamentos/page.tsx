@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   ItemListagemFinanciamento,
   ListagemQuery,
@@ -79,6 +80,8 @@ import {
 import withAuth from "@/components/with-auth"
 
 function Financiamentos() {
+  const router = useRouter()
+
   const {
     allDados,
     dados,
@@ -287,7 +290,13 @@ function Financiamentos() {
                                 >
                                   Visualizar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    router.push(
+                                      `/financiamentos/add?id=${item.id}`
+                                    )
+                                  }
+                                >
                                   Continuar solicitação
                                 </DropdownMenuItem>
                                 {/* <DropdownMenuItem>Editar</DropdownMenuItem>

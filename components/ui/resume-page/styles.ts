@@ -1,7 +1,6 @@
 import styled from "styled-components"
 
 export const StepDivider = styled.div`
-  width: 300px;
   height: 1px;
   background-color: #9e9da1;
 `
@@ -30,16 +29,16 @@ export const TextInfoSimulation = styled.span`
   font-size: 12px;
 `
 export const InforBox = styled.div`
-display: flex;
-flex-direction: column;
-max-width: 300px;
-padding: 16px;
-border: 1px solid #605dec;
-background-color: #f4f3fe;
-`;
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+  border: 1px solid #605dec;
+  background-color: #f4f3fe;
+`
 
 export const ConfirContainer = styled.div`
-display: flex;
-gap: 8px;
-align-items: center;
-`;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`
