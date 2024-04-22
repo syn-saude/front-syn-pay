@@ -52,10 +52,10 @@ export const InputContent = styled.input`
 `
 
 export const ButtonContent = styled(Button)`
-  background-color: var(--green-300);
+  background-color: var(--syn-primary);
   color: var(--white);
   &:hover {
-    background-color: var(--green-100);
+    background-color: var(--syn-primary-foreground);
   }
 `
 

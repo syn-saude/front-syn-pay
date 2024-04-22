@@ -90,21 +90,11 @@ function Financiamentos() {
   } = useListagem<ItemListagemFinanciamento, ListagemQuery>(
     1000,
     obterListagemFinanciamento as any
-    // listagemFinanciamento as any
   )
 
-  // function listagemFinanciamento(query: any, primeiraBusca?: boolean) {
-  //   query["tipo"] = 2
-  //   return obterListagemFinanciamento(query)
-  // }
-
-  // useEffect(() => {
-  //   inicio()
-  // }, [])
-
-  // async function inicio() {
-
-  // }
+  function handleVisualizar(id: string): void {
+    throw new Error("Function not implemented.")
+  }
 
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
@@ -257,11 +247,19 @@ function Financiamentos() {
                     <TableBody>
                       {dados.map((item) => (
                         <TableRow>
-                          <TableCell className="font-medium">
+                          <TableCell className="font-medium flex flex-col">
                             {item.nome}
+                            <span
+                              // variant="secondary"
+                              className="text-xs w-max text-muted-foreground italic"
+                            >
+                              última etapa {item.etapa}
+                            </span>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">{item.statusSyn}</Badge>
+                            <Badge variant="outline">
+                              {item.descricaoStatusSyn}
+                            </Badge>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             {formatarDinheiro(item.valorSolicitado)}
@@ -284,16 +282,20 @@ function Financiamentos() {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                                <DropdownMenuItem>Visualizar</DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleVisualizar(item.id)}
+                                >
+                                  Visualizar
+                                </DropdownMenuItem>
                                 <DropdownMenuItem>
                                   Continuar solicitação
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>Editar</DropdownMenuItem>
+                                {/* <DropdownMenuItem>Editar</DropdownMenuItem>
                                 <DropdownMenuItem>
                                   <span className="text-destructive hover:text-destructive">
                                     Remover
                                   </span>
-                                </DropdownMenuItem>
+                                </DropdownMenuItem> */}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>

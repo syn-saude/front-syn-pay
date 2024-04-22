@@ -25,7 +25,9 @@ export const salvarFinanciamento: (
 export interface ItemListagemFinanciamento {
   id: string
   nome: string
+  descricaoStatusSyn: string
   statusSyn: string
+  etapa: number
   valorSolicitado: number
   valorParcialLiberado: number
   criado: string
