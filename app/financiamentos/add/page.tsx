@@ -925,7 +925,7 @@ function Add() {
                             control={control}
                             controlName="cep"
                             mask="99999-999"
-                            placeholder="RG ou RNE"
+                            placeholder="Informe seu Cep"
                             onChange={handleCEPChange}
                           />
                         </div>
