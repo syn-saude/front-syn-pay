@@ -7,7 +7,7 @@ import { RadioGroupItem } from "@/components/ui/radio-group"
 import ResumePage from "@/components/ui/resume-page/resumePage"
 import { ParcelaBV, SimulacaoResponse } from "@/components/ui/resume-page/types"
 
-import ModalDetail from "../modalDetail/page"
+import ModalDetail from "../modalDetail"
 import * as S from "./styles"
 
 interface IProps {

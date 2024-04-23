@@ -27,7 +27,7 @@ interface ModalOrderProps {
   isOpen: boolean
   onRequestClose: () => void
   optionDetail?: ParcelaBV
-  simulacao: SimulacaoResponse
+  simulacao?: SimulacaoResponse
   isView?: boolean
   financiamentoDetail?: any
 }
