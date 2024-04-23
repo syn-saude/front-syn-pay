@@ -4,6 +4,15 @@ export type SingInProps = {
   senha: string
 }
 
+export type EsqueciSenhaProps = {
+  cpf: string
+}
+
+export type RedefinirSenhaProps = {
+  senha: string,
+  confirmaSenha: string
+}
+
 export interface AuthResponse {
   id: string
   cpf: string

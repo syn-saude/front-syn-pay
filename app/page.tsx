@@ -103,9 +103,6 @@ export default function Home() {
               />
             </S.InputContainer>
 
-            {/* <S.InputLabel style={{ color: "var(--purple-300)" }}>
-              Esqueceu sua senha?
-            </S.InputLabel> */}
             <S.ButtonContent
               type="submit"
               loading={loading}
@@ -113,25 +110,13 @@ export default function Home() {
             >
               Acessar
             </S.ButtonContent>
-            {/* <Button type="submit"  onClick={notificar}>
-              Acessar
-            </Button> */}
-            {/* <Button loading type="button" onClick={notificar}>
-              Acessar
-            </Button> */}
+
+            <S.btnBack href="/esqueci-senha">Esqueceu sua senha?</S.btnBack>
+
           </S.FormContent>
-          {/* <div>
-            <S.InputLabel> Não possui uma conta?</S.InputLabel>
-            <Link href="/singup">
-              <S.InputLabel
-                style={{ color: "var(--purple-300)", fontWeight: "700" }}
-              >
-                Cadastre-se!
-              </S.InputLabel>
-            </Link>
-          </div> */}
+
         </S.LoginContent>
-        {/* <DevTool control={control} /> */}
+
       </S.Container>
     </>
   )

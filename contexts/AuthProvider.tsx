@@ -58,8 +58,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setStorageUser(userAuthResponse)
       addToken(authToken)
       addTenant(tenantId)
-      // toast.success("Bem Vindo! " + cpf)
-      router.push("/financiamentos")
+
+
+      if(userAuthResponse.primeiroAcesso === true) {
+        router.push(`/redefinir-senha`)
+      } else {
+        router.push("/financiamentos")
+      }
     } catch (error) {
       toast.error("Usuário ou senha inválidos")
     }

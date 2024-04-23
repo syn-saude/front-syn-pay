@@ -24,7 +24,7 @@ export const FormContent = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   align-items: center;
 `
 
@@ -36,8 +36,15 @@ export const InputContainer = styled.div`
 `
 
 export const InputLabel = styled.span`
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 500;
 `
+export const InputText = styled.span`
+  font-size: 1rem;
+  font-weight: 400;
+`
+
+
 
 export const InputContent = styled.input`
   margin-bottom: 1rem;
@@ -62,6 +69,7 @@ export const btnBack = styled.a`
     color: var(--green-300);
   }
 `
+
 
 export const ButtonContent = styled(Button)`
   background-color: var(--syn-primary);
