@@ -10,9 +10,7 @@ export function setupAPIClient(ctx = undefined) {
   let cookies = parseCookies(ctx)
 
   const api = axios.create({
-    // baseURL: 'http://localhost:3300',
-    baseURL: "https://localhost:44377/api",
-    // baseURL: "https://synsaude-dev.azurewebsites.net/api",
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     headers: {
       Authorization: `Bearer ${cookies["@synauth.token"]}`,
     },

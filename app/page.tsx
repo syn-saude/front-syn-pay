@@ -16,6 +16,7 @@ import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -29,6 +30,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import * as S from "./styles"
+
+const { version } = require("../package.json")
 
 yup.setLocale(pt)
 
@@ -77,7 +80,7 @@ export default function Home() {
         <title>SynSaude - login</title>
       </Head>
       <S.Container className="bg-slate-900">
-        <S.LoginContent className="bg-white p-8 pb-10 rounded-md  dark:bg-slate-950">
+        <S.LoginContent className="bg-white p-8 pb-10 rounded-md  transition-opacity  dark:bg-slate-950">
           <Image src={logo2} alt="SynSaude" width={120} className="mb-2" />
 
           <S.FormContent onSubmit={handleSubmit(handleSingIn)}>
@@ -130,15 +133,11 @@ export default function Home() {
               </S.InputLabel>
             </Link>
           </div> */}
+
+          <Badge variant="secondary">v{version}</Badge>
         </S.LoginContent>
         {/* <DevTool control={control} /> */}
       </S.Container>
     </>
   )
 }
-
-// export const getServerSideProps = canSSRGuest(async (ctx) => {
-//   return {
-//     props: {},
-//   };
-// });
