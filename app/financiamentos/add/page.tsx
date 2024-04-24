@@ -749,7 +749,7 @@ function Add() {
                                   variant="default"
                                   className="flex flex-row gap-2 border-orange-400  bg-orange-50 border-blue-500 bg-blue-50"
                                 >
-                                  <div className="text-orange-500 text-blue-500">
+                                  <div className="text-blue-500">
                                     <InfoIcon />
                                   </div>
                                   <p className="text-sm text-blue-900">

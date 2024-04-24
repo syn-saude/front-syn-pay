@@ -78,7 +78,7 @@ export default function SiteHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger
               asChild
-              className="hover:bg-slate-50 p-2 rounded-sm"
+              className="hover:bg-slate-50 p-2 rounded-sm "
             >
               <div className="flex flex-row items-center gap-4 cursor-pointer ">
                 <div className="flex flex-col gap-0">
