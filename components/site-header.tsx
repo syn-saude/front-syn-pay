@@ -73,19 +73,41 @@ export default function SiteHeader() {
               /> */}
             </div>
           </form>
-          <ThemeToggle />
+
+          {/* <ThemeToggle /> */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
+            <DropdownMenuTrigger
+              asChild
+              className="hover:bg-slate-50 p-2 rounded-sm"
+            >
+              <div className="flex flex-row items-center gap-4 cursor-pointer ">
+                <div className="flex flex-col gap-0">
+                  <div className="text-sm font-semibold">
+                    Olá, {user?.perfisPorTenant[0].perfis[0].nome}
+                  </div>
+                  <div
+                    style={{ fontSize: 10, lineHeight: 1 }}
+                    className=" text-xs text-slate-500 font-semibold "
+                  >
+                    {user?.perfisPorTenant[0].descricao}
+                  </div>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="rounded-full"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Toggle user menu</span>
+                </Button>
+              </div>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>
                 <div className="flex items-center gap-4 w-44 justify-between">
-                  <div>{user?.perfisPorTenant[0].descricao}</div>
+                  <div>{user?.perfisPorTenant[0].perfis[0].nome}</div>
+                  {/* <div>{user?.perfisPorTenant[0].descricao}</div> */}
                   <ThemeToggle />
                 </div>
               </DropdownMenuLabel>

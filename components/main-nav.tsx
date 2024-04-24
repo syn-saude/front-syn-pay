@@ -8,6 +8,10 @@ import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 
+import { Badge } from "./ui/badge"
+
+const { version } = require("../package.json")
+
 interface MainNavProps {
   items?: NavItem[]
   vertical?: boolean
@@ -18,11 +22,16 @@ export function MainNav({ items, vertical = false }: MainNavProps) {
     <div className={`flex gap-6 ${vertical && "flex-col"} md:gap-10`}>
       <Link
         href="/financiamentos"
-        className="flex items-center space-x-2 "
-        style={{ width: "90px" }}
+        className="flex items-center space-x-2 mr-2"
+        style={{ width: "130px" }}
       >
         {/* <Icons.logo className="h-6 w-6" /> */}
         <Image src={logo2} alt="SynSaude" width={90} />
+        {/* <div className=" flex items-center justify-center text-primary  top-5 left-20 rounded-md px-1 bg-primary h-4">
+          <span style={{ fontSize: 10 }}>v{version}</span>
+        </div> */}
+        <Badge variant="outline">v{version}</Badge>
+        <div className="text-muted mr-2 text-lg opacity-50">/</div>
         {/* <span className="inline-block font-bold">{siteConfig.name}</span> */}
       </Link>
 
