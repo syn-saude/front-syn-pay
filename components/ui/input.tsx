@@ -92,7 +92,7 @@ export default function Input(props: ControlledInputProps) {
               decimalScale={2}
               intlConfig={{ locale: "pt-BR", currency: "BRL" }}
               decimalsLimit={2}
-              disableGroupSeparators
+              disableGroupSeparators={false}
               onValueChange={(value, name, values) => {
                 field.onChange(values?.float)
               }}

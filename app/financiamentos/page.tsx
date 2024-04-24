@@ -123,6 +123,20 @@ function Financiamentos() {
 
     return dados
   }
+
+  function podeEditar(statusSyn) {
+    switch (statusSyn) {
+      case STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO:
+      case STATUS_FINANCIAMENTO.EM_ANALISE:
+      case STATUS_FINANCIAMENTO.PAGAMENTO_REALIZADO:
+      case STATUS_FINANCIAMENTO.PROPOSTA_APROVADA:
+      case STATUS_FINANCIAMENTO.PROPOSTA_RECUSADA:
+        return false
+      default:
+        return true
+    }
+  }
+
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -325,13 +339,18 @@ function Financiamentos() {
                     {obterDadosFiltrado().map((item) => (
                       <TableRow>
                         <TableCell className="font-medium flex flex-col">
-                          {item.nome}
-                          <span
-                            // variant="secondary"
-                            className="text-xs w-max text-muted-foreground italic"
+                          <div
+                            className="text-sm  text-primary font-semibold cursor-pointer hover:text-blue-900"
+                            onClick={() => handleVisualizar(item.id)}
                           >
-                            última etapa {item.etapa}
-                          </span>
+                            {item.nome}
+                            <p
+                              // variant="secondary"
+                              className="text-xs w-max text-muted-foreground italic font-medium"
+                            >
+                              última etapa {item.etapa}
+                            </p>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
@@ -364,15 +383,17 @@ function Financiamentos() {
                               >
                                 Visualizar
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  router.push(
-                                    `/financiamentos/add?id=${item.id}`
-                                  )
-                                }
-                              >
-                                Continuar solicitação
-                              </DropdownMenuItem>
+                              {podeEditar(item.statusSyn) && (
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    router.push(
+                                      `/financiamentos/add?id=${item.id}`
+                                    )
+                                  }
+                                >
+                                  Continuar solicitação
+                                </DropdownMenuItem>
+                              )}
                               {/* <DropdownMenuItem>Editar</DropdownMenuItem>
                                 <DropdownMenuItem>
                                   <span className="text-destructive hover:text-destructive">

@@ -88,8 +88,8 @@ const schema = yup
     procedimento: yup.string().required().label("Procedimento"),
     valorSolicitado: yup
       .number()
-      .min(500)
-      .max(30000)
+      .min(500, "Valor solicitado deve ser menor ou igual a R$ 500,00")
+      .max(30000, "Valor solicitado deve ser menor ou igual a R$ 30.000,00")
       .required()
       .label("Valor solicitado"),
     renda: yup.number().required().label("Renda"),
@@ -701,7 +701,7 @@ function Add() {
                       <div className="grid grid-cols-1 gap-4">
                         <div className="flex flex-col gap-1 ">
                           <Label className="text-xs">
-                            De quanto você precisa?
+                            De quanto você precisa? <b>(máx: R$ 30.000,00)</b>
                           </Label>
                           <Input
                             money
