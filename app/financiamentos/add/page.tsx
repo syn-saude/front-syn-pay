@@ -438,8 +438,10 @@ function Add() {
 
   const handleFirstStep = () => {
     // setCurrentStep(0)
-    router.push("/financiamentos/add", undefined)
-    router.refresh()
+    window.location.href = "/financiamentos/add"
+    // router.push("/financiamentos/add", undefined)
+    // router.push("/financiamentos/add", undefined)
+    // router.refresh()
   }
 
   //#region Handle Next prev Step
