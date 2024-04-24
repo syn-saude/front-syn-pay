@@ -1,22 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Head from "next/head"
 import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
 import logo2 from "@/public/img/logo-2.png"
 import { RedefinirSenhaProps } from "@/services/auth/types"
+import { redefinirSenha, redefinirSenhaToken } from "@/services/redefinirSenha"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
+
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import * as S from "./styles"
-import { redefinirSenha, redefinirSenhaToken } from "@/services/redefinirSenha"
-import { useSearchParams } from "next/navigation"
-import { useRouter } from 'next/navigation'
 import SuccessModal from "@/components/success-modal/successModal"
+
+import * as S from "./styles"
 
 yup.setLocale(pt)
 
@@ -27,12 +28,12 @@ const schema = yup
   })
   .required()
 
-export default function RedefinirSenha() {
+function RedefinirSenha() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
 
   const { register, watch, handleSubmit, setValue, formState, control } =
-    useForm<{ senha: string; confirmaSenha: string; }>({
+    useForm<{ senha: string; confirmaSenha: string }>({
       resolver: yupResolver(schema),
     })
 
@@ -44,10 +45,10 @@ export default function RedefinirSenha() {
 
   function handleCloseModal() {
     if (token !== null) {
-      router.push('/')
+      router.push("/")
     } else {
       setTimeout(() => {
-        router.push('/financiamentos')
+        router.push("/financiamentos")
       }, 200)
     }
     setTimeout(() => {
@@ -70,7 +71,6 @@ export default function RedefinirSenha() {
       } catch (error) {
         setLoading(false)
       }
-
     } else {
       if (form.senha !== form.confirmaSenha) {
         toast.error("As senhas não conferem")
@@ -131,11 +131,19 @@ export default function RedefinirSenha() {
             <SuccessModal
               textInfo="Dentro de instantes você será redirecionado!"
               isOpen={modalIsOpen}
-              onRequestClose={handleCloseModal} />
-          )
-          }
+              onRequestClose={handleCloseModal}
+            />
+          )}
         </S.LoginContent>
       </S.Container>
     </>
+  )
+}
+
+export default function Redefinir() {
+  return (
+    <Suspense>
+      <RedefinirSenha />
+    </Suspense>
   )
 }

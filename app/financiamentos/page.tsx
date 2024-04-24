@@ -33,6 +33,10 @@ import {
   Users,
 } from "lucide-react"
 
+import {
+  STATUS_FINANCIAMENTO,
+  STATUS_FINANCIAMENTO_ARRAY,
+} from "@/config/const/syn/statusFinanciamento"
 import { ListagemResponse } from "@/hooks/listagem/types"
 import useListagem from "@/hooks/listagem/useListagem"
 import { Badge } from "@/components/ui/badge"
@@ -99,6 +103,7 @@ function Financiamentos() {
     obterListagemFinanciamento as any
   )
   const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false)
+  const [filtroStatus, setFiltroStatus] = useState<string>("")
   const [financiamentoDetail, setFinanciamentoDetail] =
     useState<IFinanciamentoRequest[]>()
 
@@ -112,6 +117,12 @@ function Financiamentos() {
     setModalDetailIsOpen(false)
   }
 
+  function obterDadosFiltrado() {
+    if (!!filtroStatus)
+      return dados.filter((item) => item.statusSyn == filtroStatus)
+
+    return dados
+  }
   return (
     <div className=" flex min-h-screen w-full flex-col bg-muted/40">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -185,18 +196,57 @@ function Financiamentos() {
           </Breadcrumb>
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <Tabs defaultValue="all">
+          <Tabs defaultValue={filtroStatus}>
             <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="all">
+                <TabsTrigger
+                  value=""
+                  onClick={() => {
+                    setFiltroStatus("")
+                  }}
+                >
                   Todos
                   <Badge variant="secondary" className="ml-2">
                     {qtdAllDados}
                   </Badge>
                 </TabsTrigger>
-                <TabsTrigger value="active">Rascunho</TabsTrigger>
-                <TabsTrigger value="draft">Em análise</TabsTrigger>
-                <TabsTrigger value="reprovada">Reprovadas</TabsTrigger>
+                {/* {
+                  STATUS_FINANCIAMENTO_ARRAY.map(s=>
+                    
+                  )
+                } */}
+                <TabsTrigger
+                  value={STATUS_FINANCIAMENTO.RASCUNHO}
+                  onClick={() => {
+                    setFiltroStatus(STATUS_FINANCIAMENTO.RASCUNHO)
+                  }}
+                >
+                  Rascunho
+                </TabsTrigger>
+                <TabsTrigger
+                  value={STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO}
+                  onClick={() => {
+                    setFiltroStatus(STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO)
+                  }}
+                >
+                  CPF aprovado
+                </TabsTrigger>
+                <TabsTrigger
+                  value={STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO}
+                  onClick={() => {
+                    setFiltroStatus(STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO)
+                  }}
+                >
+                  CPF reprovado
+                </TabsTrigger>
+                <TabsTrigger
+                  value={STATUS_FINANCIAMENTO.EM_ANALISE}
+                  onClick={() => {
+                    setFiltroStatus(STATUS_FINANCIAMENTO.EM_ANALISE)
+                  }}
+                >
+                  Em análise
+                </TabsTrigger>
                 {/* <TabsTrigger value="archived" className="hidden sm:flex">
                   Archived
                 </TabsTrigger> */}
@@ -212,15 +262,26 @@ function Financiamentos() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                    <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem checked>
-                      Active
+                    <DropdownMenuCheckboxItem
+                      checked={filtroStatus == ""}
+                      onClick={() => {
+                        setFiltroStatus("")
+                      }}
+                    >
+                      Todos
                     </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem>
-                      Archived
-                    </DropdownMenuCheckboxItem>
+                    {STATUS_FINANCIAMENTO_ARRAY.map((s) => (
+                      <DropdownMenuCheckboxItem
+                        checked={filtroStatus == s.id}
+                        onClick={() => {
+                          setFiltroStatus(s.id)
+                        }}
+                      >
+                        {s.descricao}
+                      </DropdownMenuCheckboxItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -235,100 +296,100 @@ function Financiamentos() {
                 </Link>
               </div>
             </div>
-            <TabsContent value="all">
-              <Card x-chunk="dashboard-06-chunk-0">
-                <CardHeader>
-                  <CardTitle>Financiamentos</CardTitle>
-                  <CardDescription>
-                    Acompanhe as solicitações de financiamentos.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table loading={loading}>
-                    <TableHeader>
+            {/* <TabsContent value={filtroStatus}> */}
+            <Card x-chunk="dashboard-06-chunk-0" className="mt-2">
+              <CardHeader>
+                <CardTitle>Financiamentos</CardTitle>
+                <CardDescription>
+                  Acompanhe as solicitações de financiamentos.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table loading={loading}>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Valor solicitado
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Solicitado
+                      </TableHead>
+                      <TableHead>
+                        <span className="sr-only">Ações</span>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {obterDadosFiltrado().map((item) => (
                       <TableRow>
-                        <TableHead>Cliente</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Valor solicitado
-                        </TableHead>
-                        <TableHead className="hidden md:table-cell">
-                          Solicitado
-                        </TableHead>
-                        <TableHead>
-                          <span className="sr-only">Ações</span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {dados.map((item) => (
-                        <TableRow>
-                          <TableCell className="font-medium flex flex-col">
-                            {item.nome}
-                            <span
-                              // variant="secondary"
-                              className="text-xs w-max text-muted-foreground italic"
-                            >
-                              última etapa {item.etapa}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">
-                              {item.descricaoStatusSyn}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            {formatarDinheiro(item.valorSolicitado)}
-                          </TableCell>
+                        <TableCell className="font-medium flex flex-col">
+                          {item.nome}
+                          <span
+                            // variant="secondary"
+                            className="text-xs w-max text-muted-foreground italic"
+                          >
+                            última etapa {item.etapa}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {item.descricaoStatusSyn}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {formatarDinheiro(item.valorSolicitado)}
+                        </TableCell>
 
-                          <TableCell className="hidden md:table-cell">
-                            {formatarDataHoraLocal(item.criado)}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  aria-haspopup="true"
-                                  size="icon"
-                                  variant="ghost"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                                <DropdownMenuItem
-                                  onClick={() => handleVisualizar(item.id)}
-                                >
-                                  Visualizar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    router.push(
-                                      `/financiamentos/add?id=${item.id}`
-                                    )
-                                  }
-                                >
-                                  Continuar solicitação
-                                </DropdownMenuItem>
-                                {/* <DropdownMenuItem>Editar</DropdownMenuItem>
+                        <TableCell className="hidden md:table-cell">
+                          {formatarDataHoraLocal(item.criado)}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+                              <DropdownMenuItem
+                                onClick={() => handleVisualizar(item.id)}
+                              >
+                                Visualizar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  router.push(
+                                    `/financiamentos/add?id=${item.id}`
+                                  )
+                                }
+                              >
+                                Continuar solicitação
+                              </DropdownMenuItem>
+                              {/* <DropdownMenuItem>Editar</DropdownMenuItem>
                                 <DropdownMenuItem>
                                   <span className="text-destructive hover:text-destructive">
                                     Remover
                                   </span>
                                 </DropdownMenuItem> */}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {/* <TableRow>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {/* <TableRow>
                         <TableCell colSpan={5}></TableCell>
                       </TableRow> */}
-                    </TableBody>
-                  </Table>
-                  {/* {qtdAllDados !== allDados.length && (
+                  </TableBody>
+                </Table>
+                {/* {qtdAllDados !== allDados.length && (
                     <Button
                       loading={loading}
                       className="w-full"
@@ -338,15 +399,15 @@ function Financiamentos() {
                       Carregar mais
                     </Button>
                   )} */}
-                </CardContent>
-                <CardFooter>
-                  {/* <div className="text-xs text-muted-foreground">
+              </CardContent>
+              <CardFooter>
+                {/* <div className="text-xs text-muted-foreground">
                     Showing <strong>1-10</strong> of <strong>32</strong>{" "}
                     products
                   </div> */}
-                </CardFooter>
-              </Card>
-            </TabsContent>
+              </CardFooter>
+            </Card>
+            {/* </TabsContent> */}
           </Tabs>
           {modalDetailIsOpen && (
             <ModalDetail

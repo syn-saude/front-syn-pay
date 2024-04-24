@@ -125,7 +125,8 @@ export default function ResumePage({ parcela, simulacao }: IParcela) {
         <S.LabelTitleSimulation>Periodo de carência</S.LabelTitleSimulation>
         <S.TextSimulation>
           Caso aprovada a proposta possui carência de 30 dias, com data da 1ª
-          parcela prevista para 18/05/2024
+          parcela prevista para{" "}
+          {formatarData(simulacao?.dataMinimaCarenciaFinanciamento)}
         </S.TextSimulation>
       </S.InforBox>
     </div>

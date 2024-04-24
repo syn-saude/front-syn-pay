@@ -116,9 +116,9 @@ export default function Home() {
 
             <S.btnBack href="/esqueci-senha">Esqueceu sua senha?</S.btnBack>
 
+            <Badge variant="secondary">v{version}</Badge>
           </S.FormContent>
         </S.LoginContent>
-
       </S.Container>
     </>
   )

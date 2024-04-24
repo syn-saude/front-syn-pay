@@ -43,9 +43,9 @@ export default function CardValorLiberado({
       {...props}
       className={`text-primary border-slate-400 ${
         selecionado && "selecionado"
-      } w-full md:max-w-[300px] hover:bg-slate-300 `}
+      } w-full max-w-[350px] hover:bg-slate-300 `}
     >
-      <div>
+      <div className="max-w[60px]">
         {selecionado ? (
           <Check className="h-4 w-4 bg-green-800 rounded-xl p-1" />
         ) : (
@@ -58,7 +58,7 @@ export default function CardValorLiberado({
           ></div>
         )}
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full mx-4">
         <div className="text-sm">Valor liberado:</div>
         <div className="text-lg font-bold">
           {formatarDinheiro(opcao.valorLiberado)}

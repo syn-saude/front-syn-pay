@@ -10,11 +10,13 @@ import {
   salvarFinanciamento,
 } from "@/services/financiamentos"
 import { formatarDataHoraLocal } from "@/utils/formatacoes/formatarData"
+import formatarDinheiro from "@/utils/formatacoes/formatarDinheiro"
 import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
 import {
   Frown,
   Home,
+  InfoIcon,
   LineChart,
   Package,
   Package2,
@@ -37,6 +39,7 @@ import {
 } from "@/config/const/bv/dominio"
 import { APROVADOS } from "@/config/const/common/aprovados"
 import { ESTADOS } from "@/config/const/common/states"
+import { Alert } from "@/components/ui/alert"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -83,7 +86,7 @@ const schema = yup
     uf: yup.string().required().label("UF"),
     //Step 2
     procedimento: yup.string().required().label("Procedimento"),
-    valorSolicitado: yup.number().required().label("Valor solicitado"),
+    valorSolicitado: yup.number().min(500).required().label("Valor solicitado"),
     renda: yup.number().required().label("Renda"),
     //Step 3
     qtdParcelas: yup.number().required().label("Valor aprovado"),
@@ -113,7 +116,7 @@ const schema = yup
     //Step 8
     ciente: yup
       .boolean()
-      .required()
+      .required("Você precisa aceitar os termos")
       .oneOf([true], "Você precisa aceitar os termos"),
     //visualização e validação
   })
@@ -187,8 +190,8 @@ const etapas = [
     //step 2
     nuStep: 2,
     step: ETAPAS_FINANCIAMENTO.valores,
-    titulo: "De quanto você precisa?",
-    descricao: "",
+    titulo: "Qual o seu procedimento?",
+    descricao: "Nos informe o que precisa",
     validacao: ["procedimento", "valorSolicitado", "renda"],
     ativo: true,
   },
@@ -196,8 +199,8 @@ const etapas = [
     //step 3
     nuStep: 3,
     step: ETAPAS_FINANCIAMENTO.valorAprovados,
-    titulo: "Propostas pré-aprovados",
-    descricao: "",
+    titulo: "Simular condições",
+    descricao: "Vamos simular as melhores condições",
     validacao: ["qtdParcelas"],
     ativo: true,
   },
@@ -278,8 +281,7 @@ function Add() {
   const [currentStep, setCurrentStep] = useState(0)
 
   const [id, setId] = useState(searchParams.get("id"))
-  const [aprovado, setAprovado] = useState(false)
-  const [reprovado, setReprovado] = useState(false)
+  const [cpfReprovado, setCpfReprovado] = useState(false)
   const [loading, setLoading] = useState(true)
   const [loadingSalvar, setLoadingSalvar] = useState(false)
 
@@ -347,13 +349,16 @@ function Add() {
 
   //#endregion
   //#region Request Cep
-  const handleCEPChange = async (event: any) => {
-    const cep = event.target.value.replace(/\D/g, "")
-    if (cep.length === 8) {
+  useEffect(() => {
+    handleCEPChange(form.cep)
+  }, [form.cep])
+  const handleCEPChange = async (value: any) => {
+    const cep = value?.replace(/\D/g, "")
+    if (cep?.length === 8) {
       try {
         const response = await obterCep(cep)
         const data = response.data
-        setValue("cep", data.cep)
+        // setValue("cep", data.cep)
         setValue("estado", data.uf)
         setValue("cidade", data.localidade)
         setValue("endereco", data.logradouro)
@@ -400,18 +405,23 @@ function Add() {
       }
     } catch (error) {
       console.error(error)
+      toast.error("Ocorreu um erro ao tentar realizar essa operação.")
+      setLoadingSalvar(false)
+      throw error
     }
     setLoadingSalvar(false)
   }
   //#endregion
 
   useEffect(() => {
-    if (simulacao?.listaParcelas !== null) {
-      setAprovado(true)
-    } else {
-      setReprovado(true)
+    if (currentStep > 1) {
+      if (!!simulacao?.listaParcelas?.length) {
+        setCpfReprovado(false)
+      } else {
+        setCpfReprovado(true)
+      }
     }
-  }, [])
+  }, [simulacao, currentStep])
 
   useEffect(() => {
     const parcela = simulacao?.listaParcelas?.find(
@@ -422,7 +432,9 @@ function Add() {
   }, [form.qtdParcelas, simulacao])
 
   const handleFirstStep = () => {
-    setCurrentStep(0)
+    // setCurrentStep(0)
+    router.push("/financiamentos/add", undefined)
+    router.refresh()
   }
 
   //#region Handle Next prev Step
@@ -563,12 +575,14 @@ function Add() {
             }
             <div className="grid gap-6 ">
               <Card x-chunk="dashboard-04-chunk-1" loading={loading}>
-                <CardHeader>
-                  <CardTitle>{obterEtapaAtual().titulo}</CardTitle>
-                  <CardDescription>
-                    {obterEtapaAtual().descricao}
-                  </CardDescription>
-                </CardHeader>
+                {!cpfReprovado && (
+                  <CardHeader>
+                    <CardTitle>{obterEtapaAtual().titulo}</CardTitle>
+                    <CardDescription>
+                      {obterEtapaAtual().descricao}
+                    </CardDescription>
+                  </CardHeader>
+                )}
                 <CardContent>
                   <form>
                     {
@@ -719,56 +733,96 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.valorAprovados && "hidden"
                       } grid gap-6`}
                     >
-                      {aprovado && (
-                        <Controller
-                          control={control}
-                          name="qtdParcelas"
-                          render={({ field }) => (
-                            <div className="grid grid-cols-1 gap-2 ">
-                              {simulacao?.listaParcelas?.map(
-                                (item: ParcelaBV, index: number) => (
-                                  <CardValorLiberado
-                                    simulacao={simulacao}
-                                    key={index}
-                                    selecionado={
-                                      form.qtdParcelas ===
-                                      item.quantidadeParcelas
-                                    }
-                                    onValueChange={() =>
-                                      setValue(
-                                        "qtdParcelas",
-                                        item.quantidadeParcelas
-                                      )
-                                    }
-                                    opcao={item}
-                                  />
-                                )
-                              )}
+                      {!cpfReprovado && (
+                        <div>
+                          {!!simulacao?.existeValorParcial && (
+                            <div>
+                              <div className="text-sm  max-w-[500px]">
+                                <Alert
+                                  variant="default"
+                                  className="flex flex-row gap-2 border-orange-400  bg-orange-50 border-blue-500 bg-blue-50"
+                                >
+                                  <div className="text-orange-500 text-blue-500">
+                                    <InfoIcon />
+                                  </div>
+                                  <p className="text-sm text-blue-900">
+                                    Você solicitou o valor de{" "}
+                                    <b>
+                                      {formatarDinheiro(form?.valorSolicitado)}
+                                    </b>
+                                    .
+                                    <br />
+                                    Infelizmente não encontramos crédito para
+                                    este valor.
+                                    <br /> Mas encontramos uma proposta para o
+                                    valor de{" "}
+                                    <b>
+                                      {formatarDinheiro(
+                                        simulacao?.valorMaximoFinanciado
+                                      )}
+                                    </b>
+                                    .
+                                  </p>
+                                </Alert>
+
+                                <p className="text-sm text-foreground font-semibold my-3">
+                                  Escolha a melhor proposta abaixo para
+                                  continuar a solicitação de financiamento:
+                                </p>
+                              </div>
                             </div>
                           )}
-                        />
+                          <Controller
+                            control={control}
+                            name="qtdParcelas"
+                            render={({ field }) => (
+                              <div className="grid grid-cols-1 gap-2 ">
+                                {simulacao?.listaParcelas?.map(
+                                  (item: ParcelaBV, index: number) => (
+                                    <CardValorLiberado
+                                      simulacao={simulacao}
+                                      key={index}
+                                      selecionado={
+                                        form.qtdParcelas ===
+                                        item.quantidadeParcelas
+                                      }
+                                      onValueChange={() =>
+                                        setValue(
+                                          "qtdParcelas",
+                                          item.quantidadeParcelas
+                                        )
+                                      }
+                                      opcao={item}
+                                    />
+                                  )
+                                )}
+                              </div>
+                            )}
+                          />
+                        </div>
                       )}
-                      {reprovado && (
-                        <div className="grid grid-cols-1 gap-8 justify-items-center">
+                      {cpfReprovado && (
+                        <div className="grid grid-cols-1 gap-4 justify-items-center p-8">
                           <Frown strokeWidth={1.1} size={70} color="#ff6c2e" />
-                          <div className="grid grid-cols-1 gap-8 w-[420px] ">
-                            <S.LabelNotAprov>
+                          <div className="grid grid-cols-1 gap-4 max-w-[420px] text-center ">
+                            <div className="text-lg font-semibold">
                               Infelizmente não encontramos propostas
                               disponíveis.
-                            </S.LabelNotAprov>
-                            <S.LabelNotAprov>
-                              Deseja realizar uma nova sumulação com outro CPF?
-                            </S.LabelNotAprov>
-                          </div>
+                            </div>
+                            <div className="text-sm ">
+                              Deseja realizar uma nova simulação com outro CPF?
+                            </div>
 
-                          <Button
-                            size="lg"
-                            variant="default"
-                            type="button"
-                            onClick={handleFirstStep}
-                          >
-                            Sim, Simular com outro CPF!
-                          </Button>
+                            <Button
+                              size="lg"
+                              variant="default"
+                              type="button"
+                              onClick={handleFirstStep}
+                              className="w-full"
+                            >
+                              Sim, simular com outro CPF!
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -925,8 +979,8 @@ function Add() {
                             control={control}
                             controlName="cep"
                             mask="99999-999"
+                            value={form.cep}
                             placeholder="Informe seu Cep"
-                            onChange={handleCEPChange}
                           />
                         </div>
                         <div className="flex gap-3 grid-cols-2">
@@ -953,8 +1007,11 @@ function Add() {
                               Informe sua cidade
                             </Label>
                             <Input
+                              key={form.cep}
+                              defaultValue={form.cidade}
                               errors={errors}
                               control={control}
+                              value={form.cidade}
                               controlName="cidade"
                               placeholder="Qual a sua cidade?"
                             />
@@ -967,6 +1024,7 @@ function Add() {
                           <Input
                             errors={errors}
                             control={control}
+                            value={form.endereco}
                             controlName="endereco"
                             placeholder="Qual a seu endereço?"
                           />
@@ -976,46 +1034,64 @@ function Add() {
                           <Input
                             errors={errors}
                             control={control}
+                            value={form.bairro}
                             controlName="bairro"
                             placeholder="Qual a seu bairro?"
                           />
                         </div>
 
-                        <div className="flex flex-col gap-1 ">
-                          <Label className="text-xs">Complemento</Label>
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="complemento"
-                            placeholder="Possui algum complemento?"
-                          />
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="col-span-2 gap-1 ">
+                            <Label className="text-xs">Complemento</Label>
+                            <Input
+                              errors={errors}
+                              control={control}
+                              value={form.complemento}
+                              controlName="complemento"
+                              placeholder="Possui algum complemento?"
+                            />
+                          </div>
+                          <div className="col-span-1 gap-1 ">
+                            <Label className="text-xs">Número</Label>
+                            <Input
+                              errors={errors}
+                              control={control}
+                              value={form.numero}
+                              controlName="numero"
+                              placeholder="Informe o numero da sua residência"
+                            />
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-1 ">
-                          <Label className="text-xs">Número</Label>
-                          <Input
-                            errors={errors}
-                            control={control}
-                            controlName="numero"
-                            placeholder="Informe o numero da sua residência"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <Label className="text-xs">
-                            Situação do seu imóvel
-                          </Label>
-                          <ComboboxControlled
-                            options={BV_SITUACAO_IMOVEL.map((p) => {
-                              return {
-                                label: p.descricao,
-                                value: p.codigo.toString(),
-                                id: p.codigo,
-                              }
-                            })}
-                            control={control}
-                            controlName="situacaoImovel"
-                            errors={errors}
-                            placeholder="Qual a situação do seu imovel?"
-                          />
+                        <div className="grid grid-cols-1 gap-3">
+                          <div className="flex flex-col gap-1">
+                            <Label className="text-xs">
+                              Situação do seu imóvel
+                            </Label>
+                            <ComboboxControlled
+                              options={BV_SITUACAO_IMOVEL.map((p) => {
+                                return {
+                                  label: p.descricao,
+                                  value: p.codigo.toString(),
+                                  id: p.codigo,
+                                }
+                              })}
+                              control={control}
+                              controlName="situacaoImovel"
+                              errors={errors}
+                              placeholder="Qual a situação do seu imovel?"
+                            />
+                          </div>
+                          {/* <div className="flex flex-col gap-1">
+                            <Label className="text-xs">
+                              Morando na residência a quantos meses?
+                            </Label>
+                            <Input
+                              errors={errors}
+                              control={control}
+                              controlName="mesesResidencia"
+                              placeholder="Informe meses"
+                            />
+                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -1146,7 +1222,7 @@ function Add() {
                     }
                   </form>
                 </CardContent>
-                {!reprovado && (
+                {!cpfReprovado && (
                   <CardFooter className="border-t px-6 py-4 gap-4">
                     {currentStep > 0 && (
                       <Button
@@ -1168,7 +1244,11 @@ function Add() {
                     )}
 
                     {currentStep === 7 && (
-                      <Button size="sm" onClick={handleNextStep}>
+                      <Button
+                        size="sm"
+                        onClick={handleNextStep}
+                        loading={loadingSalvar}
+                      >
                         Solicitar financiamento
                       </Button>
                     )}
