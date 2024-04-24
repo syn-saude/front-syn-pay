@@ -103,7 +103,7 @@ function Financiamentos() {
     obterListagemFinanciamento as any
   )
   const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false)
-  const [filtroStatus, setFiltroStatus] = useState<string>("")
+  const [filtroStatus, setFiltroStatus] = useState<string>("todos")
   const [financiamentoDetail, setFinanciamentoDetail] =
     useState<IFinanciamentoRequest[]>()
 
@@ -117,9 +117,14 @@ function Financiamentos() {
     setModalDetailIsOpen(false)
   }
 
-  function obterDadosFiltrado() {
-    if (!!filtroStatus)
+  function obterDadosFiltrado(status?: string) {
+    if (!!status) {
+      return dados.filter((item) => item.statusSyn == status)
+    }
+
+    if (filtroStatus != "todos") {
       return dados.filter((item) => item.statusSyn == filtroStatus)
+    }
 
     return dados
   }
@@ -214,9 +219,9 @@ function Financiamentos() {
             <div className="flex items-center">
               <TabsList>
                 <TabsTrigger
-                  value=""
+                  value="todos"
                   onClick={() => {
-                    setFiltroStatus("")
+                    setFiltroStatus("todos")
                   }}
                 >
                   Todos
@@ -236,6 +241,9 @@ function Financiamentos() {
                   }}
                 >
                   Rascunho
+                  <Badge variant="secondary" className="ml-2">
+                    {obterDadosFiltrado(STATUS_FINANCIAMENTO.RASCUNHO).length}
+                  </Badge>
                 </TabsTrigger>
                 <TabsTrigger
                   value={STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO}
@@ -244,6 +252,13 @@ function Financiamentos() {
                   }}
                 >
                   CPF aprovado
+                  <Badge variant="secondary" className="ml-2">
+                    {
+                      obterDadosFiltrado(
+                        STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO
+                      ).length
+                    }
+                  </Badge>
                 </TabsTrigger>
                 <TabsTrigger
                   value={STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO}
@@ -252,6 +267,13 @@ function Financiamentos() {
                   }}
                 >
                   CPF reprovado
+                  <Badge variant="secondary" className="ml-2">
+                    {
+                      obterDadosFiltrado(
+                        STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO
+                      ).length
+                    }
+                  </Badge>
                 </TabsTrigger>
                 <TabsTrigger
                   value={STATUS_FINANCIAMENTO.EM_ANALISE}
@@ -260,6 +282,9 @@ function Financiamentos() {
                   }}
                 >
                   Em análise
+                  <Badge variant="secondary" className="ml-2">
+                    {obterDadosFiltrado(STATUS_FINANCIAMENTO.EM_ANALISE).length}
+                  </Badge>
                 </TabsTrigger>
                 {/* <TabsTrigger value="archived" className="hidden sm:flex">
                   Archived
@@ -279,9 +304,9 @@ function Financiamentos() {
                     <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuCheckboxItem
-                      checked={filtroStatus == ""}
+                      checked={filtroStatus == "todos"}
                       onClick={() => {
-                        setFiltroStatus("")
+                        setFiltroStatus("todos")
                       }}
                     >
                       Todos
@@ -319,97 +344,103 @@ function Financiamentos() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table loading={loading}>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        Valor solicitado
-                      </TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        Solicitado
-                      </TableHead>
-                      <TableHead>
-                        <span className="sr-only">Ações</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {obterDadosFiltrado().map((item) => (
+                {obterDadosFiltrado().length == 0 ? (
+                  <div className="text-sm text-foreground font-medium">
+                    Nenhum registro encontrado com esse filtro.
+                  </div>
+                ) : (
+                  <Table loading={loading}>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell className="font-medium flex flex-col">
-                          <div
-                            className="text-sm  text-primary font-semibold cursor-pointer hover:text-blue-900"
-                            onClick={() => handleVisualizar(item.id)}
-                          >
-                            {item.nome}
-                            <p
-                              // variant="secondary"
-                              className="text-xs w-max text-muted-foreground italic font-medium"
+                        <TableHead>Cliente</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Valor solicitado
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                          Solicitado
+                        </TableHead>
+                        <TableHead>
+                          <span className="sr-only">Ações</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {obterDadosFiltrado().map((item) => (
+                        <TableRow>
+                          <TableCell className="font-medium flex flex-col">
+                            <div
+                              className="text-sm  text-primary font-semibold cursor-pointer hover:text-blue-900"
+                              onClick={() => handleVisualizar(item.id)}
                             >
-                              última etapa {item.etapa}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {item.descricaoStatusSyn}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {formatarDinheiro(item.valorSolicitado)}
-                        </TableCell>
+                              {item.nome}
+                              <p
+                                // variant="secondary"
+                                className="text-xs w-max text-muted-foreground italic font-medium"
+                              >
+                                última etapa {item.etapa}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">
+                              {item.descricaoStatusSyn}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            {formatarDinheiro(item.valorSolicitado)}
+                          </TableCell>
 
-                        <TableCell className="hidden md:table-cell">
-                          {formatarDataHoraLocal(item.criado)}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                              <DropdownMenuItem
-                                onClick={() => handleVisualizar(item.id)}
-                              >
-                                Visualizar
-                              </DropdownMenuItem>
-                              {podeEditar(item.statusSyn) && (
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    router.push(
-                                      `/financiamentos/add?id=${item.id}`
-                                    )
-                                  }
+                          <TableCell className="hidden md:table-cell">
+                            {formatarDataHoraLocal(item.criado)}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  aria-haspopup="true"
+                                  size="icon"
+                                  variant="ghost"
                                 >
-                                  Continuar solicitação
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+                                <DropdownMenuItem
+                                  onClick={() => handleVisualizar(item.id)}
+                                >
+                                  Visualizar
                                 </DropdownMenuItem>
-                              )}
-                              {/* <DropdownMenuItem>Editar</DropdownMenuItem>
+                                {podeEditar(item.statusSyn) && (
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      router.push(
+                                        `/financiamentos/add?id=${item.id}`
+                                      )
+                                    }
+                                  >
+                                    Continuar solicitação
+                                  </DropdownMenuItem>
+                                )}
+                                {/* <DropdownMenuItem>Editar</DropdownMenuItem>
                                 <DropdownMenuItem>
                                   <span className="text-destructive hover:text-destructive">
                                     Remover
                                   </span>
                                 </DropdownMenuItem> */}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {/* <TableRow>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {/* <TableRow>
                         <TableCell colSpan={5}></TableCell>
                       </TableRow> */}
-                  </TableBody>
-                </Table>
+                    </TableBody>
+                  </Table>
+                )}
                 {/* {qtdAllDados !== allDados.length && (
                     <Button
                       loading={loading}
