@@ -11,6 +11,9 @@ export const AprovadoContainer = styled.div<{ isHovered?: any }>`
   background-color: #f4f3fe;
   cursor: pointer;
 
+  @media (max-width: 768px) {
+    height: 100px;
+  }
   &.selecionado {
     background-color: #36bf76;
     border: none;

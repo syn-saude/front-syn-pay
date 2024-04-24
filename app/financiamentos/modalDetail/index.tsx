@@ -1,6 +1,7 @@
 import React from "react"
 import formatarCPF from "@/utils/formatacoes/formatarCPF"
 import { formatarData } from "@/utils/formatacoes/formatarData"
+import formatarDinheiro from "@/utils/formatacoes/formatarDinheiro"
 import formatarTelefone from "@/utils/formatacoes/formatarTelefone"
 import { X } from "lucide-react"
 
@@ -63,158 +64,209 @@ export default function ModalDetail({
     return situacaoImovel?.descricao
   }
 
+  const transformSexo = (sexo) => {
+    switch (sexo) {
+      case 'F':
+        return 'Feminino';
+      case 'M':
+        return 'Masculino';
+      default:
+        return 'Outro';
+    }
+  };
+
+
   return (
     <Dialog open={isOpen} onOpenChange={onRequestClose}>
       {isView && (
         <DialogContent className="max-w-[525px]">
-          <DialogHeader className="text-teal-600">
+          <DialogHeader className="dark:text-emerald-500 text-blue-900">
             <DialogTitle>Dados Cadastrados</DialogTitle>
           </DialogHeader>
-          <S.ContainerBox>
+          <S.Container>
             <S.ContainerBox>
-              <S.TextLabel>Dados Pessoais</S.TextLabel>
-              <div className="grid grid-cols-2">
+              <S.TextLabel className="dark:text-emerald-500 text-blue-900">
+                Dados Pessoais
+              </S.TextLabel>
+              <S.StepDivider />
+              <div className="grid grid-cols-2 gap-2">
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Nome:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">Nome</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.nome}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Telefone:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Telefone
+                  </S.TextLabelInfo>
                   <S.TextInfo>
                     {formatarTelefone(financiamentoDetail.telefone)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">CPF:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">CPF</S.TextLabelInfo>
                   <S.TextInfo>
                     {formatarCPF(financiamentoDetail.cpf)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Nascimento:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Nascimento
+                  </S.TextLabelInfo>
                   <S.TextInfo>
                     {formatarData(financiamentoDetail.dataNascimento)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">E-mail:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">E-mail</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.email}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Identidade:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Identidade
+                  </S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.rg}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Sexo:</S.TextInfo>
-                  <S.TextInfo>{financiamentoDetail.sexo}</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">Sexo</S.TextLabelInfo>
+                  <S.TextInfo>{transformSexo(financiamentoDetail.sexo)}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Mãe:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">Mãe</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.nomeMae}</S.TextInfo>
                 </S.ContenteInfo>
               </div>
             </S.ContainerBox>
 
             <S.ContainerBox>
-              <S.TextLabel>Dados Complementares</S.TextLabel>
-              <div className="grid grid-cols-2">
+              <S.TextLabel className="dark:text-emerald-500 text-blue-900">
+                Dados Complementares
+              </S.TextLabel>
+              <S.StepDivider />
+              <div className="grid grid-cols-2 gap-2">
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Profissão:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Profissão
+                  </S.TextLabelInfo>
                   <S.TextInfo>
                     {obterProfissao(financiamentoDetail.profissao)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Renda:</S.TextInfo>
-                  <S.TextInfo>{financiamentoDetail.renda}</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">Renda</S.TextLabelInfo>
+                  <S.TextInfo>
+                    {formatarDinheiro(financiamentoDetail.renda)}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Nacionalidade:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Nacionalidade
+                  </S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.nacionalidade}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Patrimonio:</S.TextInfo>
-                  <S.TextInfo>{financiamentoDetail.patrimonio}</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Patrimonio
+                  </S.TextLabelInfo>
+                  <S.TextInfo>
+                    {formatarDinheiro(financiamentoDetail.patrimonio)}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Procedimento:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Procedimento
+                  </S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.procedimento}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Estado Civil:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Estado Civil
+                  </S.TextLabelInfo>
                   <S.TextInfo>
                     {obterEstadoCivil(financiamentoDetail.estadoCivil)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Nº parcelas</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Nº parcelas
+                  </S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.qtdParcelas}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">
-                    Situação do imovel:
-                  </S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Situação do imovel
+                  </S.TextLabelInfo>
                   <S.TextInfo>
                     {obterSituacaoImovel(financiamentoDetail.situacaoImovel)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">
-                    Tipo de profissão:
-                  </S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Tipo de profissão
+                  </S.TextLabelInfo>
                   <S.TextInfo>
                     {obterTipoProfissao(financiamentoDetail.tipoProfissao)}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Valor solicitado:</S.TextInfo>
-                  <S.TextInfo>{financiamentoDetail.valorSolicitado}</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">
+                    Valor solicitado
+                  </S.TextLabelInfo>
+                  <S.TextInfo>
+                    {formatarDinheiro(financiamentoDetail.valorSolicitado)}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Anos:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">Anos</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.anos}</S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Meses:</S.TextInfo>
+                  <S.TextLabelInfo className="text-xs">Meses</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.meses}</S.TextInfo>
                 </S.ContenteInfo>
               </div>
             </S.ContainerBox>
 
             <S.ContainerBox>
-              <S.TextLabel>Dados de Endereço</S.TextLabel>
+              <S.TextLabel className="dark:text-emerald-500 text-blue-900">
+                Dados de Endereço
+              </S.TextLabel>
+              <S.StepDivider />
               <div>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Cep:</S.TextInfo>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">Cep:</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.cep}</S.TextInfo>
-                </S.ContenteInfo>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">UF:</S.TextInfo>
+                </S.ContenteInfoRow>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">UF:</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.uf}</S.TextInfo>
-                </S.ContenteInfo>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Cidade:</S.TextInfo>
+                </S.ContenteInfoRow>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">Cidade:</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.cidade}</S.TextInfo>
-                </S.ContenteInfo>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Bairro:</S.TextInfo>
+                </S.ContenteInfoRow>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">Bairro:</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.bairro}</S.TextInfo>
-                </S.ContenteInfo>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Endereço:</S.TextInfo>
+                </S.ContenteInfoRow>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">
+                    Endereço:
+                  </S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.endereco}</S.TextInfo>
-                </S.ContenteInfo>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Numero:</S.TextInfo>
+                </S.ContenteInfoRow>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">Numero:</S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.numero}</S.TextInfo>
-                </S.ContenteInfo>
-                <S.ContenteInfo>
-                  <S.TextInfo className="text-xs">Complemento:</S.TextInfo>
+                </S.ContenteInfoRow>
+                <S.ContenteInfoRow>
+                  <S.TextLabelInfo className="text-xs">
+                    Complemento:
+                  </S.TextLabelInfo>
                   <S.TextInfo>{financiamentoDetail.complemento}</S.TextInfo>
-                </S.ContenteInfo>
+                </S.ContenteInfoRow>
               </div>
             </S.ContainerBox>
-          </S.ContainerBox>
+          </S.Container>
         </DialogContent>
       )}
 

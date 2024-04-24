@@ -18,10 +18,15 @@ export const BtnClosed = styled.button`
   }
 `
 
+export const Container = styled.div`
+display: flex;
+  flex-direction: column;
+  gap: 18px;`;
+
 export const ContainerBox = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `
 export const ContentBox = styled.div`
   display: flex;
@@ -31,6 +36,11 @@ export const ContentBox = styled.div`
 
 export const ContenteInfo = styled.div`
 display: flex;
+flex-direction: column;
+gap:2px;
+`
+export const ContenteInfoRow = styled.div`
+display: flex;
 flex-direction: row;
 gap:6px;
 `
@@ -38,9 +48,18 @@ gap:6px;
 export const TextLabel = styled.span`
   font-size: 16px;
   font-weight: 500;
-  color: var(--green-100);
+`
+export const TextLabelInfo = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+
 `
 export const TextInfo = styled.span`
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
+`
+
+export const StepDivider = styled.div`
+  height: 1px;
+  background-color: #9e9da1;
 `

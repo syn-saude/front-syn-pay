@@ -43,7 +43,7 @@ export default function CardValorLiberado({
       {...props}
       className={`text-primary border-slate-400 ${
         selecionado && "selecionado"
-      } w-full max-w-[350px] hover:bg-slate-300 `}
+      } w-full max-w-[500px] hover:bg-slate-300 `}
     >
       <div className="max-w[60px]">
         {selecionado ? (
@@ -58,16 +58,23 @@ export default function CardValorLiberado({
           ></div>
         )}
       </div>
-      <div className="flex flex-col w-full mx-4">
-        <div className="text-sm">Valor liberado:</div>
-        <div className="text-lg font-bold">
-          {formatarDinheiro(opcao.valorLiberado)}
+      <div className="flex flex-col w-full sm:flex-row">
+        <div className="flex flex-col w-full mx-4">
+          <div className="text-sm">Valor liberado:</div>
+          <div className="text-lg font-bold">
+            {formatarDinheiro(opcao.valorLiberado)}
+          </div>
         </div>
-        <div className="text-sm font-bold">
-          x{opcao.quantidadeParcelas} de{" "}
-          {formatarDinheiro(opcao.valorParcelaSemSeguro)}
+        <div className="flex flex-col w-full mx-4">
+          <div className="text-sm font-bold">
+            {opcao.quantidadeParcelas}x de{" "}
+          </div>
+          <div className="text-sm font-bold">
+            {formatarDinheiro(opcao.valorParcelaSemSeguro)}
+          </div>
         </div>
       </div>
+
       <div>
         <Button
           className={`${selecionado && "selecionado"}`}
