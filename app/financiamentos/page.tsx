@@ -344,7 +344,7 @@ function Financiamentos() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {obterDadosFiltrado().length == 0 ? (
+                {loading || obterDadosFiltrado().length == 0 ? (
                   <div className="text-sm text-foreground font-medium">
                     Nenhum registro encontrado com esse filtro.
                   </div>
