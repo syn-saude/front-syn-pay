@@ -86,7 +86,12 @@ const schema = yup
     uf: yup.string().required().label("UF"),
     //Step 2
     procedimento: yup.string().required().label("Procedimento"),
-    valorSolicitado: yup.number().min(500).required().label("Valor solicitado"),
+    valorSolicitado: yup
+      .number()
+      .min(500)
+      .max(30000)
+      .required()
+      .label("Valor solicitado"),
     renda: yup.number().required().label("Renda"),
     //Step 3
     qtdParcelas: yup.number().required().label("Valor aprovado"),
