@@ -2,6 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Check } from "lucide-react"
 
 import { Alert } from "@/components/ui/alert"
@@ -17,6 +18,7 @@ import Button from "@/components/ui/button"
 import withAuth from "@/components/with-auth"
 
 function Sucesso() {
+  const router = useRouter()
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 ">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -62,6 +64,14 @@ function Sucesso() {
             </Link>
             <p className="text-sm ">ou ligue (98) 99229-3099</p>
           </Alert>
+          <Button
+            className="w-full"
+            onClick={() => {
+              router.replace("/financiamentos")
+            }}
+          >
+            Gerenciar financiamentos
+          </Button>
         </main>
       </div>
     </div>
