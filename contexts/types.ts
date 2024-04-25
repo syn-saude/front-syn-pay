@@ -6,6 +6,7 @@ export type AuthContextData = {
   isAuthenticated: boolean
   singIn: (credentials: SingInProps) => Promise<void>
   singOut?: () => void
+  setAceitouTermo: () => void
 }
 
 export type UserProps = {

@@ -59,8 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       addToken(authToken)
       addTenant(tenantId)
 
-
-      if(userAuthResponse.primeiroAcesso === true) {
+      if (userAuthResponse.primeiroAcesso === true) {
         router.push(`/redefinir-senha`)
       } else {
         router.push("/financiamentos")
@@ -70,8 +69,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  function setAceitouTermo() {
+    if (!user) return
+
+    let newUser = user
+    newUser.aceitouPoliticaPrivacidade = true
+    newUser.aceitouTermo = true
+
+    setUser(newUser)
+    setStorageUser(newUser)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, singIn, singOut }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, singIn, singOut, setAceitouTermo }}
+    >
       {children}
     </AuthContext.Provider>
   )

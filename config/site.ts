@@ -1,9 +1,8 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Syn Pay",
-  description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+  name: "Syn pay - Financiamentos para cirurgia ",
+  description: "Plataforma para empréstimos e financiamentos de cirurgia.",
   mainNav: [
     // {
     //   title: "Home",

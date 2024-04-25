@@ -248,63 +248,63 @@ um aviso antes para poder aceitar ou recusar.
 <p align="justify" style="margin-left: 0.75cm; margin-top: 0.35cm; margin-bottom: 0.35cm; line-height: 80%">
 <font size="3" style="font-size: 12pt"><font face="Tahoma, serif">A Política de Privacidade a seguir está dividida da seguinte forma para
 facilitar o seu acesso à informação:</font></font></p>
-<ol type="a">
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+<ol type="a" class="px-8">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	a) Data de Disponibilização do Texto;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	b) Explicação dos Termos Técnicos ou em Língua Estrangeira;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	c) Privacidade do Usuário e Operadores de Dados Terceirizados;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	d) Coleta de Dados;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	e) Tratamento de Dados Pessoais;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	f) Compartilhamento dos Dados Pessoais dos Usuários;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	g) Cancelamento da Plataforma, de Contas de Acesso e Exclusão de Dados;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	h) Direitos do Titular dos Dados Pessoais;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	i) Segurança;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	j) Mudanças na Política de Privacidade;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	k) Encarregado e Disposições Gerais;
 	</font><font face="Tahoma, serif"></font></font></p>
 
-	<p align="justify" style="margin-bottom: 0cm; line-height: 0%">
+	<p align="justify" style="margin-bottom: 0cm; ">
 	<font size="3" style="font-size: 12pt"><font face="Tahoma, serif">
 	l) Contato.
 	</font><font face="Tahoma, serif"></font></font></p>

@@ -8,3 +8,7 @@ export function authLogin(
 ): Promise<AxiosResponse<AuthResponse>> {
   return api.post("/synpayauth/login", query)
 }
+
+export function aceitarTermoDeUso(tipoTermo: number): Promise<AxiosResponse> {
+  return api.post(`/auth/aceitarTermo/${tipoTermo}`)
+}
