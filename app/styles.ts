@@ -16,7 +16,7 @@ export const LoginContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 2.5rem;
   margin-top: -80px;
 `
 
@@ -24,14 +24,14 @@ export const FormContent = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 28px;
   align-items: center;
 `
 
 export const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
   width: 100%;
 `
 

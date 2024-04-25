@@ -1,9 +1,7 @@
 "use client"
 
 import { ReactNode, useEffect, useState } from "react"
-// import { redirect } from "next/navigation"
 import { useRouter } from "next/navigation"
-// import { useRouter } from "next/router"
 import { sessionStatus } from "@/utils/sessionStatus"
 import { parseCookies } from "nookies"
 
@@ -12,16 +10,14 @@ import { SYN_PROFILES } from "@/config/const/syn/profiles"
 import useAuth from "@/hooks/useAuth"
 
 import SiteHeader from "../site-header"
+import SiteFooter from "../site-footer"
 
-// interface IProps {
-//   Component: any
-//   showHeader: boolean
-// }
 
 export default function withAuth(
   Component: ReactNode,
   profiles = [SYN_PROFILES.CLINICA_SYNPAY],
-  showHeader = true
+  showHeader = true,
+  showFooter = true
 ) {
   const session = sessionStatus
   return function WithAuth(props: any) {
@@ -40,7 +36,6 @@ export default function withAuth(
       }
 
       if (!!user && profiles.length > 0) {
-        //Verificar se usuário logado tem o perfil requisitado
         const profileExist = profiles.find((p) =>
           user?.perfisPorTenant[0].perfis.map((p) => p.idPerfil).includes(p)
         )
@@ -59,6 +54,7 @@ export default function withAuth(
       <div>
         {showHeader && <SiteHeader />}
         {Component}
+        {showFooter && <SiteFooter />}
       </div>
     )
   }
