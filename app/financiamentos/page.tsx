@@ -128,8 +128,7 @@ function Financiamentos() {
     if (filtroStatus != "todos") {
       return dados.filter((item) => item.statusSyn == filtroStatus)
     }
-
-    console.log("dados", dados)
+    
     return dados
   }
 
@@ -419,7 +418,7 @@ function Financiamentos() {
                             </Badge>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {formatarDinheiro(item.valorSolicitado)}
+                            {item.valorParcialLiberado ? formatarDinheiro(item.valorParcialLiberado) : formatarDinheiro(item.valorSolicitado)}
                           </TableCell>
 
                           <TableCell className="hidden md:table-cell">
