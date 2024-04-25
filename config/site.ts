@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Syn pay - Financiamentos para cirurgia ",
-  description: "Plataforma para empréstimos e financiamentos de cirurgia.",
+  name: "SYN PAY - Financie sua cirrugia particular!",
+  description: "Plataforma para financiamentos de cirurgia particular.",
   mainNav: [
     // {
     //   title: "Home",
