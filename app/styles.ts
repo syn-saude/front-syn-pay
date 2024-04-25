@@ -8,6 +8,7 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   margin: 0px auto;
+  flex-direction: column;
 `
 
 export const LoginContent = styled.div`
@@ -17,7 +18,9 @@ export const LoginContent = styled.div`
   align-items: center;
   justify-content: center;
   gap: 2.5rem;
-  margin-top: -80px;
+  margin-top: 90px;
+  margin-bottom: 90px;
+
 `
 
 export const FormContent = styled.form`

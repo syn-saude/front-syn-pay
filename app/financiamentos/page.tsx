@@ -117,7 +117,10 @@ function Financiamentos() {
     setModalDetailIsOpen(false)
   }
 
+  
+
   function obterDadosFiltrado(status?: string) {
+
     if (!!status) {
       return dados.filter((item) => item.statusSyn == status)
     }
@@ -126,6 +129,7 @@ function Financiamentos() {
       return dados.filter((item) => item.statusSyn == filtroStatus)
     }
 
+    console.log("dados", dados)
     return dados
   }
 
@@ -142,8 +146,29 @@ function Financiamentos() {
     }
   }
 
+  const transformStatusColors = (status) => {
+    switch (status) {
+      case STATUS_FINANCIAMENTO.RASCUNHO:
+        return "text-gray-950 bg-gray-100 border-gray-300"
+      case STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO:
+        return " text-blue-600 bg-blue-50  border-blue-300"
+      case STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO:
+        return "text-red-600 bg-red-50 border-red-300"
+      case STATUS_FINANCIAMENTO.EM_ANALISE:
+        return " text-orange-600 bg-orange-100 border-orange-300"
+      case STATUS_FINANCIAMENTO.PROPOSTA_APROVADA:
+        return " text-blue-700 bg-blue-100  border-blue-300"
+      case STATUS_FINANCIAMENTO.PROPOSTA_RECUSADA:
+        return "text-red-700 bg-red-100 border-red-300"
+      case STATUS_FINANCIAMENTO.PAGAMENTO_REALIZADO:
+        return " text-green-600 bg-green-100 border-green-300"
+      default:
+        return ""
+    }
+  }
+
   return (
-    <div className=" flex min-h-screen w-full flex-col bg-muted/40">
+    <div className=" flex min-h-screen w-full flex-col bg-muted/40 text-yellow-500">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <Sheet>
@@ -383,7 +408,13 @@ function Financiamentos() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">
+                            <Badge
+                              variant="outline"
+                              className={
+                                transformStatusColors(item.statusSyn) +
+                                " rounded-md shadow-md "
+                              }
+                            >
                               {item.descricaoStatusSyn}
                             </Badge>
                           </TableCell>

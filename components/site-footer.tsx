@@ -2,7 +2,7 @@ import React from "react"
 
 export default function SiteFooter() {
   return (
-    <div className="flex flex-col grid-cols-1 gap-2 p-10 w-full" >
+    <div className="flex flex-col grid-cols-1 gap-2 p-8 pb-4 w-full" >
       <span style={{fontSize:'10px'}}>
         SYN SOLUCAO EM SAUDE LTDA inscrita no CNPJ 38.312.6222/0001-28, com sede
         na Cidade de São Luís, Estado do Maranhão, Endereço Rua Miquerinos, n°

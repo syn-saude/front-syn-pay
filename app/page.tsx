@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import SiteFooter from "@/components/site-footer"
 import Modal from "@/app/modal/modal"
 
 import * as S from "./styles"
@@ -79,6 +80,7 @@ export default function Home() {
       <Head>
         <title>SynSaude - login</title>
       </Head>
+
       <S.Container className="bg-slate-900">
         <S.LoginContent className="bg-white p-8 pb-10 rounded-md  transition-opacity  dark:bg-slate-950">
           <Image src={logo2} alt="SynSaude" width={120} className="mb-2" />
@@ -119,6 +121,12 @@ export default function Home() {
             <Badge variant="secondary">v{version}</Badge>
           </S.FormContent>
         </S.LoginContent>
+        <div className="mt-auto text-white w-full bg-slate-800 h-22">
+          <div className="container">
+
+          <SiteFooter />
+          </div>
+        </div>
       </S.Container>
     </>
   )
