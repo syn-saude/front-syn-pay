@@ -31,9 +31,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Modal from "@/app/modal/modal"
 
 import * as S from "./styles"
-import Modal from "@/app/modal/modal"
 
 const { version } = require("../package.json")
 
@@ -44,10 +44,6 @@ const schema = yup
     cpf: yup.string().required(),
     email: yup.string(),
     senha: yup.string().required(),
-    ciente: yup
-      .boolean()
-      .required()
-      .oneOf([true], "Você precisa aceitar os termos"),
   })
   .required()
 
@@ -61,23 +57,10 @@ export default function Home() {
 
   const form = watch()
   const { errors } = formState
-  const msgError = () => errors.ciente?.message
-  const isValid = () => !msgError()
 
   const [loading, setLoading] = useState(false)
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const [textInfo, setTextInfo] = useState<number>(0)
-  const showOpenModal = (idInfo: number) => {
-    setTextInfo(idInfo)
-    setOpenModal(true)
-  }
-
 
   async function handleSingIn(form: SingInProps) {
-    if (!isValid) {
-      return
-    }
-
     try {
       setLoading(true)
 
@@ -135,63 +118,6 @@ export default function Home() {
 
             <Badge variant="secondary">v{version}</Badge>
           </S.FormContent>
-
-          <div className="flex flex-col gap-2 mt-2">
-            <div className="flex grid-cols-2">
-              <Button
-                className="text-xs"
-                type="button"
-                variant="link"
-                onClick={() => showOpenModal(1)}
-              >
-                Ver termo de uso{" "}
-                <ExternalLink size={16} style={{ marginLeft: "6px" }} />
-              </Button>
-
-              <Button
-                className="text-xs"
-                type="button"
-                variant="link"
-                onClick={() => showOpenModal(2)}
-                
-              >
-                Ver políticas de privacidade{" "}
-                <ExternalLink size={16} style={{ marginLeft: "6px" }} />
-              </Button>
-            </div>
-            <div>
-              <Controller
-                control={control}
-                name="ciente"
-                render={({ field }) => (
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      className="flex items-center space-x-2"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-
-                    <Label className="text-xs">
-                      Confirmo estar ciente sobre o CET e taxas do meu contrato!
-                    </Label>
-                  </div>
-                )}
-              />
-              {!isValid() && (
-                <span className="text-sm font-medium text-red-500">
-                  {msgError()}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {openModal && (
-            <Modal
-              isOpen={openModal}
-              onRequestClose={() => setOpenModal(false)}
-              idInfo={textInfo}
-            />
-          )}
         </S.LoginContent>
       </S.Container>
     </>

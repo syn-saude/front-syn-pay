@@ -1,17 +1,17 @@
 "use client"
 
 import { ReactNode, useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 import { sessionStatus } from "@/utils/sessionStatus"
 import { parseCookies } from "nookies"
 
 import { SYN_ROUTES } from "@/config/const/routes"
 import { SYN_PROFILES } from "@/config/const/syn/profiles"
 import useAuth from "@/hooks/useAuth"
+import TermoDeUso from "@/app/termo-de-uso/component/termos"
 
-import SiteHeader from "../site-header"
 import SiteFooter from "../site-footer"
-
+import SiteHeader from "../site-header"
 
 export default function withAuth(
   Component: ReactNode,
@@ -47,7 +47,12 @@ export default function withAuth(
     }, [user])
 
     if (!user || !allowed) {
-      return null
+      // return null
+    }
+
+    if (!user?.aceitouTermo || !user.aceitouPoliticaPrivacidade) {
+      window.history.pushState({}, "", SYN_ROUTES.termoDeUso)
+      return <TermoDeUso />
     }
 
     return (

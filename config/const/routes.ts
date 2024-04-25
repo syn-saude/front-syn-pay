@@ -1,4 +1,5 @@
 export const SYN_ROUTES = {
   signIn: "/",
-  home: "/home",
+  home: "/",
+  termoDeUso: "/termo-de-uso",
 }

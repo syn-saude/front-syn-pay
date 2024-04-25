@@ -2,7 +2,6 @@ export type SingInProps = {
   cpf: string
   email?: string
   senha: string
-  ciente: boolean
 }
 
 export type EsqueciSenhaProps = {
@@ -10,7 +9,7 @@ export type EsqueciSenhaProps = {
 }
 
 export type RedefinirSenhaProps = {
-  senha: string,
+  senha: string
   confirmaSenha: string
 }
 
