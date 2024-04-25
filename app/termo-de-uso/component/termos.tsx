@@ -1,13 +1,15 @@
 "use client"
 
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import Head from "next/head"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { permanentRedirect, redirect, useRouter } from "next/navigation"
 import logo2 from "@/public/img/logo-2.png"
+import { aceitarTermoDeUso } from "@/services/auth"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { ArrowLeft, ExternalLink } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
@@ -29,9 +31,15 @@ const schema = yup
   })
   .required()
 
+const TIPO_TERMO = {
+  termoDeUso: 1,
+  privacidade: 2,
+}
+
 export default function TermoDeUso() {
   const router = useRouter()
-  const { singOut } = useAuth()
+  const { singOut, setAceitouTermo } = useAuth()
+  const [loading, setLoading] = useState<boolean>(false)
   const { register, watch, handleSubmit, formState, control } = useForm<{
     ciente: boolean
   }>({
@@ -41,7 +49,25 @@ export default function TermoDeUso() {
   const form = watch()
   const { errors } = formState
 
-  async function handleAceiteTermo(form: any) {}
+  async function handleAceiteTermo() {
+    setLoading(true)
+
+    try {
+      await aceitarTermoDeUso(TIPO_TERMO.termoDeUso)
+      setAceitouTermo()
+
+      setTimeout(() => {
+        window.document.location.href = SYN_ROUTES.financiamentos
+        // setLoading(false)
+      }, 200)
+    } catch (err) {
+      // showNotificationErrorAPI(err)
+      toast.error(
+        "Erro ao realizar operação, tente novamente em alguns instantes."
+      )
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -75,7 +101,9 @@ export default function TermoDeUso() {
                 className="text-sm"
                 type="button"
                 variant="link"
-                onClick={() => {}}
+                onClick={() => {
+                  window.open(SYN_ROUTES.documentoTermoDeUso, "_blank")
+                }}
               >
                 Ver termo de uso{" "}
                 <ExternalLink size={16} style={{ marginLeft: "6px" }} />
@@ -85,7 +113,12 @@ export default function TermoDeUso() {
                 className="text-sm"
                 type="button"
                 variant="link"
-                onClick={() => {}}
+                onClick={() => {
+                  window.open(
+                    SYN_ROUTES.documentoPoliticasDePrivacidade,
+                    "_blank"
+                  )
+                }}
               >
                 Ver políticas de privacidade{" "}
                 <ExternalLink size={16} style={{ marginLeft: "6px" }} />
@@ -119,10 +152,11 @@ export default function TermoDeUso() {
               </div>
               <Button
                 disabled={!form?.ciente}
+                loading={loading}
                 className="text-xs w-full"
                 type="button"
                 variant="default"
-                onClick={() => {}}
+                onClick={handleAceiteTermo}
               >
                 Continuar
               </Button>

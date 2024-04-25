@@ -1,6 +1,7 @@
 import React from "react"
 
-
+import PoliticaPrivacidadeText from "@/config/const/docs/PoliticaPrivacidadeTexto"
+import TermoDeUsoText from "@/config/const/docs/TermoDeUsoTexto"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,8 +10,6 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import * as S from "./styles"
-import TermoDeUsoText from "@/config/const/docs/TermoDeUsoText"
-import PoliticaPrivacidadeText from "@/config/const/docs/PoliticaPrivacidadeText"
 
 interface ModalProps {
   isOpen: boolean
@@ -18,7 +17,7 @@ interface ModalProps {
   idInfo: number
 }
 export default function Modal({ onRequestClose, isOpen, idInfo }: ModalProps) {
-    const veiwInfo = idInfo === 1 ? TermoDeUsoText : PoliticaPrivacidadeText;
+  const veiwInfo = idInfo === 1 ? TermoDeUsoText : PoliticaPrivacidadeText
 
   return (
     <AlertDialog open={isOpen}>
@@ -26,9 +25,17 @@ export default function Modal({ onRequestClose, isOpen, idInfo }: ModalProps) {
         <S.ContenteInfo>
           <S.TextInfo>{idInfo}</S.TextInfo>
         </S.ContenteInfo>
-        <div className="mt-[-50]" dangerouslySetInnerHTML={{ __html: veiwInfo }}></div>
-        <AlertDialogFooter  className="mx-[250px] mt-[-50]">
-          <AlertDialogAction className="w-[400px] h-16" onClick={onRequestClose}>Fechar</AlertDialogAction>
+        <div
+          className="mt-[-50]"
+          dangerouslySetInnerHTML={{ __html: veiwInfo }}
+        ></div>
+        <AlertDialogFooter className="mx-[250px] mt-[-50]">
+          <AlertDialogAction
+            className="w-[400px] h-16"
+            onClick={onRequestClose}
+          >
+            Fechar
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

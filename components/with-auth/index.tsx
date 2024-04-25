@@ -26,7 +26,7 @@ export default function withAuth(
     const { user } = useAuth()
     const router = useRouter()
     function replaceToSignin() {
-      router.replace(SYN_ROUTES.signIn)
+      window.document.location.href = SYN_ROUTES.signIn
       return
     }
 
@@ -47,11 +47,12 @@ export default function withAuth(
     }, [user])
 
     if (!user || !allowed) {
-      // return null
+      return null
     }
 
     if (!user?.aceitouTermo || !user.aceitouPoliticaPrivacidade) {
-      window.history.pushState({}, "", SYN_ROUTES.termoDeUso)
+      // if (!!window) window?.history.pushState({}, "", SYN_ROUTES.termoDeUso)
+
       return <TermoDeUso />
     }
 
