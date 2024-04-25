@@ -117,10 +117,7 @@ function Financiamentos() {
     setModalDetailIsOpen(false)
   }
 
-  
-
   function obterDadosFiltrado(status?: string) {
-
     if (!!status) {
       return dados.filter((item) => item.statusSyn == status)
     }
@@ -128,7 +125,7 @@ function Financiamentos() {
     if (filtroStatus != "todos") {
       return dados.filter((item) => item.statusSyn == filtroStatus)
     }
-    
+
     return dados
   }
 
@@ -317,7 +314,11 @@ function Financiamentos() {
               <div className="ml-auto flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-foreground h-8 gap-1"
+                    >
                       <Filter className="h-3.5 w-3.5" />
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                         Filtrar
@@ -418,7 +419,9 @@ function Financiamentos() {
                             </Badge>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {item.valorParcialLiberado ? formatarDinheiro(item.valorParcialLiberado) : formatarDinheiro(item.valorSolicitado)}
+                            {item.valorParcialLiberado
+                              ? formatarDinheiro(item.valorParcialLiberado)
+                              : formatarDinheiro(item.valorSolicitado)}
                           </TableCell>
 
                           <TableCell className="hidden md:table-cell">

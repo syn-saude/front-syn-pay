@@ -3,36 +3,19 @@
 import { useContext, useEffect, useState } from "react"
 import Head from "next/head"
 import Image from "next/image"
-import Link from "next/link"
 import { AuthContext } from "@/contexts/AuthContext"
 import logo2 from "@/public/img/logo-2.png"
 import { SingInProps } from "@/services/auth/types"
-import { canSSRGuest } from "@/utils/canSSRGuest"
-import { DevTool } from "@hookform/devtools"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { ExternalLink } from "lucide-react"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 // import { toast } from "sonner"
-import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
-import { SYN_ROUTES } from "@/config/const/routes"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import SiteFooter from "@/components/site-footer"
-import Modal from "@/app/modal/modal"
 
 import * as S from "./styles"
 
@@ -123,8 +106,7 @@ export default function Home() {
         </S.LoginContent>
         <div className="mt-auto text-white w-full bg-slate-800 h-22">
           <div className="container">
-
-          <SiteFooter />
+            <SiteFooter />
           </div>
         </div>
       </S.Container>
