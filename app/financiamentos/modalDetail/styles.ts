@@ -21,7 +21,8 @@ export const BtnClosed = styled.button`
 export const Container = styled.div`
 display: flex;
   flex-direction: column;
-  gap: 18px;`;
+  gap: 18px;
+  `;
 
 export const ContainerBox = styled.div`
   display: flex;

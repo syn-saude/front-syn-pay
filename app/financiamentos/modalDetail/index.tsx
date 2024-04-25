@@ -66,20 +66,19 @@ export default function ModalDetail({
 
   const transformSexo = (sexo) => {
     switch (sexo) {
-      case 'F':
-        return 'Feminino';
-      case 'M':
-        return 'Masculino';
+      case "F":
+        return "Feminino"
+      case "M":
+        return "Masculino"
       default:
-        return 'Outro';
+        return "Outro"
     }
-  };
-
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onRequestClose}>
       {isView && (
-        <DialogContent className="max-w-[525px]">
+        <DialogContent className="max-w-[525px] max-h-[85vh] overflow-auto">
           <DialogHeader className="dark:text-emerald-500 text-blue-900">
             <DialogTitle>Dados Cadastrados</DialogTitle>
           </DialogHeader>
@@ -89,23 +88,31 @@ export default function ModalDetail({
                 Dados Pessoais
               </S.TextLabel>
               <S.StepDivider />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1">
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">Nome</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.nome}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.nome
+                      ? financiamentoDetail.nome
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Telefone
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {formatarTelefone(financiamentoDetail.telefone)}
+                    {financiamentoDetail.telefone
+                      ? formatarTelefone(financiamentoDetail.telefone)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">CPF</S.TextLabelInfo>
                   <S.TextInfo>
-                    {formatarCPF(financiamentoDetail.cpf)}
+                    {financiamentoDetail.cpf
+                      ? formatarCPF(financiamentoDetail.cpf)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
@@ -113,26 +120,44 @@ export default function ModalDetail({
                     Nascimento
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {formatarData(financiamentoDetail.dataNascimento)}
+                    {financiamentoDetail.dataNascimento
+                      ? formatarData(financiamentoDetail.dataNascimento)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">E-mail</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.email}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.email
+                      ? financiamentoDetail.email
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Identidade
                   </S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.rg}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.rg
+                      ? financiamentoDetail.rg
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">Sexo</S.TextLabelInfo>
-                  <S.TextInfo>{transformSexo(financiamentoDetail.sexo)}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.sexo
+                      ? transformSexo(financiamentoDetail.sexo)
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">Mãe</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.nomeMae}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.nomeMae
+                      ? financiamentoDetail.nomeMae
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
               </div>
             </S.ContainerBox>
@@ -142,61 +167,83 @@ export default function ModalDetail({
                 Dados Complementares
               </S.TextLabel>
               <S.StepDivider />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1">
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Profissão
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {obterProfissao(financiamentoDetail.profissao)}
+                    {financiamentoDetail.profissao
+                      ? obterProfissao(financiamentoDetail.profissao)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">Renda</S.TextLabelInfo>
                   <S.TextInfo>
-                    {formatarDinheiro(financiamentoDetail.renda)}
+                    {financiamentoDetail.renda
+                      ? formatarDinheiro(financiamentoDetail.renda)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Nacionalidade
                   </S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.nacionalidade}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.nacionalidade
+                      ? financiamentoDetail.nacionalidade
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Patrimonio
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {formatarDinheiro(financiamentoDetail.patrimonio)}
+                    {financiamentoDetail.patrimonio
+                      ? formatarDinheiro(financiamentoDetail.patrimonio)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Procedimento
                   </S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.procedimento}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.procedimento
+                      ? financiamentoDetail.procedimento
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Estado Civil
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {obterEstadoCivil(financiamentoDetail.estadoCivil)}
+                    {financiamentoDetail.estadoCivil
+                      ? obterEstadoCivil(financiamentoDetail.estadoCivil)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Nº parcelas
                   </S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.qtdParcelas}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.qtdParcelas
+                      ? financiamentoDetail.qtdParcelas
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
                     Situação do imovel
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {obterSituacaoImovel(financiamentoDetail.situacaoImovel)}
+                    {financiamentoDetail.situacaoImovel
+                      ? obterSituacaoImovel(financiamentoDetail.situacaoImovel)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
@@ -204,7 +251,9 @@ export default function ModalDetail({
                     Tipo de profissão
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {obterTipoProfissao(financiamentoDetail.tipoProfissao)}
+                    {financiamentoDetail.tipoProfissao
+                      ? obterTipoProfissao(financiamentoDetail.tipoProfissao)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
@@ -212,16 +261,26 @@ export default function ModalDetail({
                     Valor solicitado
                   </S.TextLabelInfo>
                   <S.TextInfo>
-                    {formatarDinheiro(financiamentoDetail.valorSolicitado)}
+                    {financiamentoDetail.valorSolicitado
+                      ? formatarDinheiro(financiamentoDetail.valorSolicitado)
+                      : "Não preenchido"}
                   </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">Anos</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.anos}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.anos
+                      ? financiamentoDetail.anos
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
                 <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">Meses</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.meses}</S.TextInfo>
+                  <S.TextInfo>
+                    {financiamentoDetail.meses
+                      ? financiamentoDetail.meses
+                      : "Não preenchido"}
+                  </S.TextInfo>
                 </S.ContenteInfo>
               </div>
             </S.ContainerBox>
@@ -232,38 +291,79 @@ export default function ModalDetail({
               </S.TextLabel>
               <S.StepDivider />
               <div>
-                <S.ContenteInfoRow>
-                  <S.TextLabelInfo className="text-xs">Cep:</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.cep}</S.TextInfo>
-                </S.ContenteInfoRow>
-                <S.ContenteInfoRow>
-                  <S.TextLabelInfo className="text-xs">UF:</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.uf}</S.TextInfo>
-                </S.ContenteInfoRow>
-                <S.ContenteInfoRow>
-                  <S.TextLabelInfo className="text-xs">Cidade:</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.cidade}</S.TextInfo>
-                </S.ContenteInfoRow>
-                <S.ContenteInfoRow>
-                  <S.TextLabelInfo className="text-xs">Bairro:</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.bairro}</S.TextInfo>
-                </S.ContenteInfoRow>
-                <S.ContenteInfoRow>
+                <div className="grid grid-cols-2 gap-1">
+                  <S.ContenteInfo>
+                    <S.TextLabelInfo className="text-xs">Cep</S.TextLabelInfo>
+                    <S.TextInfo>
+                      {financiamentoDetail.cep
+                        ? financiamentoDetail.cep
+                        : "Não preenchido"}
+                    </S.TextInfo>
+                  </S.ContenteInfo>
+                  <S.ContenteInfo>
+                    <S.TextLabelInfo className="text-xs">UF</S.TextLabelInfo>
+                    <S.TextInfo>
+                      {financiamentoDetail.uf
+                        ? financiamentoDetail.uf
+                        : "Não preenchido"}
+                    </S.TextInfo>
+                  </S.ContenteInfo>
+                </div>
+                <div className="grid grid-cols-2 gap-1">
+                  <S.ContenteInfo>
+                    <S.TextLabelInfo className="text-xs">
+                      Cidade
+                    </S.TextLabelInfo>
+                    <S.TextInfo>
+                      {financiamentoDetail.cidade
+                        ? financiamentoDetail.cidade
+                        : "Não preenchido"}
+                    </S.TextInfo>
+                  </S.ContenteInfo>
+
+                  <S.ContenteInfo>
+                    <S.TextLabelInfo className="text-xs">
+                      Endereço
+                    </S.TextLabelInfo>
+                    <S.TextInfo>
+                      {financiamentoDetail.endereco
+                        ? financiamentoDetail.endereco
+                        : "Não preenchido"}
+                    </S.TextInfo>
+                  </S.ContenteInfo>
+                </div>
+                <div className="grid grid-cols-2 gap-1">
+                  <S.ContenteInfo>
+                    <S.TextLabelInfo className="text-xs">
+                      Bairro
+                    </S.TextLabelInfo>
+                    <S.TextInfo>
+                      {financiamentoDetail.bairro
+                        ? financiamentoDetail.bairro
+                        : "Não preenchido"}
+                    </S.TextInfo>
+                  </S.ContenteInfo>
+                  <S.ContenteInfo>
+                    <S.TextLabelInfo className="text-xs">
+                      Numero
+                    </S.TextLabelInfo>
+                    <S.TextInfo>
+                      {financiamentoDetail.numero
+                        ? financiamentoDetail.numero
+                        : "Não preenchido"}
+                    </S.TextInfo>
+                  </S.ContenteInfo>
+                </div>
+                <S.ContenteInfo>
                   <S.TextLabelInfo className="text-xs">
-                    Endereço:
+                    Complemento
                   </S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.endereco}</S.TextInfo>
-                </S.ContenteInfoRow>
-                <S.ContenteInfoRow>
-                  <S.TextLabelInfo className="text-xs">Numero:</S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.numero}</S.TextInfo>
-                </S.ContenteInfoRow>
-                <S.ContenteInfoRow>
-                  <S.TextLabelInfo className="text-xs">
-                    Complemento:
-                  </S.TextLabelInfo>
-                  <S.TextInfo>{financiamentoDetail.complemento}</S.TextInfo>
-                </S.ContenteInfoRow>
+                  <S.TextInfo>
+                    {financiamentoDetail.complemento
+                      ? financiamentoDetail.complemento
+                      : "Não preenchido"}
+                  </S.TextInfo>
+                </S.ContenteInfo>
               </div>
             </S.ContainerBox>
           </S.Container>

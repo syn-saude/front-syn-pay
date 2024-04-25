@@ -417,11 +417,11 @@ function Financiamentos() {
                               {item.descricaoStatusSyn}
                             </Badge>
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="hidden md:table-cell ">
                             {item.valorParcialLiberado ? formatarDinheiro(item.valorParcialLiberado) : formatarDinheiro(item.valorSolicitado)}
                           </TableCell>
 
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="hidden md:table-cell ">
                             {formatarDataHoraLocal(item.criado)}
                           </TableCell>
                           <TableCell>
