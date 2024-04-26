@@ -60,7 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       addTenant(tenantId)
 
       if (userAuthResponse.primeiroAcesso === true) {
-        router.push(`/redefinir-senha`)
+        router.push(`/definir-senha`)
       } else {
         router.push("/financiamentos")
       }
