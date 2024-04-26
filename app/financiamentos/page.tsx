@@ -159,7 +159,7 @@ function Financiamentos() {
       case STATUS_FINANCIAMENTO.PAGAMENTO_REALIZADO:
         return " text-green-600 bg-green-100 border-green-300"
       default:
-        return ""
+        return "text-gray-950 bg-gray-100 border-gray-300"
     }
   }
 
