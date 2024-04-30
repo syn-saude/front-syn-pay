@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Image from "next/image"
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { api } from "@/services/apiClient"
@@ -10,25 +9,19 @@ import {
   ListagemQuery,
   obterListagemFinanciamento,
 } from "@/services/financiamentos"
-import {
-  formatarDataHora,
-  formatarDataHoraLocal,
-} from "@/utils/formatacoes/formatarData"
+import { formatarDataHoraLocal } from "@/utils/formatacoes/formatarData"
 import formatarDinheiro from "@/utils/formatacoes/formatarDinheiro"
 import {
-  File,
+  Eye,
+  FileText,
   Filter,
-  FilterIcon,
   Home,
   LineChart,
-  //   ListFilter,
-  MoreHorizontal,
   Package,
   Package2,
   PanelLeft,
   PlusCircle,
   Search,
-  Settings,
   ShoppingCart,
   Users,
 } from "lucide-react"
@@ -37,7 +30,6 @@ import {
   STATUS_FINANCIAMENTO,
   STATUS_FINANCIAMENTO_ARRAY,
 } from "@/config/const/syn/statusFinanciamento"
-import { ListagemResponse } from "@/hooks/listagem/types"
 import useListagem from "@/hooks/listagem/useListagem"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -45,7 +37,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
@@ -61,12 +52,10 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
   Table,
@@ -76,7 +65,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Tooltip,
   TooltipContent,
@@ -86,6 +75,7 @@ import withAuth from "@/components/with-auth"
 
 import { IFinanciamentoRequest } from "./interface"
 import ModalDetail from "./modalDetail"
+import * as S from "./styles"
 
 function Financiamentos() {
   const router = useRouter()
@@ -104,6 +94,7 @@ function Financiamentos() {
   )
   const [modalDetailIsOpen, setModalDetailIsOpen] = useState(false)
   const [filtroStatus, setFiltroStatus] = useState<string>("todos")
+  const [searchTerm, setSearchTerm] = useState("")
   const [financiamentoDetail, setFinanciamentoDetail] =
     useState<IFinanciamentoRequest[]>()
 
@@ -124,6 +115,12 @@ function Financiamentos() {
 
     if (filtroStatus != "todos") {
       return dados.filter((item) => item.statusSyn == filtroStatus)
+    }
+
+    if (searchTerm) {
+      return dados.filter((item) =>
+        item.nome.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     }
 
     return dados
@@ -250,11 +247,6 @@ function Financiamentos() {
                     {qtdAllDados}
                   </Badge>
                 </TabsTrigger>
-                {/* {
-                  STATUS_FINANCIAMENTO_ARRAY.map(s=>
-                    
-                  )
-                } */}
                 <TabsTrigger
                   value={STATUS_FINANCIAMENTO.RASCUNHO}
                   onClick={() => {
@@ -307,11 +299,18 @@ function Financiamentos() {
                     {obterDadosFiltrado(STATUS_FINANCIAMENTO.EM_ANALISE).length}
                   </Badge>
                 </TabsTrigger>
-                {/* <TabsTrigger value="archived" className="hidden sm:flex">
-                  Archived
-                </TabsTrigger> */}
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
+                <div className=" felx relative align-middle p-[2px]">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="search"
+                    placeholder="Pesquisar por nome..."
+                    className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[240px] h-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -350,7 +349,6 @@ function Financiamentos() {
                 </DropdownMenu>
 
                 <Link href="/financiamentos/add">
-                  {/* <Button size="default" className="h-8 gap-1"> */}
                   <Button size="sm" className=" gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -360,7 +358,6 @@ function Financiamentos() {
                 </Link>
               </div>
             </div>
-            {/* <TabsContent value={filtroStatus}> */}
             <Card x-chunk="dashboard-06-chunk-0" className="mt-2">
               <CardHeader>
                 <CardTitle>Financiamentos</CardTitle>
@@ -385,9 +382,7 @@ function Financiamentos() {
                         <TableHead className="hidden md:table-cell">
                           Solicitado
                         </TableHead>
-                        <TableHead>
-                          <span className="sr-only">Ações</span>
-                        </TableHead>
+                        <TableHead>Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -399,10 +394,7 @@ function Financiamentos() {
                               onClick={() => handleVisualizar(item.id)}
                             >
                               {item.nome}
-                              <p
-                                // variant="secondary"
-                                className="text-xs w-max text-muted-foreground italic font-medium"
-                              >
+                              <p className="text-xs w-max text-muted-foreground italic font-medium">
                                 última etapa {item.etapa}
                               </p>
                             </div>
@@ -428,71 +420,55 @@ function Financiamentos() {
                             {formatarDataHoraLocal(item.criado)}
                           </TableCell>
                           <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  aria-haspopup="true"
-                                  size="icon"
-                                  variant="ghost"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                                <DropdownMenuItem
-                                  onClick={() => handleVisualizar(item.id)}
-                                >
-                                  Visualizar
-                                </DropdownMenuItem>
-                                {podeEditar(item.statusSyn) && (
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      router.push(
-                                        `/financiamentos/add?id=${item.id}`
-                                      )
-                                    }
-                                  >
-                                    Continuar solicitação
-                                  </DropdownMenuItem>
-                                )}
-                                {/* <DropdownMenuItem>Editar</DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <span className="text-destructive hover:text-destructive">
-                                    Remover
-                                  </span>
-                                </DropdownMenuItem> */}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                            <div className="flex flex-row ">
+                              <div className="cursor-pointer  hover:text-blue-800 ">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Eye
+                                      size={18}
+                                      strokeWidth={1.6}
+                                      onClick={() => handleVisualizar(item.id)}
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Visualizar</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </div>
+
+                              {podeEditar(item.statusSyn) && (
+                                <>
+                                  <S.StepDivider />
+                                  <div className="cursor-pointer hover:text-blue-800">
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <FileText
+                                          size={18}
+                                          strokeWidth={1.5}
+                                          onClick={() =>
+                                            router.push(
+                                              `/financiamentos/add?id=${item.id}`
+                                            )
+                                          }
+                                        />
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Continuar solicitação</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </div>
+                                </>
+                              )}
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
-                      {/* <TableRow>
-                        <TableCell colSpan={5}></TableCell>
-                      </TableRow> */}
                     </TableBody>
                   </Table>
                 )}
-                {/* {qtdAllDados !== allDados.length && (
-                    <Button
-                      loading={loading}
-                      className="w-full"
-                      variant="outline"
-                      onClick={handleProxPagina}
-                    >
-                      Carregar mais
-                    </Button>
-                  )} */}
               </CardContent>
-              <CardFooter>
-                {/* <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                    products
-                  </div> */}
-              </CardFooter>
+              <CardFooter></CardFooter>
             </Card>
-            {/* </TabsContent> */}
           </Tabs>
           {modalDetailIsOpen && (
             <ModalDetail

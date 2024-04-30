@@ -78,7 +78,7 @@ export default function ModalDetail({
   return (
     <Dialog open={isOpen} onOpenChange={onRequestClose}>
       {isView && (
-        <DialogContent className="max-w-[525px] max-h-[85vh] overflow-auto">
+        <DialogContent className="max-w-[525px] max-h-[94vh] overflow-auto">
           <DialogHeader className="dark:text-emerald-500 text-blue-900">
             <DialogTitle>Dados Cadastrados</DialogTitle>
           </DialogHeader>
