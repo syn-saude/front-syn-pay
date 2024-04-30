@@ -32,6 +32,8 @@ export interface ItemListagemFinanciamento {
   valorSolicitado: number
   valorParcialLiberado: number
   criado: string
+  avatarUrl?: string
+  procedimento: string
 }
 
 export const obterListagemFinanciamento: (
