@@ -160,8 +160,8 @@ function Financiamentos() {
 
   return (
     <>
-      <div className=" flex min-h-screen w-full flex-col bg-muted/40">
-        <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <div className=" flex min-h-screen w-full flex-col bg-muted/40 ">
+        <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14 mb-8">
           <>
             {!isMobile && (
               <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -182,11 +182,11 @@ function Financiamentos() {
             )}
             <Tabs defaultValue={filtroStatus}>
               {isMobile ? (
-                <div className="flex flex-col items-center gap-2 ">
+                <div className="flex flex-col gap-2 ">
                   <div className="grid grid-cols-3 gap-2 mt-2 ">
                     <Badge
                       variant="secondary"
-                      className="h-8 cursor-pointer rounded-md shadow-md hover:bg-gray-200 "
+                      className="h-8  cursor-pointer rounded-md shadow-md hover:bg-gray-200 "
                       onClick={() => {
                         setFiltroStatus("todos")
                       }}
@@ -195,7 +195,7 @@ function Financiamentos() {
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="h-8 w-30 cursor-pointer rounded-md text-blue-950 bg-blue-50  border-blue-300 shadow-md hover:bg-blue-50 hover:shadow-blue-200"
+                      className="h-8  w-[118px] cursor-pointer rounded-md text-blue-950 bg-blue-50  border-blue-300 shadow-md hover:bg-blue-50 hover:shadow-blue-200"
                       onClick={() => {
                         setFiltroStatus(
                           STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO
@@ -211,7 +211,7 @@ function Financiamentos() {
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="h-8 w-24 cursor-pointer rounded-md text-gray-950 bg-gray-100 border-gray-300 shadow-md hover:bg-gray-100 hover:shadow-gray-300"
+                      className="h-8 max-[400px]:w-[91px] max-[400px]:ml-3 cursor-pointer rounded-md text-gray-950 bg-gray-100 border-gray-300 shadow-md hover:bg-gray-100 hover:shadow-gray-300"
                       onClick={() => {
                         setFiltroStatus(STATUS_FINANCIAMENTO.RASCUNHO)
                       }}
@@ -221,7 +221,7 @@ function Financiamentos() {
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="h-8 cursor-pointer rounded-md text-orange-600 bg-orange-100 border-orange-300 shadow-md hover:bg-orange-100 hover:shadow-orange-200"
+                      className="h-8  cursor-pointer rounded-md text-orange-600 bg-orange-100 border-orange-300 shadow-md hover:bg-orange-100 hover:shadow-orange-200"
                       onClick={() => {
                         setFiltroStatus(STATUS_FINANCIAMENTO.EM_ANALISE)
                       }}
@@ -234,7 +234,7 @@ function Financiamentos() {
                     </Badge>
                     <Badge
                       variant="secondary"
-                      className="h-8 w-30 cursor-pointer rounded-md text-red-600 bg-red-50 border-red-300 shadow-md hover:bg-red-50 hover:shadow-red-200"
+                      className="h-8 w-[118px] cursor-pointer rounded-md text-red-600 bg-red-50 border-red-300 shadow-md hover:bg-red-50 hover:shadow-red-200"
                       onClick={() => {
                         setFiltroStatus(
                           STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO
@@ -250,19 +250,19 @@ function Financiamentos() {
                     </Badge>
                   </div>
 
-                  <div className="flex items-center mr-5 gap-2">
+                  <div className="flex items-center gap-2">
                     <div className=" felx relative align-middle p-[2px]">
                       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                       <input
                         type="search"
-                        placeholder="Pesquisar por nome..."
-                        className="rounded-lg bg-background pl-8 w-[240px] h-8"
+                        placeholder="Pesquisar nome..."
+                        className="rounded-lg bg-background pl-8 min-w-52 w-full h-8"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
                     </div>
 
-                    <div className="flex flex-row gap-1 ">
+                    <div className="flex flex-row gap-2 ">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -308,7 +308,7 @@ function Financiamentos() {
                     </div>
                   </div>
 
-                  <div className="flex flex-row gap-3 ml-[200px]">
+                  <div className="flex flex-row gap-3 justify-end">
                     <span>Lista</span>
                     <Switch
                       checked={typeOrder === "Card"}
@@ -502,9 +502,9 @@ function Financiamentos() {
                             <TableHead>Ações</TableHead>
                           </TableRow>
                         </TableHeader>
-                        <TableBody className="max-[600px]:w-[360px]">
+                        <TableBody >
                           {obterDadosFiltrado().map((item) => (
-                            <TableRow>
+                            <TableRow className="max-[600px]:w-[360px]">
                               <TableCell className="font-medium flex flex-col">
                                 <div
                                   className="text-sm  text-primary font-semibold cursor-pointer hover:text-blue-900"

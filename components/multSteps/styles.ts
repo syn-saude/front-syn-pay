@@ -9,7 +9,7 @@ export const progressContainer = styled.div`
 export const StepNumberMobile = styled.span`
   display: flex;
   position: relative;
-  left: 80%;
+  justify-content: end;
   font-weight: bold;
   font-size: 14px;
 `
