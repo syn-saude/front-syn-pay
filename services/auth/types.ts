@@ -23,6 +23,7 @@ export interface AuthResponse {
   aceitouPoliticaPrivacidade: boolean
   verResumoAtualizacoes: boolean
   aceitouTermo: boolean
+  urlPerfil: string
 }
 
 export interface TenantPerfil {
