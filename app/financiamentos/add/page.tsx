@@ -1,6 +1,6 @@
 "use client"
 
-import { SetStateAction, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { setupAPIClient } from "@/services/api"
@@ -699,7 +699,7 @@ function Add() {
                               <div className="text-sm  max-w-[500px]">
                                 <Alert
                                   variant="default"
-                                  className="flex flex-row gap-2 border-orange-400  bg-orange-50 border-blue-500 bg-blue-50"
+                                  className="flex flex-row gap-2 border-blue-500 bg-blue-50"
                                 >
                                   <div className="text-blue-500">
                                     <InfoIcon />

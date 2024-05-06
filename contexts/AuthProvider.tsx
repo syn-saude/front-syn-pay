@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { addTenant, addToken } from "@/services/apiClient"
 import { authLogin } from "@/services/auth"
-import { AuthResponse, SingInProps } from "@/services/auth/types"
+import { UserEditProps, AuthResponse, SingInProps } from "@/services/auth/types"
 import { destroyCookie, parseCookies, setCookie } from "nookies"
 import { toast } from "react-toastify"
 
@@ -69,6 +69,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  function setUrlAvatar(url: string) {
+    if (!user) return
+
+    let newUser = user
+    newUser.urlAvatar = url
+    setUser(newUser)
+    setStorageUser(newUser)
+  }
+  // console.log("user", user)
+  
+  function setEditUser(data: UserEditProps) {
+    if (!user) return
+    // console.log("user", data)
+    
+    // debugger
+    // const newUser: AuthResponse = {
+    //   ...user,
+    //   ...data
+    // }
+    let newUser = user
+    newUser.nome = data.nome
+    newUser.email = data.email 
+    newUser.telefone = data.telefone
+    
+    setUser(newUser)
+    setStorageUser(newUser)
+  }
+
   function setAceitouTermo() {
     if (!user) return
 
@@ -82,7 +110,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, singIn, singOut, setAceitouTermo }}
+      value={{
+        user,
+        isAuthenticated,
+        singIn,
+        singOut,
+        setAceitouTermo,
+        setUrlAvatar,
+        setEditUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

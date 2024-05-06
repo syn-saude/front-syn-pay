@@ -2,7 +2,16 @@
 
 import Link from "next/link"
 import { singOut } from "@/contexts/AuthProvider"
-import { DollarSign, HandCoins, Menu, Moon, Sun, User } from "lucide-react"
+import {
+  DollarSign,
+  HandCoins,
+  Menu,
+  Moon,
+  NotebookPen,
+  Pencil,
+  Sun,
+  User,
+} from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { siteConfig } from "@/config/site"
@@ -22,6 +31,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
+import { useEffect } from "react"
 
 export default function SiteHeader() {
   const { user } = useAuth()
@@ -30,12 +40,16 @@ export default function SiteHeader() {
   const { width } = useWindowDimensions()
   const isMobile = width && width < 600
 
+  // useEffect(() => {
+  //   console.log("user?.urlAvatar", user?.urlAvatar)
+  // }, [user?.urlAvatar])
+
   return (
     <header className="bg-background  top-0 z-40 w-full border-b">
       {/* <header className="bg-background sticky top-0 z-40 w-full border-b"> */}
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+      {/* {user?.urlAvatar} */}
         {!isMobile && <MainNav items={siteConfig.mainNav} />}
-
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -55,19 +69,16 @@ export default function SiteHeader() {
               </div>
 
               <div className="flex flex-col items-center gap-4 cursor-pointer ">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage
-                    // src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
+                <Avatar key={user?.urlAvatar} className="h-28 w-28">
+                  <AvatarImage src={user?.urlAvatar} alt="@shadcn" />
                   <AvatarFallback>
                     <User size={28} strokeWidth={1.75} />
                   </AvatarFallback>
                 </Avatar>
-               
+
                 <div className="flex flex-col gap-0 items-center">
                   <div className="text-sm font-semibold">
-                    Olá, {user?.perfisPorTenant[0].perfis[0].nome}
+                    Olá, {user?.nome}
                   </div>
                   <div
                     style={{ fontSize: 10, lineHeight: 1 }}
@@ -75,8 +86,14 @@ export default function SiteHeader() {
                   >
                     {user?.perfisPorTenant[0].descricao}
                   </div>
-                  {/* <ThemeToggle /> */}
                 </div>
+                <Link
+                  href="/editar-usuario"
+                  className="flex items-center gap-2 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  Editar
+                  <NotebookPen size={16} strokeWidth={1.75} />
+                </Link>
               </div>
 
               <Link
@@ -128,7 +145,6 @@ export default function SiteHeader() {
             </div>
           </form>
 
-          {/* <ThemeToggle /> */}
           {!isMobile && (
             <DropdownMenu>
               <DropdownMenuTrigger
@@ -152,7 +168,13 @@ export default function SiteHeader() {
                     size="icon"
                     className="rounded-full"
                   >
-                    <User className="h-5 w-5" />
+                    <Avatar key={user?.urlAvatar} className="h-10 w-10">
+                      <AvatarImage src={user?.urlAvatar} alt="@shadcn" />
+                      <AvatarFallback>
+                        <User size={28} strokeWidth={1.75} />
+                      </AvatarFallback>
+                    </Avatar>
+                    {/* <User className="h-5 w-5" /> */}
                     <span className="sr-only">Toggle user menu</span>
                   </Button>
                 </div>
@@ -173,6 +195,16 @@ export default function SiteHeader() {
                   Alterar para modo {theme === "light" ? "noite" : "dia"}
                 </DropdownMenuItem>
                 {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
+                <DropdownMenuSeparator />
+                <Link
+                  href="/editar-usuario"
+                  className="flex items-center gap-2 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  Editar
+                  {/* <Pencil size={14} strokeWidth={1.75}/> */}
+                  <NotebookPen size={16} strokeWidth={1.75} />
+                </Link>
+                {/* <Link href="/editar-usuario">Editar dados</Link> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={singOut}
