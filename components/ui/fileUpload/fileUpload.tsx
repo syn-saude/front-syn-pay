@@ -2,12 +2,14 @@ import { use, useEffect, useState } from "react"
 import { redefinirImgAvatar } from "@/services/editUser"
 import { ImagePlus, Trash2, User } from "lucide-react"
 import Dropzone from "react-dropzone"
+import Cropper from "react-easy-crop"
 import { toast } from "react-toastify"
 
+import useAuth from "@/hooks/useAuth"
 import { IEditImgAvatarRequest } from "@/app/editar-usuario/interface"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar"
-import useAuth from "@/hooks/useAuth"
+import ModalCropper from "./modalCropper"
 
 interface FileUploadProps {
   avatarUrl: string
@@ -16,6 +18,8 @@ interface FileUploadProps {
 export default function FileUpload({ avatarUrl }: FileUploadProps) {
   const { setUrlAvatar } = useAuth()
   const [selectedFile, setSelectedFile] = useState(null)
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [urlArquivoCropper, setUrlArquivoCropper] = useState("")
 
   const handleFileSelect = (acceptedFiles) => {
     const file = acceptedFiles[0]
@@ -28,20 +32,29 @@ export default function FileUpload({ avatarUrl }: FileUploadProps) {
 
   useEffect(() => {
     if (selectedFile !== null) {
-      handleSubmit(selectedFile)
+      const novaUrl = URL.createObjectURL(selectedFile)
+      setUrlArquivoCropper(novaUrl)
+      // setShowCropper(true)
+      setModalIsOpen(true)
+
+      console.log(selectedFile)
+      // handleSubmit(selectedFile)
     }
   }, [selectedFile])
 
-
-
   async function handleSubmit(selectedFile: any) {
-    
     try {
       let resp = await redefinirImgAvatar(selectedFile)
       setUrlAvatar(resp.data)
     } catch (error) {
       console.error(error)
     }
+  }
+
+  function handleCloseModal() {
+    // router.push("/financiamentos")
+    setModalIsOpen(false)
+    setTimeout(() => {}, 400)
   }
 
   return (
@@ -95,6 +108,22 @@ export default function FileUpload({ avatarUrl }: FileUploadProps) {
           </section>
         )}
       </Dropzone>
+      {modalIsOpen && (
+        <ModalCropper
+          imgEdit={urlArquivoCropper}
+          isOpen={modalIsOpen}
+          onRequestClose={handleCloseModal}
+        />
+      )}
+      {/* <Cropper
+        image={this.state.image}
+        crop={this.state.crop}
+        zoom={this.state.zoom}
+        aspect={this.state.aspect}
+        onCropChange={this.onCropChange}
+        onCropComplete={this.onCropComplete}
+        onZoomChange={this.onZoomChange}
+      /> */}
     </>
   )
 }
