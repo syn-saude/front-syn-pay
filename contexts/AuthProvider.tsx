@@ -69,32 +69,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  function setUrlAvatar(url: string) {
-    if (!user) return
+  // function setUrlAvatar(url: string) {
+  //   if (!user) return
 
-    let newUser = user
-    newUser.urlAvatar = url
-    setUser(newUser)
-    setStorageUser(newUser)
+  //   let newUser = user
+  //   newUser.urlAvatar = url
+  //   setStorageUser(newUser)
+  //   setUser(newUser)
+  // }
+
+  function setUrlAvatar(url: string) {
+    if (!user) return;
+  
+    const updatedUser = { ...user, urlAvatar: url };
+    setStorageUser(updatedUser);
+    setUser(updatedUser);
   }
-  // console.log("user", user)
   
   function setEditUser(data: UserEditProps) {
     if (!user) return
-    // console.log("user", data)
+
+    const newUser: AuthResponse = {
+      ...user,
+      nome: data.nome,
+      email: data.email,
+      telefone: data.telefone
+
+    }
     
-    // debugger
-    // const newUser: AuthResponse = {
-    //   ...user,
-    //   ...data
-    // }
-    let newUser = user
-    newUser.nome = data.nome
-    newUser.email = data.email 
-    newUser.telefone = data.telefone
-    
-    setUser(newUser)
     setStorageUser(newUser)
+    setUser(newUser)
   }
 
   function setAceitouTermo() {

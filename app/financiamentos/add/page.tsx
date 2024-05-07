@@ -324,8 +324,6 @@ function Add() {
             setValue(key, valor, { shouldValidate: false })
           }
         )
-
-        console.log("finnanciamento por id", response.data)
       } catch (error) {
         toast.error("Erro ao obter simulacao")
       }
@@ -434,7 +432,6 @@ function Add() {
       (p) => p.quantidadeParcelas === form.qtdParcelas
     )
     setParcelaSelecionada(parcela)
-    // console.log(filteredSimulacao)
   }, [form.qtdParcelas, simulacao])
 
   const handleFirstStep = () => {

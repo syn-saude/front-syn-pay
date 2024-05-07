@@ -1,25 +1,23 @@
 "use client"
 
-import React, { use, useEffect, useState } from "react"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { redefinirUser } from "@/services/editUser"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { User } from "lucide-react"
 import { useForm } from "react-hook-form"
-import { toast } from "react-toastify"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
 import useAuth from "@/hooks/useAuth"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import FileUpload from "@/components/ui/fileUpload/fileUpload"
-import { Input, InputShadcn } from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import SuccessModal from "@/components/success-modal/successModal"
 import withAuth from "@/components/with-auth"
 
 import { IEditUserRequest } from "./interface"
 import * as S from "./styles"
+import { UserEditProps } from "@/services/auth/types"
 
 yup.setLocale(pt)
 
@@ -60,19 +58,17 @@ function EditarUsuario() {
     }, 400)
   }
 
-  async function handleEditarUsuarioSenha(form: any) {
+  async function handleEditarUsuarioSenha(form: UserEditProps) {
     try {
-      // setLoading(true)
-      let resp = await redefinirUser(form)
-      setEditUser(resp.data)
-      console.log("resp", resp.data)
-      // setLoading(false)
+      setLoading(true)
+      await redefinirUser(form)
+      setEditUser(form)
+      setLoading(false)
       setModalIsOpen(true)
     } catch (error) {
       setLoading(false)
     }
   }
-
 
   return (
     <>
@@ -81,6 +77,7 @@ function EditarUsuario() {
           <Label>Olá,</Label>
           <Label>Vamos alterar os deus dados?</Label>
 
+          {/* <div>{user?.urlAvatar}</div> */}
           <div className="flex flex-col gap-8 items-center">
             <FileUpload avatarUrl={avatarUrl} />
           </div>

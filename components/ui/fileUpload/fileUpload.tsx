@@ -36,13 +36,9 @@ export default function FileUpload({ avatarUrl }: FileUploadProps) {
 
   async function handleSubmit(selectedFile: any) {
     
-    // console.log(selectedFile)
     try {
-      // await redefinirImgAvatar(selectedFile)
       let resp = await redefinirImgAvatar(selectedFile)
-      // console.log("nome da foto",resp.data)
       setUrlAvatar(resp.data)
-
     } catch (error) {
       console.error(error)
     }
