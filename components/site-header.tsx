@@ -126,75 +126,72 @@ export default function SiteHeader() {
           </SheetContent>
           {isMobile && <span>Menu</span>}
         </Sheet>
-        <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
 
-
-          {!isMobile && (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                asChild
-                className="hover:bg-slate-50 p-2 rounded-sm "
-              >
-                <div className="flex flex-row items-center gap-4 cursor-pointer ">
-                  <div className="flex flex-col gap-0">
-                    <div className="text-sm font-semibold">
-                      Olá, {user?.nome}
-                    </div>
-                    <div
-                      style={{ fontSize: 10, lineHeight: 1 }}
-                      className=" text-xs text-slate-500 font-semibold "
-                    >
-                      {user?.perfisPorTenant[0].descricao}
-                    </div>
+        {!isMobile && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              asChild
+              className="hover:bg-slate-50 p-2 rounded-sm hover:text-black"
+            >
+              <div className="flex flex-row items-center gap-4 cursor-pointer ">
+                <div className="flex flex-col gap-0">
+                  <div className="text-sm font-semibold">
+                    Olá, {user?.nome}
                   </div>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
+                  <div
+                    style={{ fontSize: 10, lineHeight: 1 }}
+                    className=" text-xs text-slate-500 font-semibold "
                   >
-                    <Avatar key={user?.urlAvatar} className="h-10 w-10">
-                      <AvatarImage src={user?.urlAvatar} alt="@shadcn" />
-                      <AvatarFallback>
-                        <User size={28} strokeWidth={1.75} />
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="sr-only">Toggle user menu</span>
-                  </Button>
-                </div>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
-                  <div className="flex items-center gap-4 w-44 justify-between">
-                    <div>{user?.nome}</div>
-                    <ThemeToggle />
+                    {user?.perfisPorTenant[0].descricao}
                   </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                </div>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="rounded-full"
                 >
-                  Alterar para modo {theme === "light" ? "noite" : "dia"}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <Link
-                  href="/editar-usuario"
-                  className="flex items-center gap-2 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  Editar
-                  <NotebookPen size={16} strokeWidth={1.75} />
-                </Link>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={singOut}
-                  className="font-bold cursor-pointer text-red-600 hover:bg-red-10"
-                >
-                  Sair
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
+                  <Avatar key={user?.urlAvatar} className="h-10 w-10">
+                    <AvatarImage src={user?.urlAvatar} alt="@shadcn" />
+                    <AvatarFallback>
+                      <User size={28} strokeWidth={1.75} />
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="sr-only">Toggle user menu</span>
+                </Button>
+              </div>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <div className="flex items-center gap-4 w-44 justify-between">
+                  <div>{user?.nome}</div>
+                  <ThemeToggle />
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                Alterar para modo {theme === "light" ? "noite" : "dia"}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <Link
+                href="/editar-usuario"
+                className="flex items-center gap-2 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                Editar
+                <NotebookPen size={16} strokeWidth={1.75} />
+              </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={singOut}
+                className="font-bold cursor-pointer text-red-600 hover:bg-red-10"
+              >
+                Sair
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </header>
   )
