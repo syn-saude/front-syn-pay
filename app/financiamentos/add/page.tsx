@@ -1,6 +1,6 @@
 "use client"
 
-import { SetStateAction, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { setupAPIClient } from "@/services/api"
@@ -39,6 +39,7 @@ import {
 } from "@/config/const/bv/dominio"
 import { APROVADOS } from "@/config/const/common/aprovados"
 import { ESTADOS } from "@/config/const/common/states"
+import useWindowDimensions from "@/hooks/useWindowDimensions"
 import { Alert } from "@/components/ui/alert"
 import {
   Breadcrumb,
@@ -323,8 +324,6 @@ function Add() {
             setValue(key, valor, { shouldValidate: false })
           }
         )
-
-        console.log("finnanciamento por id", response.data)
       } catch (error) {
         toast.error("Erro ao obter simulacao")
       }
@@ -433,7 +432,6 @@ function Add() {
       (p) => p.quantidadeParcelas === form.qtdParcelas
     )
     setParcelaSelecionada(parcela)
-    // console.log(filteredSimulacao)
   }, [form.qtdParcelas, simulacao])
 
   const handleFirstStep = () => {
@@ -482,83 +480,34 @@ function Add() {
     return etapas[currentStep]
   }
 
+  const { width } = useWindowDimensions()
+  const isMobile = width && width < 600
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <div className="container flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon" variant="outline" className="sm:hidden">
-                <PanelLeft className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="sm:max-w-xs">
-              <nav className="grid gap-6 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-                >
-                  <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Orders
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-foreground"
-                >
-                  <Package className="h-5 w-5" />
-                  Products
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="h-5 w-5" />
-                  Customers
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="h-5 w-5" />
-                  Settings
-                </Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
-          <Breadcrumb className="hidden md:flex">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink>Dashboard</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/financiamentos">Financiamentos</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Novo financiamento</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4  md:gap-8 md:p-10">
+        {!isMobile && (
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+            <Breadcrumb className="hidden md:flex">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink>Dashboard</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href="/financiamentos">Financiamentos</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Novo financiamento</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </header>
+        )}
+        <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4  md:gap-8 md:p-10 mt-4">
           <div className="mx-auto grid w-full  items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
             {
               //#region STEPPER
@@ -601,7 +550,7 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.proponente && "hidden"
                       } grid gap-6 md:max-w-[600px]`}
                     >
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
                         <div className="flex flex-col gap-1">
                           <Label className="text-xs">Nome completo</Label>
                           <Input
@@ -623,7 +572,7 @@ function Add() {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
                         <div className="flex flex-col gap-1 ">
                           <Label className="text-xs">
                             Informe os números do seu CPF
@@ -649,7 +598,7 @@ function Add() {
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
                         <div className="flex flex-col gap-1">
                           <Label className="text-xs">E-mail</Label>
                           <Input
@@ -747,7 +696,7 @@ function Add() {
                               <div className="text-sm  max-w-[500px]">
                                 <Alert
                                   variant="default"
-                                  className="flex flex-row gap-2 border-orange-400  bg-orange-50 border-blue-500 bg-blue-50"
+                                  className="flex flex-row gap-2 border-blue-500 bg-blue-50"
                                 >
                                   <div className="text-blue-500">
                                     <InfoIcon />
@@ -867,10 +816,10 @@ function Add() {
                           ETAPAS_FINANCIAMENTO.dadosPessoais && "hidden"
                       } grid gap-6`}
                     >
-                      <div className="flex grid-cols-2 gap-1">
+                      <div className="flex grid-cols-2 gap-1 max-[600px]:grid-cols-1">
                         <div>
                           <Label className="text-xs">
-                            Em qual sua nacionalidade?
+                            Qual sua nacionalidade?
                           </Label>
                           <ComboboxControlled
                             options={BV_NACIONALIDADE.map((p) => {
@@ -905,12 +854,12 @@ function Add() {
                           />
                         </div>
                       </div>
-                      <div className="flex gap-8 grid-cols-2">
+                      <div className="flex gap-8 grid-cols-2 max-[600px]:grid-cols-1">
                         <div className="flex flex-col gap-3 ">
                           <Label className="text-xs">
                             Informe os numeros da sua identidade
                           </Label>
-                          <div className="flex gap-8 grid-cols-2">
+                          <div className="flex gap-8 grid-cols-2 max-[600px]:grid-cols-1">
                             <Input
                               errors={errors}
                               control={control}
@@ -990,7 +939,7 @@ function Add() {
                             placeholder="Informe seu Cep"
                           />
                         </div>
-                        <div className="flex gap-3 grid-cols-2">
+                        <div className="flex gap-3 grid-cols-2 max-[600px]:grid-cols-1">
                           <div className="flex flex-col gap-1">
                             <Label className="text-xs">
                               Em qual estado o cliente mora?
@@ -1155,7 +1104,7 @@ function Add() {
                           <Label className="text-xs">
                             A quanto tempo está na sua ocupação atual?
                           </Label>
-                          <div className="flex gap-3 grid-cols-2">
+                          <div className="flex gap-3 grid-cols-2 max-[600px]:grid-cols-1">
                             <div>
                               <Label className="text-xs">A quantos anos?</Label>
                               <Input

@@ -29,7 +29,6 @@ export default function Page() {
     })
   const form = watch()
   const { errors } = formState
-  // console.log(form.inputCurrency)
 
   const handleNextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1)
@@ -45,7 +44,6 @@ export default function Page() {
 
   return (
     <S.Container>
-      {/* <MultSteps currentStep={currentStep} qtdSteps={8} /> */}
       <div>
         <form>
           <InputCurrency

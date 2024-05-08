@@ -13,9 +13,19 @@ export type RedefinirSenhaProps = {
   confirmaSenha: string
 }
 
+export interface UserEditProps {
+  nome: string
+  email: string
+  telefone: string
+  // urlAvatar: string
+}
+
 export interface AuthResponse {
   id: string
   cpf: string
+  nome: string
+  email: string
+  telefone: string
   perfisPorTenant: TenantPerfil[]
   authToken: string
   dataExpiracaoToken: Date
@@ -23,6 +33,7 @@ export interface AuthResponse {
   aceitouPoliticaPrivacidade: boolean
   verResumoAtualizacoes: boolean
   aceitouTermo: boolean
+  urlAvatar?: string
 }
 
 export interface TenantPerfil {

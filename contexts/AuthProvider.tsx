@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { addTenant, addToken } from "@/services/apiClient"
 import { authLogin } from "@/services/auth"
-import { AuthResponse, SingInProps } from "@/services/auth/types"
+import { AuthResponse, SingInProps, UserEditProps } from "@/services/auth/types"
 import { destroyCookie, parseCookies, setCookie } from "nookies"
 import { toast } from "react-toastify"
 
@@ -69,6 +69,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  // function setUrlAvatar(url: string) {
+  //   if (!user) return
+
+  //   let newUser = user
+  //   newUser.urlAvatar = url
+  //   setStorageUser(newUser)
+  //   setUser(newUser)
+  // }
+
+  function setUrlAvatar(url?: string) {
+    if (!user) return
+
+    const updatedUser = { ...user, urlAvatar: url }
+    setStorageUser(updatedUser)
+    setUser(updatedUser)
+  }
+
+  function setEditUser(data: UserEditProps) {
+    if (!user) return
+
+    const newUser: AuthResponse = {
+      ...user,
+      nome: data.nome,
+      email: data.email,
+      telefone: data.telefone,
+    }
+
+    setStorageUser(newUser)
+    setUser(newUser)
+  }
+
   function setAceitouTermo() {
     if (!user) return
 
@@ -82,7 +113,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, singIn, singOut, setAceitouTermo }}
+      value={{
+        user,
+        isAuthenticated,
+        singIn,
+        singOut,
+        setAceitouTermo,
+        setUrlAvatar,
+        setEditUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

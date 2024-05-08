@@ -123,7 +123,7 @@ export default function Input(props: ControlledInputProps) {
   )
 }
 
-export { Input }
+export { Input, InputShadcn }
 
 /* Exemplos de uso:
 <InputWithMask mask="99/99/9999" placeholder="Data de Nascimento" />
