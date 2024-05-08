@@ -17,20 +17,12 @@ export default function useWindowInfiniteScroll({
     }
 
     function scrollEvent() {
-      //   console.log(
-      //     'scroll',
-      //     window.scrollY,
-      //     document.documentElement.scrollHeight -
-      //       document.documentElement.clientHeight,
-      //     document.documentElement.scrollHeight,
-      //     screenSize
-      //   )
+
       if (
         window.scrollY ===
         document.documentElement.scrollHeight -
           document.documentElement.clientHeight
       ) {
-        console.log('ativou evento')
         loadMoreFunc()
       }
     }

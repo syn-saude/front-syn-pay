@@ -46,7 +46,6 @@ export default function InputCurrency(props: ControlledInputProps) {
           name="input-name"
           placeholder="Digite seus valores aqui"
           defaultValue={0.0}
-          // fixedDecimalLength={2}
           disableAbbreviations
           groupSeparator="."
           decimalSeparator=","
@@ -56,7 +55,6 @@ export default function InputCurrency(props: ControlledInputProps) {
           disableGroupSeparators
           onValueChange={(value, name, values) => {
             field.onChange(values?.float)
-            // console.log(values)
           }}
         />
       )}

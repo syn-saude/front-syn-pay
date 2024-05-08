@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 
 import { Badge } from "./ui/badge"
+import useWindowDimensions from "@/hooks/useWindowDimensions"
 
 const { version } = require("../package.json")
 
@@ -18,6 +19,8 @@ interface MainNavProps {
 }
 
 export function MainNav({ items, vertical = false }: MainNavProps) {
+  const { width } = useWindowDimensions()
+  const isMobile = width && width < 600
   return (
     <div className={`flex gap-6 ${vertical && "flex-col"} md:gap-10`}>
       <Link
@@ -31,7 +34,8 @@ export function MainNav({ items, vertical = false }: MainNavProps) {
           <span style={{ fontSize: 10 }}>v{version}</span>
         </div> */}
         <Badge variant="outline">v{version}</Badge>
-        <div className="text-muted mr-2 text-lg opacity-50">/</div>
+        {!isMobile && <div className="text-muted mr-2 text-lg opacity-50">/</div>}
+        
         {/* <span className="inline-block font-bold">{siteConfig.name}</span> */}
       </Link>
 
