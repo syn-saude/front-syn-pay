@@ -12,6 +12,7 @@ export const Container = styled.div`
   @media (max-width: 768px) {
     min-height: 70vh;
     background-color: var(--white);
+    padding: 0;
   }
 `
 
