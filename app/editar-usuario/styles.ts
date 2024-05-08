@@ -3,11 +3,11 @@ import styled from "styled-components"
 import Button from "@/components/ui/button"
 
 export const Container = styled.div`
-  min-height: 85vh;
+  heigth: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0px auto;
+  padding: 130px 80px 60px 80px;
   margin-bottom: -10px;
   @media (max-width: 768px) {
     min-height: 70vh;

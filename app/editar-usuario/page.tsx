@@ -75,8 +75,6 @@ function EditarUsuario() {
         <S.LoginContent className="bg-white p-8 pb-10 rounded-md  dark:bg-slate-950">
           <Label>Olá,</Label>
           <Label>Vamos alterar os deus dados?</Label>
-
-          {/* <div>{user?.urlAvatar}</div> */}
           <div className="flex flex-col gap-8 items-center">
             <FileUpload />
           </div>
