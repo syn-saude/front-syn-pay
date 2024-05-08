@@ -7,7 +7,7 @@ export type AuthContextData = {
   singIn: (credentials: SingInProps) => Promise<void>
   singOut?: () => void
   setAceitouTermo: () => void
-  setUrlAvatar: (url: string) => void
+  setUrlAvatar: (url?: string) => void
   setEditUser: (editCredentials: any) => void
 }
 

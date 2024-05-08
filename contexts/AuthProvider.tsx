@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { addTenant, addToken } from "@/services/apiClient"
 import { authLogin } from "@/services/auth"
-import { UserEditProps, AuthResponse, SingInProps } from "@/services/auth/types"
+import { AuthResponse, SingInProps, UserEditProps } from "@/services/auth/types"
 import { destroyCookie, parseCookies, setCookie } from "nookies"
 import { toast } from "react-toastify"
 
@@ -78,14 +78,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   //   setUser(newUser)
   // }
 
-  function setUrlAvatar(url: string) {
-    if (!user) return;
-  
-    const updatedUser = { ...user, urlAvatar: url };
-    setStorageUser(updatedUser);
-    setUser(updatedUser);
+  function setUrlAvatar(url?: string) {
+    if (!user) return
+
+    const updatedUser = { ...user, urlAvatar: url }
+    setStorageUser(updatedUser)
+    setUser(updatedUser)
   }
-  
+
   function setEditUser(data: UserEditProps) {
     if (!user) return
 
@@ -93,10 +93,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       ...user,
       nome: data.nome,
       email: data.email,
-      telefone: data.telefone
-
+      telefone: data.telefone,
     }
-    
+
     setStorageUser(newUser)
     setUser(newUser)
   }

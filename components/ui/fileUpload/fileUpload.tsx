@@ -1,5 +1,5 @@
 import { use, useEffect, useState } from "react"
-import { redefinirImgAvatar } from "@/services/editUser"
+import { redefinirImgAvatar, removerImgAvatar } from "@/services/editUser"
 import { ImagePlus, Trash2, User } from "lucide-react"
 import Dropzone from "react-dropzone"
 import Cropper from "react-easy-crop"
@@ -22,11 +22,21 @@ export default function FileUpload() {
     setSelectedFile(file)
   }
 
-  const removeFile = () => {
-    setSelectedFile(null)
+  const removeFile = async () => {
+    try {
+      await removerImgAvatar()
+      setSelectedFile(null)
+      setUrlAvatar(undefined)
+    } catch (error) {
+      console.error(error)
+      toast.error(
+        "Não foi possível completar essa operação. Tente novamente mais tarde."
+      )
+    }
   }
 
   useEffect(() => {
+    debugger
     if (selectedFile !== null) {
       const novaUrl = URL.createObjectURL(selectedFile)
       setUrlArquivoCropper(novaUrl)
@@ -82,13 +92,14 @@ export default function FileUpload() {
                   {/* <input {...getInputProps()} id="fileInput" style={{ display: 'none' }} /> */}
                 </div>
                 <div className="text-red-700 hover:text-red-400">
-                  {selectedFile && (
-                    <Trash2
-                      className="cursor-pointer"
-                      onClick={removeFile}
-                      size={28}
-                    />
-                  )}
+                  {!!selectedFile ||
+                    (!!user?.urlAvatar && (
+                      <Trash2
+                        className="cursor-pointer"
+                        onClick={removeFile}
+                        size={28}
+                      />
+                    ))}
                 </div>
               </div>
             </div>

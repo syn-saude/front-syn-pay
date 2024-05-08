@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { UserEditProps } from "@/services/auth/types"
-import { redefinirUser } from "@/services/editUser"
+import { redefinirUsuario } from "@/services/editUser"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm } from "react-hook-form"
 import * as yup from "yup"
@@ -60,7 +60,7 @@ function EditarUsuario() {
   async function handleEditarUsuarioSenha(form: UserEditProps) {
     try {
       setLoading(true)
-      await redefinirUser(form)
+      await redefinirUsuario(form)
       setEditUser(form)
       setLoading(false)
       setModalIsOpen(true)

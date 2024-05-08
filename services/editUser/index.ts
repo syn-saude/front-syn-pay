@@ -23,11 +23,16 @@ export const redefinirImgAvatar: (
       "Content-Type": "multipart/form-data",
     },
   })
-  // return api.post("/usuario/avatar", arquivo)
 }
 
-export const redefinirUser: (data: any) => Promise<AxiosResponse<any>> = async (
-  data
-) => {
+export const removerImgAvatar: () => Promise<
+  AxiosResponse<string>
+> = async () => {
+  return api.delete("/usuario/avatar")
+}
+
+export const redefinirUsuario: (
+  data: any
+) => Promise<AxiosResponse<any>> = async (data) => {
   return api.put("/usuario", data)
 }
