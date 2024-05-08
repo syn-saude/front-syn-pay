@@ -11,12 +11,8 @@ import { IEditImgAvatarRequest } from "@/app/editar-usuario/interface"
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar"
 import ModalCropper from "./modalCropper"
 
-interface FileUploadProps {
-  avatarUrl: string
-}
-
-export default function FileUpload({ avatarUrl }: FileUploadProps) {
-  const { setUrlAvatar } = useAuth()
+export default function FileUpload() {
+  const { user, setUrlAvatar } = useAuth()
   const [selectedFile, setSelectedFile] = useState(null)
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [urlArquivoCropper, setUrlArquivoCropper] = useState("")
@@ -34,11 +30,7 @@ export default function FileUpload({ avatarUrl }: FileUploadProps) {
     if (selectedFile !== null) {
       const novaUrl = URL.createObjectURL(selectedFile)
       setUrlArquivoCropper(novaUrl)
-      // setShowCropper(true)
       setModalIsOpen(true)
-
-      console.log(selectedFile)
-      // handleSubmit(selectedFile)
     }
   }, [selectedFile])
 
@@ -65,19 +57,14 @@ export default function FileUpload({ avatarUrl }: FileUploadProps) {
             <div className="flex flex-col items-center gap-7">
               <div {...getRootProps()} className="relative">
                 <Avatar
+                  key={user?.urlAvatar}
                   className="h-32 w-32 cursor-pointer"
                   onClick={() => document.getElementById("fileInput")?.click()}
                 >
-                  {selectedFile ? (
-                    <AvatarImage src={URL.createObjectURL(selectedFile)} />
-                  ) : (
-                    <>
-                      <AvatarImage src={avatarUrl} />
-                      <AvatarFallback>
-                        <User size={42} strokeWidth={1.75} />
-                      </AvatarFallback>
-                    </>
-                  )}
+                  <AvatarImage src={user?.urlAvatar} />
+                  <AvatarFallback>
+                    <User size={42} strokeWidth={1.75} />
+                  </AvatarFallback>
                 </Avatar>
               </div>
               <div className="flex items-center gap-5">
@@ -113,6 +100,11 @@ export default function FileUpload({ avatarUrl }: FileUploadProps) {
           imgEdit={urlArquivoCropper}
           isOpen={modalIsOpen}
           onRequestClose={handleCloseModal}
+          onImgChange={(myBlob) => {
+            let file = new File([myBlob], "imagem.jpg")
+            handleSubmit(file)
+            handleCloseModal()
+          }}
         />
       )}
       {/* <Cropper

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
+import { UserEditProps } from "@/services/auth/types"
 import { redefinirUser } from "@/services/editUser"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm } from "react-hook-form"
@@ -17,7 +18,6 @@ import withAuth from "@/components/with-auth"
 
 import { IEditUserRequest } from "./interface"
 import * as S from "./styles"
-import { UserEditProps } from "@/services/auth/types"
 
 yup.setLocale(pt)
 
@@ -43,7 +43,6 @@ function EditarUsuario() {
       },
     })
 
-  const [avatarUrl, setAvatarUrl] = useState<string>(user?.urlAvatar || "") //user?.avatar ||
   const form = watch()
   const { errors } = formState
 
@@ -79,7 +78,7 @@ function EditarUsuario() {
 
           {/* <div>{user?.urlAvatar}</div> */}
           <div className="flex flex-col gap-8 items-center">
-            <FileUpload avatarUrl={avatarUrl} />
+            <FileUpload />
           </div>
 
           <S.FormContent onSubmit={handleSubmit(handleEditarUsuarioSenha)}>

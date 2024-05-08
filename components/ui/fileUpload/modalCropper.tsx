@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Check } from "lucide-react"
 import Cropper from "react-easy-crop"
-import getCroppedImg  from "./cropImage"
 
 import {
   AlertDialog,
@@ -12,12 +11,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../alert-dialog"
+import getCroppedImg from "./cropImage"
 
 interface ModalCropperProps {
   isOpen: boolean
   onRequestClose: () => void
   imgEdit: any
-  onImgChange?: (img: any) => void
+  onImgChange: (img: any) => void
 }
 
 export default function ModalCropper({
@@ -26,7 +26,6 @@ export default function ModalCropper({
   imgEdit,
   onImgChange,
 }: ModalCropperProps) {
-  const { image, onCropped } = imgEdit
   const minZoom = 0.4
 
   const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -39,18 +38,17 @@ export default function ModalCropper({
   }, [imgEdit.open])
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    // console.log(croppedArea, croppedAreaPixels)
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
   async function getCropped() {
-    debugger
-    var imgCropped = await getCroppedImg(image, croppedAreaPixels)
-    
-    console.log(imgCropped)
-    onCropped(imgCropped)
+    var imgCropped = await getCroppedImg(imgEdit, croppedAreaPixels)
+
+    if (!!imgCropped) {
+      onImgChange(imgCropped as File)
+    }
   }
-  
+
   return (
     <AlertDialog open={isOpen}>
       <AlertDialogContent className="flex flex-col items-center justify-center gap-7  ">
@@ -75,7 +73,6 @@ export default function ModalCropper({
             onCropChange={setCrop}
             onCropComplete={onCropComplete}
             onZoomChange={setZoom}
-            
           />
         </div>
         <div className="controls">
@@ -92,16 +89,14 @@ export default function ModalCropper({
             className="zoom-range"
           />
         </div>
-        <img src={image} alt="" />
+        {/* <img src={imgEdit} alt="" /> */}
         {/* <S.TextLabel>Sucesso!</S.TextLabel> */}
         {/* <S.ContenteInfo>
           <S.TextInfo>{textInfo}</S.TextInfo>
         </S.ContenteInfo> */}
 
         <AlertDialogFooter className="flex flex-row gap-4">
-          <AlertDialogAction onClick={getCropped}>
-            Recortar
-          </AlertDialogAction>
+          <AlertDialogAction onClick={getCropped}>Recortar</AlertDialogAction>
           <AlertDialogCancel onClick={onRequestClose} className="m-0">
             Cancelar
           </AlertDialogCancel>
