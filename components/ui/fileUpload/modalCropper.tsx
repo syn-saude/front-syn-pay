@@ -55,12 +55,9 @@ export default function ModalCropper({
         <AlertDialogHeader>
           <AlertDialogTitle>
             <span>editar imagem</span>
-            {/* <div className="w-20 h-20 flex items-center justify-center bg-white rounded-full border-2 border-green-300">
-              <Check className=" h-14 w-14 text-green-500  animate-in" />
-            </div> */}
           </AlertDialogTitle>
         </AlertDialogHeader>
-        <div className="relative h-[260px] w-[260px]">
+        <div className="relative h-[280px] w-[380px]">
           <Cropper
             image={imgEdit}
             crop={crop}
@@ -89,11 +86,6 @@ export default function ModalCropper({
             className="zoom-range"
           />
         </div>
-        {/* <img src={imgEdit} alt="" /> */}
-        {/* <S.TextLabel>Sucesso!</S.TextLabel> */}
-        {/* <S.ContenteInfo>
-          <S.TextInfo>{textInfo}</S.TextInfo>
-        </S.ContenteInfo> */}
 
         <AlertDialogFooter className="flex flex-row gap-4">
           <AlertDialogAction onClick={getCropped}>Recortar</AlertDialogAction>

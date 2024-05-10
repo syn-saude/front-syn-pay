@@ -158,6 +158,14 @@ function Financiamentos() {
   const { width } = useWindowDimensions()
   const isMobile = width && width < 600
 
+  function handleChangeType() {
+    if (typeOrder === "List") {
+      setTypeOrder("Card")
+    } else {
+      setTypeOrder("List")
+    }
+  }
+
   return (
     <>
       <div className=" flex min-h-screen w-full flex-col bg-muted/40 ">
@@ -308,97 +316,115 @@ function Financiamentos() {
                     </div>
                   </div>
 
-                  <div className="flex flex-row gap-3 justify-end">
-                    <span>Lista</span>
-                    <Switch
-                      checked={typeOrder === "Card"}
-                      onCheckedChange={(checked: boolean) =>
-                        handleOrder(checked ? "Card" : "List")
-                      }
-                    />
-                    <span>Cards</span>
+                  <div className="flex flex-row gap-1 justify-end mt-2 items-center">
+                    <span className="text-sm text-gray-500">Visualização:</span>
+                    <Tabs defaultValue="List">
+                      <TabsList className="inline-flex h-7 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground">
+                        <TabsTrigger
+                          className="rounded-md px-2 py-[3px] text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                          value="List"
+                          onClick={() => {
+                            setTypeOrder("List")
+                          }}
+                        >
+                          Lista
+                        </TabsTrigger>
+                        <TabsTrigger
+                          className="rounded-md px-2 py-[3px] text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                          value="Card"
+                          onClick={() => {
+                            setTypeOrder("Card")
+                          }}
+                        >
+                          Card
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
                   </div>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center">
                     {!isMobile && (
-                      <TabsList>
-                        <TabsTrigger
-                          value="todos"
-                          onClick={() => {
-                            setFiltroStatus("todos")
-                          }}
-                        >
-                          Todos
-                          <Badge variant="secondary" className="ml-2">
-                            {qtdAllDados}
-                          </Badge>
-                        </TabsTrigger>
-                        <TabsTrigger
-                          value={STATUS_FINANCIAMENTO.RASCUNHO}
-                          onClick={() => {
-                            setFiltroStatus(STATUS_FINANCIAMENTO.RASCUNHO)
-                          }}
-                        >
-                          Rascunho
-                          <Badge variant="secondary" className="ml-2">
-                            {
-                              obterDadosFiltrado(STATUS_FINANCIAMENTO.RASCUNHO)
-                                .length
-                            }
-                          </Badge>
-                        </TabsTrigger>
-                        <TabsTrigger
-                          value={STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO}
-                          onClick={() => {
-                            setFiltroStatus(
-                              STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO
-                            )
-                          }}
-                        >
-                          CPF aprovado
-                          <Badge variant="secondary" className="ml-2">
-                            {
-                              obterDadosFiltrado(
+                      <Tabs defaultValue="todos">
+                        <TabsList>
+                          <TabsTrigger
+                            value="todos"
+                            onClick={() => {
+                              setFiltroStatus("todos")
+                            }}
+                          >
+                            Todos
+                            <Badge variant="secondary" className="ml-2">
+                              {qtdAllDados}
+                            </Badge>
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value={STATUS_FINANCIAMENTO.RASCUNHO}
+                            onClick={() => {
+                              setFiltroStatus(STATUS_FINANCIAMENTO.RASCUNHO)
+                            }}
+                          >
+                            Rascunho
+                            <Badge variant="secondary" className="ml-2">
+                              {
+                                obterDadosFiltrado(
+                                  STATUS_FINANCIAMENTO.RASCUNHO
+                                ).length
+                              }
+                            </Badge>
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value={STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO}
+                            onClick={() => {
+                              setFiltroStatus(
                                 STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO
-                              ).length
-                            }
-                          </Badge>
-                        </TabsTrigger>
-                        <TabsTrigger
-                          value={STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO}
-                          onClick={() => {
-                            setFiltroStatus(
-                              STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO
-                            )
-                          }}
-                        >
-                          CPF reprovado
-                          <Badge variant="secondary" className="ml-2">
-                            {
-                              obterDadosFiltrado(
+                              )
+                            }}
+                          >
+                            CPF aprovado
+                            <Badge variant="secondary" className="ml-2">
+                              {
+                                obterDadosFiltrado(
+                                  STATUS_FINANCIAMENTO.RASCUNHO_PRE_APROVADO
+                                ).length
+                              }
+                            </Badge>
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value={STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO}
+                            onClick={() => {
+                              setFiltroStatus(
                                 STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO
-                              ).length
-                            }
-                          </Badge>
-                        </TabsTrigger>
-                        <TabsTrigger
-                          value={STATUS_FINANCIAMENTO.EM_ANALISE}
-                          onClick={() => {
-                            setFiltroStatus(STATUS_FINANCIAMENTO.EM_ANALISE)
-                          }}
-                        >
-                          Em análise
-                          <Badge variant="secondary" className="ml-2">
-                            {
-                              obterDadosFiltrado(
-                                STATUS_FINANCIAMENTO.EM_ANALISE
-                              ).length
-                            }
-                          </Badge>
-                        </TabsTrigger>
-                      </TabsList>
+                              )
+                            }}
+                          >
+                            CPF reprovado
+                            <Badge variant="secondary" className="ml-2">
+                              {
+                                obterDadosFiltrado(
+                                  STATUS_FINANCIAMENTO.CREDITO_PRE_REPROVADO
+                                ).length
+                              }
+                            </Badge>
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value={STATUS_FINANCIAMENTO.EM_ANALISE}
+                            onClick={() => {
+                              setFiltroStatus(STATUS_FINANCIAMENTO.EM_ANALISE)
+                            }}
+                          >
+                            Em análise
+                            <Badge variant="secondary" className="ml-2">
+                              {
+                                obterDadosFiltrado(
+                                  STATUS_FINANCIAMENTO.EM_ANALISE
+                                ).length
+                              }
+                            </Badge>
+                          </TabsTrigger>
+                        </TabsList>
+                      </Tabs>
                     )}
                     <div className="ml-auto flex items-center gap-2">
                       <div className=" felx relative align-middle p-[2px]">
@@ -459,16 +485,35 @@ function Financiamentos() {
                     </div>
                   </div>
                   {!isMobile && (
-                    <div className="flex flex-row gap-3 justify-end mt-2">
-                      <span>Lista</span>
-                      <Switch
-                        checked={typeOrder === "Card"}
-                        onCheckedChange={(checked: boolean) =>
-                          handleOrder(checked ? "Card" : "List")
-                        }
-                      />
-                      <span>Cards</span>
-                    </div>
+                    <>
+                      <div className="flex flex-row gap-1 justify-end mt-2 items-center">
+                        <span className="text-sm text-gray-500">
+                          Visualização:
+                        </span>
+                        <Tabs defaultValue="List">
+                          <TabsList className="inline-flex h-7 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground">
+                            <TabsTrigger
+                              className="rounded-md px-2 py-[3px] text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                              value="List"
+                              onClick={() => {
+                                setTypeOrder("List")
+                              }}
+                            >
+                              Lista
+                            </TabsTrigger>
+                            <TabsTrigger
+                              className="rounded-md px-2 py-[3px] text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                              value="Card"
+                              onClick={() => {
+                                setTypeOrder("Card")
+                              }}
+                            >
+                              Card
+                            </TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </div>
+                    </>
                   )}
                 </>
               )}
@@ -502,7 +547,7 @@ function Financiamentos() {
                             <TableHead>Ações</TableHead>
                           </TableRow>
                         </TableHeader>
-                        <TableBody >
+                        <TableBody>
                           {obterDadosFiltrado().map((item) => (
                             <TableRow className="max-[600px]:w-[360px]">
                               <TableCell className="font-medium flex flex-col">
@@ -591,133 +636,163 @@ function Financiamentos() {
               )}
 
               {typeOrder === "Card" && (
-                <div className="grid grid-cols-3  w-full gap-4 ml-2 mt-3 max-[1050px]:grid-cols-2 max-[700px]:grid-cols-1 max-[600px]:ml-0">
-                  {obterDadosFiltrado().map((item) => (
-                    <Card className="w-full min-h-[185px] shadow-md">
+                <div>
+                  {!loading && obterDadosFiltrado().length == 0 ? (
+                    <Card x-chunk="dashboard-06-chunk-0" className="mt-2">
                       <CardHeader>
-                        <div className="flex flex-row justify-between">
-                          <div
-                            className="felx flex-col text-primary gap-4 text-sm font-semibold cursor-pointer"
-                            onClick={() => handleVisualizar(item.id)}
-                          >
-                            <div className="flex flex-col gap-1">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span className="text-blue-800 ">
-                                    {item?.nome?.length > 30
-                                      ? item?.nome?.slice(0, 30).concat("...")
-                                      : item.nome}
-                                  </span>
-                                </TooltipTrigger>
-                                {item?.nome?.length > 20 && (
-                                  <TooltipContent>{item.nome}</TooltipContent>
-                                )}
-                              </Tooltip>
-
-                              <span>{item.procedimento}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-row ">
-                            <div className="cursor-pointer  hover:text-blue-800 ">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Eye
-                                    size={18}
-                                    strokeWidth={1.6}
-                                    onClick={() => handleVisualizar(item.id)}
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Visualizar</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </div>
-
-                            {podeEditar(item.statusSyn) && (
-                              <>
-                                <S.DividerVertical />
-                                <div className="cursor-pointer hover:text-blue-800">
+                        <div className="flex flex-row gap-3 justify-between">
+                          <CardTitle>Financiamentos</CardTitle>
+                        </div>
+                        <CardDescription>
+                          Acompanhe as solicitações de financiamentos.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-sm text-foreground font-medium">
+                          Nenhum registro encontrado com esse filtro.
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="grid grid-cols-3  w-full gap-4 ml-2 mt-3 max-[1050px]:grid-cols-2 max-[700px]:grid-cols-1 max-[600px]:ml-0">
+                      {obterDadosFiltrado().map((item) => (
+                        <Card className="w-full min-h-[185px] shadow-md">
+                          <CardHeader>
+                            <div className="flex flex-row justify-between">
+                              <div
+                                className="felx flex-col text-primary gap-4 text-sm font-semibold cursor-pointer"
+                                onClick={() => handleVisualizar(item.id)}
+                              >
+                                <div className="flex flex-col gap-1">
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <FileText
+                                      <span className="text-blue-800 ">
+                                        {item?.nome?.length > 30
+                                          ? item?.nome
+                                              ?.slice(0, 30)
+                                              .concat("...")
+                                          : item.nome}
+                                      </span>
+                                    </TooltipTrigger>
+                                    {item?.nome?.length > 20 && (
+                                      <TooltipContent>
+                                        {item.nome}
+                                      </TooltipContent>
+                                    )}
+                                  </Tooltip>
+
+                                  <span>{item.procedimento}</span>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-row ">
+                                <div className="cursor-pointer  hover:text-blue-800 ">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Eye
                                         size={18}
-                                        strokeWidth={1.5}
+                                        strokeWidth={1.6}
                                         onClick={() =>
-                                          router.push(
-                                            `/financiamentos/add?id=${item.id}`
-                                          )
+                                          handleVisualizar(item.id)
                                         }
                                       />
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                      <p>Continuar solicitação</p>
+                                      <p>Visualizar</p>
                                     </TooltipContent>
                                   </Tooltip>
                                 </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
 
-                        <div>
-                          <div className="flex flex-row justify-between mt-2">
-                            <p className="text-xs w-max text-muted-foreground italic font-medium mt-[-14px]">
-                              última etapa {item.etapa}
-                            </p>
-                            <div className="flex relative">
-                              <Badge
-                                variant="outline"
-                                className={
-                                  transformStatusColors(item.statusSyn) +
-                                  " rounded-md shadow-md mt-[-6px] mb-[6px]"
-                                }
-                              >
-                                {item.descricaoStatusSyn}
-                              </Badge>
+                                {podeEditar(item.statusSyn) && (
+                                  <>
+                                    <S.DividerVertical />
+                                    <div className="cursor-pointer hover:text-blue-800">
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <FileText
+                                            size={18}
+                                            strokeWidth={1.5}
+                                            onClick={() =>
+                                              router.push(
+                                                `/financiamentos/add?id=${item.id}`
+                                              )
+                                            }
+                                          />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Continuar solicitação</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </CardHeader>
 
-                      <CardContent className="flex  flex-col gap-1 mt-[-10px]">
-                        <div>
-                          <div className="flex flex-row justify-between mt-4">
-                            {item.valorParcialLiberado !== null && (
-                              <>
-                                <span className="text-sm mt-[-14px]">
-                                  <p>Valor disponivel</p>
+                            <div>
+                              <div className="flex flex-row justify-between mt-2">
+                                <p className="text-xs w-max text-muted-foreground italic font-medium mt-[-14px]">
+                                  última etapa {item.etapa}
+                                </p>
+                                <div className="flex relative">
+                                  <Badge
+                                    variant="outline"
+                                    className={
+                                      transformStatusColors(item.statusSyn) +
+                                      " rounded-md shadow-md mt-[-6px] mb-[6px]"
+                                    }
+                                  >
+                                    {item.descricaoStatusSyn}
+                                  </Badge>
+                                </div>
+                              </div>
+                            </div>
+                          </CardHeader>
+
+                          <CardContent className="flex  flex-col gap-1 mt-[-10px]">
+                            <div>
+                              <div className="flex flex-row justify-between mt-4">
+                                {item.valorParcialLiberado !== null && (
+                                  <>
+                                    <span className="text-sm mt-[-14px]">
+                                      <p>Valor disponivel</p>
+                                    </span>
+                                    <span className="text-sm font-medium mt-[-14px]">
+                                      <p>
+                                        {item.valorParcialLiberado
+                                          ? formatarDinheiro(
+                                              item.valorParcialLiberado
+                                            )
+                                          : "R$ 0,00"}
+                                      </p>
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                              <div className="flex flex-row justify-between">
+                                <span className="text-sm">
+                                  Valor solicitado{" "}
                                 </span>
-                                <span className="text-sm font-medium mt-[-14px]">
-                                  <p>
-                                    {item.valorParcialLiberado
-                                      ? formatarDinheiro(
-                                          item.valorParcialLiberado
-                                        )
-                                      : "R$ 0,00"}
-                                  </p>
+                                <span className="text-sm font-medium">
+                                  {item.valorSolicitado
+                                    ? formatarDinheiro(item.valorSolicitado)
+                                    : "R$ 0,00"}
                                 </span>
-                              </>
-                            )}
-                          </div>
-                          <div className="flex flex-row justify-between">
-                            <span className="text-sm">Valor solicitado </span>
-                            <span className="text-sm font-medium">
-                              {item.valorSolicitado
-                                ? formatarDinheiro(item.valorSolicitado)
-                                : "R$ 0,00"}
-                            </span>
-                          </div>
-                          <div className="flex flex-row justify-between">
-                            <span className="text-sm">Data solicitação </span>
-                            <span className="text-sm font-medium">
-                              {formatarDataHoraLocal(item.criado)}
-                            </span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                              </div>
+                              <div className="flex flex-row justify-between">
+                                <span className="text-sm">
+                                  Data solicitação{" "}
+                                </span>
+                                <span className="text-sm font-medium">
+                                  {formatarDataHoraLocal(item.criado)}
+                                </span>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </Tabs>
