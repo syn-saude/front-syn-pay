@@ -90,14 +90,13 @@ export default function FileUpload() {
                   />
                 </div>
                 <div className="text-red-700 hover:text-red-400">
-                  {!!selectedFile ||
-                    (!!user?.urlAvatar && (
-                      <Trash2
-                        className="cursor-pointer"
-                        onClick={removeFile}
-                        size={28}
-                      />
-                    ))}
+                  {!!user?.urlAvatar && (
+                    <Trash2
+                      className="cursor-pointer"
+                      onClick={removeFile}
+                      size={28}
+                    />
+                  )}
                 </div>
               </div>
             </div>
