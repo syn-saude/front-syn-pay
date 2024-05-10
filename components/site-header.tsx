@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { singOut } from "@/contexts/AuthProvider"
 import {
@@ -30,10 +31,10 @@ import {
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 
+import EditModal from "./ModalEdit/editModal"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
-import { useEffect } from "react"
 import Input from "./ui/input"
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 
 export default function SiteHeader() {
   const { user } = useAuth()
@@ -42,6 +43,15 @@ export default function SiteHeader() {
   const { width } = useWindowDimensions()
   const isMobile = width && width < 600
 
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+
+  const handleOpenEditModal = () => {
+    setModalIsOpen(true)
+  }
+
+  function handleCloseModal() {
+    setModalIsOpen(false)
+  }
 
   return (
     <header className="bg-background  top-0 z-40 w-full border-b">
@@ -73,9 +83,7 @@ export default function SiteHeader() {
                 </Avatar>
 
                 <div className="flex flex-col gap-0 items-center">
-                  <div className="text-sm font-semibold">
-                    Olá, {user?.nome}
-                  </div>
+                  <div className="text-sm font-semibold">Olá, {user?.nome}</div>
                   <div
                     style={{ fontSize: 10, lineHeight: 1 }}
                     className=" text-xs text-slate-500 font-semibold "
@@ -83,13 +91,21 @@ export default function SiteHeader() {
                     {user?.perfisPorTenant[0].descricao}
                   </div>
                 </div>
-                <Link
+                {/* <Link
                   href="/editar-usuario"
                   className="flex items-center gap-2 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   Editar
                   <NotebookPen size={16} strokeWidth={1.75} />
-                </Link>
+                </Link> */}
+                <Button
+                onClick={handleOpenEditModal}
+                variant={"link"}
+                className="gap-2 px-2.5 hover:text-foreground decoration-transparent"
+              >
+                {" "}
+                Editar <NotebookPen size={16} strokeWidth={1.75} />
+              </Button>
               </div>
 
               <Link
@@ -135,9 +151,7 @@ export default function SiteHeader() {
             >
               <div className="flex flex-row items-center gap-4 cursor-pointer ">
                 <div className="flex flex-col gap-0">
-                  <div className="text-sm font-semibold">
-                    Olá, {user?.nome}
-                  </div>
+                  <div className="text-sm font-semibold">Olá, {user?.nome}</div>
                   <div
                     style={{ fontSize: 10, lineHeight: 1 }}
                     className=" text-xs text-slate-500 font-semibold "
@@ -175,13 +189,21 @@ export default function SiteHeader() {
                 Alterar para modo {theme === "light" ? "noite" : "dia"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <Link
+              <Button
+                onClick={handleOpenEditModal}
+                variant={"link"}
+                className="gap-2 px-2.5 hover:text-foreground decoration-transparent"
+              >
+                {" "}
+                Editar <NotebookPen size={16} strokeWidth={1.75} />
+              </Button>
+              {/* <Link
                 href="/editar-usuario"
                 className="flex items-center gap-2 px-2.5 text-muted-foreground hover:text-foreground"
               >
                 Editar
                 <NotebookPen size={16} strokeWidth={1.75} />
-              </Link>
+              </Link> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={singOut}
@@ -193,6 +215,12 @@ export default function SiteHeader() {
           </DropdownMenu>
         )}
       </div>
+      {modalIsOpen && (
+        <EditModal
+          isOpen={modalIsOpen}
+          onRequestClose={handleCloseModal}
+        />
+      )}
     </header>
   )
 }

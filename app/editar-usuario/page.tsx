@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label"
 import SuccessModal from "@/components/success-modal/successModal"
 import withAuth from "@/components/with-auth"
 
-import { IEditUserRequest } from "./interface"
+import { IEditUserRequest } from "../../components/ModalEdit/interface"
 import * as S from "./styles"
 
 yup.setLocale(pt)
