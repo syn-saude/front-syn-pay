@@ -7,7 +7,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 80px 80px 60px 80px;
+  padding: 130px 80px 60px 80px;
   margin-bottom: -10px;
   @media (max-width: 768px) {
     min-height: 70vh;
@@ -23,6 +23,7 @@ export const LoginContent = styled.div`
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  margin-top: -80px;
 `
 
 export const FormContent = styled.form`

@@ -6,7 +6,7 @@ import Cropper from "react-easy-crop"
 import { toast } from "react-toastify"
 
 import useAuth from "@/hooks/useAuth"
-import { IEditImgAvatarRequest } from "@/app/editar-usuario/interface"
+import { IEditImgAvatarRequest } from "@/components/ModalEdit/interface"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar"
 import ModalCropper from "./modalCropper"
@@ -54,7 +54,6 @@ export default function FileUpload() {
   }
 
   function handleCloseModal() {
-    // router.push("/financiamentos")
     setModalIsOpen(false)
     setTimeout(() => {}, 400)
   }
@@ -89,17 +88,15 @@ export default function FileUpload() {
                     }
                     size={30}
                   />
-                  {/* <input {...getInputProps()} id="fileInput" style={{ display: 'none' }} /> */}
                 </div>
                 <div className="text-red-700 hover:text-red-400">
-                  {!!selectedFile ||
-                    (!!user?.urlAvatar && (
-                      <Trash2
-                        className="cursor-pointer"
-                        onClick={removeFile}
-                        size={28}
-                      />
-                    ))}
+                  {!!user?.urlAvatar && (
+                    <Trash2
+                      className="cursor-pointer"
+                      onClick={removeFile}
+                      size={28}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -118,15 +115,6 @@ export default function FileUpload() {
           }}
         />
       )}
-      {/* <Cropper
-        image={this.state.image}
-        crop={this.state.crop}
-        zoom={this.state.zoom}
-        aspect={this.state.aspect}
-        onCropChange={this.onCropChange}
-        onCropComplete={this.onCropComplete}
-        onZoomChange={this.onZoomChange}
-      /> */}
     </>
   )
 }
