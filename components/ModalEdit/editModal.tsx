@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import { UserEditProps } from "@/services/auth/types"
 import { redefinirUsuario } from "@/services/editUser"
-import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { pt } from "yup-locales"
 
@@ -95,7 +95,7 @@ export default function EditModal({ onRequestClose, isOpen }: ModalOrderProps) {
                 errors={errors}
                 control={control}
                 controlName="email"
-                placeholder="Informe seu nome"
+                placeholder="Informe seu email"
               />
             </div>
             <div className="flex flex-col gap-1 ">
@@ -105,7 +105,7 @@ export default function EditModal({ onRequestClose, isOpen }: ModalOrderProps) {
                 control={control}
                 mask="(99) 99999-9999"
                 controlName="telefone"
-                placeholder="Informe seu nome"
+                placeholder="Informe seu telefone"
               />
             </div>
           </div>

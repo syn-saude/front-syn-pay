@@ -102,7 +102,7 @@ const schema = yup
     nacionalidade: yup.string().required().label("Nacionalidade"),
     estadoCivil: yup.number().required().label("Estado civil"),
     rg: yup.string().required().label("Identidade"),
-    sexo: yup.string().label("Gênero"),
+    sexo: yup.string().required().label("Gênero"),
     nomeMae: yup.string().required().label("Nome da mãe"),
     patrimonio: yup.number().required().label("Valor do Patrimônio"),
     //Step 6
@@ -890,6 +890,11 @@ function Add() {
                               </RadioGroup>
                             )}
                           />
+                          {errors.sexo && (
+                            <span className="text-sm font-medium text-red-500">
+                              {errors.sexo.message}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-col gap-1">
